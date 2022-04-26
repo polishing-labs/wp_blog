@@ -159,7 +159,7 @@
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="https://wp.zgroot.cn/2022/04/26/python_jiansuo/">
+    <link itemprop="mainEntityOfPage" href="https://wp.zgroot.cn/2022/04/26/BUUCTF_hfctf_2020_marksman/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="image" content="/images/image.png">
@@ -173,7 +173,7 @@
       <header class="post-header">
         <h2 class="post-title" itemprop="name headline">
           
-            <a href="/2022/04/26/python_jiansuo/" class="post-title-link" itemprop="url">用python写了一个检索题目信息（WP的题目）与关键知识点的小工具（真的很小）</a>
+            <a href="/2022/04/26/BUUCTF_hfctf_2020_marksman/" class="post-title-link" itemprop="url">BUUCTF_hfctf_2020_marksman</a>
         </h2>
 
         <div class="post-meta">
@@ -183,7 +183,7 @@
               </span>
               <span class="post-meta-item-text">发表于</span>
 
-              <time title="创建时间：2022-04-26 09:30:22" itemprop="dateCreated datePublished" datetime="2022-04-26T09:30:22+00:00">2022-04-26</time>
+              <time title="创建时间：2022-04-26 09:38:47" itemprop="dateCreated datePublished" datetime="2022-04-26T09:38:47+00:00">2022-04-26</time>
             </span>
 
           
@@ -197,12 +197,15 @@
     <div class="post-body" itemprop="articleBody">
 
       
-          <blockquote>
-<p>一个工具之所以被开发出来，肯定是先有的需求，然后才去想办法开发。</p>
-</blockquote>
+          <h2 id="总结："><a href="#总结：" class="headerlink" title="总结："></a>总结：</h2><p>通过这道题的学习与收获有：</p>
+<p>1、atol函数放入的数据应该是打包之前的，而非是打包之后的数据</p>
+<p>2、exit函数执行流程，<strong>exit函数的调用流程exit函数—&gt;run_exit_handlers函数—&gt;_dl_fini函数—&gt; rtld_lock_unlock_recursive指针</strong> 如果我们能够将最后的指针所指向的内容修改为one_gadget，那么即可获取shell。这个劫持exit_hook的可取之处在于，程序正常结束的话，最后都会调用这个exit函数</p>
+<p>3、学会了重新绑定程序所对应的libc动态库（patch libc和ld）。即使相同的libc库，在小版本不同的情况下，某些内容的偏移也是不一样的</p>
+<p>4、用这个方法可以在开了PIE的程序中下断点。gdb.attach(p, ‘b * $rebase(0xd63)\nc’)</p>
+<p>5、one_gadget加上参数-l2可以搜索更多的one_gadget。</p>
           <!--noindex-->
             <div class="post-button">
-              <a class="btn" href="/2022/04/26/python_jiansuo/#more" rel="contents">
+              <a class="btn" href="/2022/04/26/BUUCTF_hfctf_2020_marksman/#more" rel="contents">
                 阅读全文 &raquo;
               </a>
             </div>
@@ -226,7 +229,7 @@
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="https://wp.zgroot.cn/2022/04/26/ret2_dl_runtime_resolve/">
+    <link itemprop="mainEntityOfPage" href="https://wp.zgroot.cn/2022/04/26/BUUCTF_jarvisoj_guess/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="image" content="/images/image.png">
@@ -240,7 +243,7 @@
       <header class="post-header">
         <h2 class="post-title" itemprop="name headline">
           
-            <a href="/2022/04/26/ret2_dl_runtime_resolve/" class="post-title-link" itemprop="url">关于学习ret2_dl_runtime_resolve的总结</a>
+            <a href="/2022/04/26/BUUCTF_jarvisoj_guess/" class="post-title-link" itemprop="url">BUUCTF_jarvisoj_guess</a>
         </h2>
 
         <div class="post-meta">
@@ -250,7 +253,7 @@
               </span>
               <span class="post-meta-item-text">发表于</span>
 
-              <time title="创建时间：2022-04-26 09:30:22" itemprop="dateCreated datePublished" datetime="2022-04-26T09:30:22+00:00">2022-04-26</time>
+              <time title="创建时间：2022-04-26 09:38:47" itemprop="dateCreated datePublished" datetime="2022-04-26T09:38:47+00:00">2022-04-26</time>
             </span>
 
           
@@ -264,10 +267,12 @@
     <div class="post-body" itemprop="articleBody">
 
       
-          <h2 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h2><p>这篇文章也算是集百家之长了，因为在学习ret2dlresolve这个高级rop的时候，师傅们可能都是因为实力比较强，因而在一些细节的地方没有解释为什么，如此在学习的时候，还是稍微有点吃力的，学习了很多位师傅的博客之后加上自己的一些思考才写出了这篇博客（我认为写的比较好的博客链接都放到文章最后了，我有的小细节可能忘记提到了，可以去这些师傅的博客上面看一下），也算是站在巨人的肩膀上学习了。</p>
+          <h1 id="总结："><a href="#总结：" class="headerlink" title="总结："></a>总结：</h1><p>通过这道题的学习与收获有：（说实话，我把这玩意拖到IDA里的一刻，我是想直接把它扔进回收站的，不过最终还是硬着头皮做下来了，收获也真的很多）</p>
+<p>1、这道题的漏洞点是数组下标的不检查，导致char类型可能自身变成负数，使得我们可以输入不正常数据来通过对flag的检查。</p>
+<p>2、使用单字节爆破的手段，获取flag，这道题对于flag的检查是判断整体的，但之所以可以进行单字节爆破是因为我们是先通过了flag的检查，然后依次改变一字节，来观察回显，我们的flag是否正确，从而进行单字节的爆破。并且还有一个前提是不限次数的输入内容（只要内容是100字节，就可以与flag进行比较判断）</p>
           <!--noindex-->
             <div class="post-button">
-              <a class="btn" href="/2022/04/26/ret2_dl_runtime_resolve/#more" rel="contents">
+              <a class="btn" href="/2022/04/26/BUUCTF_jarvisoj_guess/#more" rel="contents">
                 阅读全文 &raquo;
               </a>
             </div>
@@ -291,7 +296,7 @@
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="https://wp.zgroot.cn/2022/04/26/ret2csu/">
+    <link itemprop="mainEntityOfPage" href="https://wp.zgroot.cn/2022/04/26/DASCTF2022_checkin/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="image" content="/images/image.png">
@@ -305,7 +310,7 @@
       <header class="post-header">
         <h2 class="post-title" itemprop="name headline">
           
-            <a href="/2022/04/26/ret2csu/" class="post-title-link" itemprop="url">关于学习ret2csu的总结</a>
+            <a href="/2022/04/26/DASCTF2022_checkin/" class="post-title-link" itemprop="url">DASCTF2022_checkin</a>
         </h2>
 
         <div class="post-meta">
@@ -315,7 +320,7 @@
               </span>
               <span class="post-meta-item-text">发表于</span>
 
-              <time title="创建时间：2022-04-26 09:30:22" itemprop="dateCreated datePublished" datetime="2022-04-26T09:30:22+00:00">2022-04-26</time>
+              <time title="创建时间：2022-04-26 09:38:47" itemprop="dateCreated datePublished" datetime="2022-04-26T09:38:47+00:00">2022-04-26</time>
             </span>
 
           
@@ -329,12 +334,15 @@
     <div class="post-body" itemprop="articleBody">
 
       
-          <blockquote>
-<p>关于这个ret2csu，与其说它是一种题型，倒不如说这是一种方法（改变参数）。</p>
-</blockquote>
+          <h2 id="总结："><a href="#总结：" class="headerlink" title="总结："></a>总结：</h2><p>通过这道题的学习和收获有：</p>
+<p>1、栈迁移，何为栈？本来栈的定义就是rsp指针与rbp指针之间的就是栈。rsp在哪栈就在哪，因此两次leave，栈就变了两次，而真正跳到变化的栈那步是在最后的ret执行的。也算是对栈迁移又有了一点新的理解。</p>
+<p>2、利用magic gadget修改got表</p>
+<p>3、这道题的核心考察的就是栈迁移以及payload布局。</p>
+<p>4、取magic gadget中的ebx时，如果ebx的值为正，则直接取，如果为负，则加0x100000000取补码。</p>
+<p>5、如果可以的话，迁移到bss段尽量迁移到地址高一点的地方。这次打远程的那个exp就是因为bss段迁移的太低了，因为是破坏了某些数据，导致最后执行system函数的时候卡住了。</p>
           <!--noindex-->
             <div class="post-button">
-              <a class="btn" href="/2022/04/26/ret2csu/#more" rel="contents">
+              <a class="btn" href="/2022/04/26/DASCTF2022_checkin/#more" rel="contents">
                 阅读全文 &raquo;
               </a>
             </div>
@@ -358,7 +366,7 @@
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="https://wp.zgroot.cn/2022/04/26/ret2syscall/">
+    <link itemprop="mainEntityOfPage" href="https://wp.zgroot.cn/2022/04/26/[GKCTF%202021]checkin/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="image" content="/images/image.png">
@@ -372,7 +380,7 @@
       <header class="post-header">
         <h2 class="post-title" itemprop="name headline">
           
-            <a href="/2022/04/26/ret2syscall/" class="post-title-link" itemprop="url">ret2syscall的做题思路（以32位程序为例）</a>
+            <a href="/2022/04/26/%5BGKCTF%202021%5Dcheckin/" class="post-title-link" itemprop="url">GKCTF 2021_checkin</a>
         </h2>
 
         <div class="post-meta">
@@ -382,7 +390,7 @@
               </span>
               <span class="post-meta-item-text">发表于</span>
 
-              <time title="创建时间：2022-04-26 09:30:22" itemprop="dateCreated datePublished" datetime="2022-04-26T09:30:22+00:00">2022-04-26</time>
+              <time title="创建时间：2022-04-26 09:38:47" itemprop="dateCreated datePublished" datetime="2022-04-26T09:38:47+00:00">2022-04-26</time>
             </span>
 
           
@@ -396,446 +404,12 @@
     <div class="post-body" itemprop="articleBody">
 
       
-          <blockquote>
-<p>ret2syscall需要寻找的指令的思路和构造shellcode的思路是一样的，只不过ret2syscall获取的指令算是就地取材，而ret2shellcode创造指令算是无中生有。在32位程序中，我们要系统调用，那就需要把系统调用号传入eax寄存器，然后需要把ecx和edx的寄存器给清空。最后就是需要去把参数&#x2F;bin&#x2F;sh的地址存入ebx寄存器。而我感觉ret2syscall的难点也就是在最后这个把参数地址存入ebx寄存器这里了。</p>
-</blockquote>
+          <h1 id="总结："><a href="#总结：" class="headerlink" title="总结："></a>总结：</h1><p>1、这道题md5加密这个点，其实蛮重要的，个人感觉想判断出来的话，只能是靠经验的积累。下回只要遇见了这种奇奇怪怪的函数，还给了类似于密文这种东西，就去考虑加密。</p>
+<p>2、能够输入的字节很少的时候，执行某个函数，可以尝试写call的这个地址，这样即可以执行函数，又可以控制执行流（只要我们可以把控好选取的call地址即可）</p>
+<p>3、后期调试的话，多按自己的思路思考。</p>
           <!--noindex-->
             <div class="post-button">
-              <a class="btn" href="/2022/04/26/ret2syscall/#more" rel="contents">
-                阅读全文 &raquo;
-              </a>
-            </div>
-          <!--/noindex-->
-        
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
-      
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="https://wp.zgroot.cn/2022/04/26/shellcode/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/image.png">
-      <meta itemprop="name" content="楼上请让路*">
-      <meta itemprop="description" content="楼上请让路*的博客">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="楼上请让路*">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/2022/04/26/shellcode/" class="post-title-link" itemprop="url">用汇编语言构造简单的shellcode（64位&&32位）以及将汇编语言转换成机器码的方法</a>
-        </h2>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-calendar"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-
-              <time title="创建时间：2022-04-26 09:30:22" itemprop="dateCreated datePublished" datetime="2022-04-26T09:30:22+00:00">2022-04-26</time>
-            </span>
-
-          
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <h1 id="1、什么是shellcode"><a href="#1、什么是shellcode" class="headerlink" title="1、什么是shellcode"></a>1、什么是shellcode</h1><p>​		这里我谈谈自己的理解，shellcode就是人为编写的一段代码，执行这串代码之后，就可以获取电脑的shell。（这个解释为了方便理解，从而忽略了一部分严谨性（如果想看更严谨的定义的话，可以百度一下），但是初学者去理解shellcode的话，这么理解，应该是没什么问题的）。</p>
-          <!--noindex-->
-            <div class="post-button">
-              <a class="btn" href="/2022/04/26/shellcode/#more" rel="contents">
-                阅读全文 &raquo;
-              </a>
-            </div>
-          <!--/noindex-->
-        
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
-      
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="https://wp.zgroot.cn/2022/04/26/srop/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/image.png">
-      <meta itemprop="name" content="楼上请让路*">
-      <meta itemprop="description" content="楼上请让路*的博客">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="楼上请让路*">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/2022/04/26/srop/" class="post-title-link" itemprop="url">关于学习SROP的总结</a>
-        </h2>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-calendar"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-
-              <time title="创建时间：2022-04-26 09:30:22" itemprop="dateCreated datePublished" datetime="2022-04-26T09:30:22+00:00">2022-04-26</time>
-            </span>
-
-          
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <p>这个SROP是一种极其有趣的攻击方式，它是利用程序从内核层面切换到用户层面恢复上下文时的一个漏洞，该漏洞可以让我们自己自行设置所有寄存器里的值。</p>
-          <!--noindex-->
-            <div class="post-button">
-              <a class="btn" href="/2022/04/26/srop/#more" rel="contents">
-                阅读全文 &raquo;
-              </a>
-            </div>
-          <!--/noindex-->
-        
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
-      
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="https://wp.zgroot.cn/2022/04/26/wp_for_wangren/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/image.png">
-      <meta itemprop="name" content="楼上请让路*">
-      <meta itemprop="description" content="楼上请让路*的博客">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="楼上请让路*">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/2022/04/26/wp_for_wangren/" class="post-title-link" itemprop="url">网刃杯部分wp</a>
-        </h2>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-calendar"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-
-              <time title="创建时间：2022-04-26 09:30:22" itemprop="dateCreated datePublished" datetime="2022-04-26T09:30:22+00:00">2022-04-26</time>
-            </span>
-
-          
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <h2 id="Web部分"><a href="#Web部分" class="headerlink" title="Web部分"></a>Web部分</h2><h3 id="Upload："><a href="#Upload：" class="headerlink" title="Upload："></a>Upload：</h3><p><img src="/upload/img/clip_image002.gif" alt="img"></p>
-<p>这个题怎么说有点狗，upload但是其实是一个sql注，我尝试上传php</p>
-<p>他说type要是ctf，行吧改mini为ctf<img src="/upload/img/clip_image004.gif" alt="img"></p>
-<p>上传上去后发现访问他</p>
-<p><img src="/upload/img/clip_image006.gif" alt="img"></p>
-<p>既然说SQL就尝试去找注入点</p>
-<p><img src="/upload/img/clip_image008.gif" alt="img"></p>
-<p>尝试了很多点，发现就这个地方有报错，那就报错注入’ or extractvalue(1,concat(0x7e,database(),0x7e)))#</p>
-<p><img src="/upload/img/clip_image010.gif" alt="img"></p>
-<p>尝试爆表半天出不来，平时做题最多的表名就是什么flag，ctf什么的</p>
-<p>就直接尝试去爆flag：’ or extractvalue(1,concat(0x7e,(select group_concat(flag) from flag),0x7e)))#</p>
-<p><img src="/upload/img/clip_image012.gif" alt="img"></p>
-<p>数据不全，用mid爆出来就行</p>
-<h3 id="Sign-in："><a href="#Sign-in：" class="headerlink" title="Sign_in："></a>Sign_in：</h3><p>这个题打开</p>
-<p><img src="/upload/img/clip_image014.gif" alt="img"></p>
-<p>之前又见过一些类似的，链接：<a target="_blank" rel="noopener" href="https://blog.csdn.net/weixin_29963537/article/details/115813343">(26条消息) php curl ssrf,ssrf漏洞学习(PHP)_拖狗老师的博客-CSDN博客</a></p>
-<p>尝试去读取<img src="/upload/img/clip_image016.gif" alt="img"></p>
-<p>也没又发现什么有用的借鉴这篇文章</p>
-<p><a target="_blank" rel="noopener" href="https://blog.csdn.net/a3320315/article/details/102880329?ops_request_misc=%7B%22request_id%22:%22165078432816782395313513%22,%22scm%22:%2220140713.130102334.pc_all.%22%7D&request_id=165078432816782395313513&biz_id=0&utm_medium=distribute.pc_search_result.none-task-blog-2~all~first_rank_ecpm_v1~rank_v31_ecpm-1-102880329.142%5Ev9%5Epc_search_result_cache,157%5Ev4%5Econtrol&utm_term=gopher%E5%8D%8F%E8%AE%AE&spm=1018.2226.3001.4187">(26条消息) CTF gopher协议_HyyMbb的博客-CSDN博客_gopher协议</a></p>
-<p>直到读到hosts文件</p>
-<p><img src="/upload/img/clip_image018.gif" alt="img"></p>
-<p>发现内网ip</p>
-<p><img src="/upload/img/clip_image020.jpg" alt="IMG_256"></p>
-<p>给传入一个a后</p>
-<p><img src="/upload/img/clip_image022.gif" alt="img"></p>
-<p>尝试利用fopher写payload</p>
-<p><img src="/upload/img/clip_image024.gif" alt="img"></p>
-<p><img src="/upload/img/clip_image026.gif" alt="img"></p>
-<p>加上xff头</p>
-<p><img src="/upload/img/clip_image028.gif" alt="img"></p>
-<p><img src="/upload/img/clip_image030.gif" alt="img"></p>
-<p>加上referer头</p>
-<p><img src="/upload/img/clip_image032.gif" alt="img"></p>
-<p>最后整个脚本是</p>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> urllib</span><br><span class="line"><span class="keyword">import</span> urllib.parse</span><br><span class="line"><span class="keyword">import</span> requests</span><br><span class="line"></span><br><span class="line">POST =\</span><br><span class="line"><span class="string">&quot;&quot;&quot;POST /index.php?a=1 HTTP/1.1</span></span><br><span class="line"><span class="string">Host: 172.73.23.100</span></span><br><span class="line"><span class="string">Content-Type:application/x-www-form-urlencoded</span></span><br><span class="line"><span class="string">X-Forwarded-For: 127.0.0.1</span></span><br><span class="line"><span class="string">Referer: bolean.club</span></span><br><span class="line"><span class="string">Content-Length:1</span></span><br><span class="line"><span class="string"></span></span><br><span class="line"><span class="string">b=1</span></span><br><span class="line"><span class="string">&quot;&quot;&quot;</span></span><br><span class="line"></span><br><span class="line"></span><br><span class="line">tmp = urllib.parse.quote(POST)</span><br><span class="line">new = tmp.replace(<span class="string">&#x27;%0A&#x27;</span>,<span class="string">&#x27;%0D%0A&#x27;</span>)</span><br><span class="line">result = <span class="string">&#x27;_&#x27;</span>+new</span><br><span class="line">result=urllib.parse.quote(result)</span><br><span class="line"><span class="built_in">print</span>(<span class="string">&#x27;gopher%3A//172.73.23.100%3A80/&#x27;</span>+result)</span><br></pre></td></tr></table></figure>
-
-<h2 id="ICS的"><a href="#ICS的" class="headerlink" title="ICS的"></a>ICS的</h2><h3 id="Easyiec"><a href="#Easyiec" class="headerlink" title="Easyiec"></a>Easyiec</h3><p>这个题就直接以文本的格式打开，然后Ctr+f找到flag</p>
-<p><img src="/upload/img/clip_image034.gif" alt="img"></p>
-<h3 id="Xyp07"><a href="#Xyp07" class="headerlink" title="Xyp07"></a>Xyp07</h3><p>这个题开始我还以为是7位文件密码爆破，后来在属性发现了</p>
-<p><img src="/upload/img/clip_image036.gif" alt="img"></p>
-<p>对其一直base64解密，得到Xyp77&amp;7&amp;77用wires hark打开</p>
-<p>追踪TCP流</p>
-<p><img src="/upload/img/clip_image038.gif" alt="img"></p>
-<p>对其进行base91解密</p>
-<p><img src="/upload/img/clip_image040.gif" alt="img"></p>
-<h2 id="逆向的"><a href="#逆向的" class="headerlink" title="逆向的"></a>逆向的</h2><h3 id="freestyle"><a href="#freestyle" class="headerlink" title="freestyle"></a>freestyle</h3><p>首先，逆向一般有壳，查一下壳</p>
-<p><img src="/upload/img/clip_image042.jpg" alt="img"></p>
-<p>将程序拖入IDA，找到main函数</p>
-<p><img src="/upload/img/clip_image044.jpg" alt="img"></p>
-<p>查看fun1()函数</p>
-<p><img src="/upload/img/clip_image046.jpg" alt="img"></p>
-<p><img src="/upload/img/clip_image048.jpg" alt="img"></p>
-<p>Main.c</p>
-<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">include</span><span class="string">&lt;stdio.h&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="type">int</span> <span class="title function_">main</span><span class="params">()</span></span><br><span class="line"></span><br><span class="line">&#123;</span><br><span class="line"></span><br><span class="line">  <span class="type">int</span> i=<span class="number">0</span>;</span><br><span class="line"></span><br><span class="line">  <span class="keyword">for</span>(i=<span class="number">0</span>;i&lt;=<span class="number">1000000000</span>;i++)</span><br><span class="line"></span><br><span class="line">  &#123;</span><br><span class="line"></span><br><span class="line">  <span class="keyword">if</span>( <span class="number">4</span> * (<span class="number">3</span> * i / <span class="number">9</span> - <span class="number">9</span>) == <span class="number">4400</span>)</span><br><span class="line"></span><br><span class="line">  <span class="built_in">printf</span>(<span class="string">&quot;%d &quot;</span>,i);</span><br><span class="line"></span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line"> &#125; </span><br></pre></td></tr></table></figure>
-
-<p>查看fun2() 函数</p>
-<p><img src="/upload/img/clip_image050.jpg" alt="img"></p>
-<p><img src="/upload/img/clip_image052.jpg" alt="img"></p>
-<p>C：</p>
-<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">include</span><span class="string">&lt;stdio.h&gt;</span></span></span><br><span class="line"></span><br><span class="line">  <span class="type">int</span> <span class="title function_">main</span><span class="params">()</span></span><br><span class="line"></span><br><span class="line">&#123;</span><br><span class="line"></span><br><span class="line"> </span><br><span class="line"></span><br><span class="line">  <span class="type">int</span> i=<span class="number">0</span>;</span><br><span class="line"></span><br><span class="line">  <span class="keyword">for</span>(i=<span class="number">0</span>;i&lt;<span class="number">1000</span>;i++)</span><br><span class="line"></span><br><span class="line">  <span class="keyword">if</span>(<span class="number">2</span>*(i%<span class="number">56</span>)== <span class="number">98</span>)</span><br><span class="line"></span><br><span class="line">  <span class="built_in">printf</span>(<span class="string">&quot;%d\n&quot;</span>,i);</span><br><span class="line"></span><br><span class="line">  <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<p>将两个输出拼接可以知道flag原文就是 3327105</p>
-<p>将其进行md5 可以得到散列值为 </p>
-<p><code>31a364d51abd0c8304106c16779d83b1</code></p>
-<p>加上 flag{}即可</p>
-<p><img src="/upload/img/clip_image054.jpg" alt="img"></p>
-<h3 id="Re-function"><a href="#Re-function" class="headerlink" title="Re_function"></a>Re_function</h3><p><img src="/upload/img/clip_image056.jpg" alt="img"></p>
-<p>Hex打开，尝试寻找压缩包密码</p>
-<p><img src="/upload/img/clip_image058.jpg" alt="img"></p>
-<p>看到PNG图片文件头，可以得知可能是PNG文件，先改成PNG后缀，尝试打开。</p>
-<p><img src="/upload/img/clip_image060.jpg" alt="img"></p>
-<p>可以得知密码为3CF8</p>
-<p>查壳，发现无壳</p>
-<p><img src="/upload/img/clip_image062.jpg" alt="img"></p>
-<p>拖入IDA打开，分析</p>
-<p><img src="/upload/img/clip_image064.jpg" alt="img"></p>
-<p>看起来没啥有效信息，那就去看另一个ELF文件</p>
-<p><img src="/upload/img/clip_image066.jpg" alt="img"></p>
-<p>发现可能是base64的表，可能是基于base64变表编码方式。</p>
-<p>用OD打开文件，搜索字符串定位</p>
-<p><img src="/upload/img/clip_image068.jpg" alt="img"></p>
-<p><img src="/upload/img/clip_image070.jpg" alt="img"></p>
-<p>得到了flag的长度，为28位。</p>
-<p><img src="/upload/img/clip_image072.jpg" alt="img"></p>
-<p>变种方式可能是输入的字符串会隔一位与 0x37 进行异或，那我们可以查看内存，对比一下字符串编码前和编码后的。</p>
-<p><img src="/upload/img/clip_image074.jpg" alt="img"></p>
-<p>发现了编码后的字符串</p>
-<p><img src="/upload/img/clip_image076.jpg" alt="img"></p>
-<p>运行结果如下：SqcTSxCxSAwHGm&#x2F;JvxQrvxiNjR9</p>
-<p>Main2.c</p>
-<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br></pre></td><td class="code"><pre><span class="line">include&lt;stdio.h&gt;</span><br><span class="line"></span><br><span class="line"><span class="type">int</span> <span class="title function_">main</span><span class="params">()</span></span><br><span class="line"></span><br><span class="line">&#123;</span><br><span class="line"></span><br><span class="line">  <span class="type">int</span> a[]=&#123;<span class="number">0x00</span>,<span class="number">0x64</span>,<span class="number">0x71</span>,<span class="number">0x54</span>,<span class="number">0x54</span>,<span class="number">0x64</span>,<span class="number">0x78</span>,<span class="number">0x74</span>,<span class="number">0x78</span>,<span class="number">0x64</span>,<span class="number">0x41</span>,<span class="number">0x40</span>,<span class="number">0x48</span>,<span class="number">0x70</span>,<span class="number">0x6D</span>,<span class="number">0x18</span>,<span class="number">0x4A</span>,<span class="number">0x41</span>,<span class="number">0x78</span>,<span class="number">0x66</span>,<span class="number">0x72</span>,<span class="number">0x41</span>,<span class="number">0x78</span>,<span class="number">0x5E</span>,<span class="number">0x4E</span>,<span class="number">0x5D</span>,<span class="number">0x52</span>,<span class="number">0x0E</span>,<span class="number">0x3D</span>,<span class="number">0x07</span>&#125;;</span><br><span class="line"></span><br><span class="line">  <span class="type">int</span> i;</span><br><span class="line"></span><br><span class="line">  <span class="keyword">for</span>(i=<span class="number">0</span>;i&lt;<span class="number">28</span>;i++)</span><br><span class="line"></span><br><span class="line">  &#123;</span><br><span class="line"></span><br><span class="line">​    i=i+<span class="number">1</span>;</span><br><span class="line"></span><br><span class="line">​    a[i]=a[i]^<span class="number">0x37</span>;</span><br><span class="line"></span><br><span class="line">​    </span><br><span class="line"></span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  <span class="keyword">for</span>(i=<span class="number">0</span>;i&lt;<span class="number">28</span>;i++)</span><br><span class="line"></span><br><span class="line">  <span class="built_in">printf</span>(<span class="string">&quot;%c&quot;</span>,a[i]);</span><br><span class="line"></span><br><span class="line">  <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<p><img src="/upload/img/clip_image078.jpg" alt="img"></p>
-<p>Base64解码一手。</p>
-<p><img src="/upload/img/clip_image080.jpg" alt="img"></p>
-<h2 id="ez-algorithm"><a href="#ez-algorithm" class="headerlink" title="ez_algorithm"></a>ez_algorithm</h2><p>第一步还是查壳</p>
-<p><img src="/upload/img/clip_image082.jpg" alt="img"></p>
-<p>拖入IDA，找到main函数</p>
-<p><img src="/upload/img/clip_image084.jpg" alt="img"></p>
-<p>查看第一个函数encryption</p>
-<p><img src="/upload/img/clip_image086.jpg" alt="img"></p>
-<p><img src="/upload/img/clip_image088.jpg" alt="img"></p>
-<p>可以大致判断是这个函数对输入的字符串进行过滤，将大小写字母所对应下标进行变换后再进入下一个步骤。</p>
-<p><img src="/upload/img/clip_image090.jpg" alt="img"></p>
-<p>第二个函数隔离数字，同时对字符进行大小写转换</p>
-<p><img src="/upload/img/clip_image092.jpg" alt="img"></p>
-<p>第三个函数</p>
-<p><img src="/upload/img/clip_image094.jpg" alt="img"></p>
-<p><img src="/upload/img/clip_image096.jpg" alt="img"></p>
-<p>首先对字母和数字分组，分别操作，但对字母大小写t&#x2F;t和大小写g&#x2F;G 单独操作，不区分大小写对不同的字母进行转换</p>
-<p>Main.py</p>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br><span class="line">102</span><br><span class="line">103</span><br><span class="line">104</span><br><span class="line">105</span><br><span class="line">106</span><br><span class="line">107</span><br><span class="line">108</span><br><span class="line">109</span><br><span class="line">110</span><br><span class="line">111</span><br><span class="line">112</span><br><span class="line">113</span><br><span class="line">114</span><br><span class="line">115</span><br><span class="line">116</span><br><span class="line">117</span><br><span class="line">118</span><br><span class="line">119</span><br></pre></td><td class="code"><pre><span class="line">a=<span class="string">&quot;BRUF&#123;E6oU9Ci#J9+6nWAhwMR9n:&#125;&quot;</span></span><br><span class="line"></span><br><span class="line">b=<span class="string">&quot;&quot;</span></span><br><span class="line"></span><br><span class="line">c=<span class="string">&quot;&quot;</span></span><br><span class="line"></span><br><span class="line">d=<span class="string">&quot;abcdefABCDEF&quot;</span></span><br><span class="line"></span><br><span class="line">e=<span class="string">&quot;uvwxyzUVWXYZ&quot;</span></span><br><span class="line"></span><br><span class="line">f=<span class="string">&quot;hijklmHIJKLM&quot;</span></span><br><span class="line"></span><br><span class="line">g=<span class="string">&quot;nopqrsNOPQRS&quot;</span></span><br><span class="line"></span><br><span class="line">h=<span class="string">&quot;qwertyuioplkjhgfdsazxcvbnm&quot;</span></span><br><span class="line"></span><br><span class="line">m=<span class="string">&quot;QWERTYUIOPLKJHGFDSAZXCVBNM&quot;</span></span><br><span class="line"></span><br><span class="line">j=<span class="string">&quot;&quot;</span></span><br><span class="line"></span><br><span class="line">up=<span class="string">&quot;TMQZWKGOIAGLBYHPCRJSUXEVND&quot;</span></span><br><span class="line"></span><br><span class="line">l=<span class="string">&quot;ckagevdxizblqnwtmsrpufyhoj&quot;</span></span><br><span class="line"></span><br><span class="line"><span class="built_in">print</span>(a)</span><br><span class="line"></span><br><span class="line"><span class="keyword">for</span> i <span class="keyword">in</span> a:</span><br><span class="line"></span><br><span class="line">  <span class="keyword">if</span>(i <span class="keyword">in</span> d):</span><br><span class="line"></span><br><span class="line">​    b+=<span class="built_in">chr</span>(<span class="built_in">ord</span>(i)+<span class="number">20</span>)</span><br><span class="line"></span><br><span class="line">  <span class="keyword">elif</span>(i <span class="keyword">in</span> e):</span><br><span class="line"></span><br><span class="line">​    b+=<span class="built_in">chr</span>(<span class="built_in">ord</span>(i)-<span class="number">20</span>)</span><br><span class="line"></span><br><span class="line">  <span class="keyword">elif</span> (i <span class="keyword">in</span> f):</span><br><span class="line"></span><br><span class="line">​    b+=<span class="built_in">chr</span>(<span class="built_in">ord</span>(i)+<span class="number">6</span>)</span><br><span class="line"></span><br><span class="line">  <span class="keyword">elif</span> (i <span class="keyword">in</span> g):</span><br><span class="line"></span><br><span class="line">​    b+=<span class="built_in">chr</span>(<span class="built_in">ord</span>(i)-<span class="number">6</span>)</span><br><span class="line"></span><br><span class="line">  <span class="keyword">elif</span>(i==<span class="string">&#x27;t&#x27;</span><span class="keyword">or</span> i==<span class="string">&#x27;T&#x27;</span>):</span><br><span class="line"></span><br><span class="line">​    b += <span class="built_in">chr</span>(<span class="built_in">ord</span>(i) - <span class="number">13</span>)</span><br><span class="line"></span><br><span class="line">  <span class="keyword">elif</span>(i==<span class="string">&#x27;g&#x27;</span><span class="keyword">or</span> i==<span class="string">&#x27;G&#x27;</span>):</span><br><span class="line"></span><br><span class="line">​    b += <span class="built_in">chr</span>(<span class="built_in">ord</span>(i) + <span class="number">13</span>)</span><br><span class="line"></span><br><span class="line">  <span class="keyword">else</span>:</span><br><span class="line"></span><br><span class="line">​    b+=i</span><br><span class="line"></span><br><span class="line"><span class="built_in">print</span>(b)</span><br><span class="line"></span><br><span class="line"><span class="keyword">for</span> i <span class="keyword">in</span> b:</span><br><span class="line"></span><br><span class="line">  <span class="keyword">if</span> (i <span class="keyword">in</span> h):</span><br><span class="line"></span><br><span class="line">​    c += <span class="built_in">chr</span>(<span class="built_in">ord</span>(i) - <span class="number">32</span>)</span><br><span class="line"></span><br><span class="line">  <span class="keyword">elif</span>(i <span class="keyword">in</span> m):</span><br><span class="line"></span><br><span class="line">​    c += <span class="built_in">chr</span>(<span class="built_in">ord</span>(i) + <span class="number">32</span>)</span><br><span class="line"></span><br><span class="line">  <span class="keyword">else</span>:</span><br><span class="line"></span><br><span class="line">​    c+=i</span><br><span class="line"></span><br><span class="line"><span class="built_in">print</span>(c)</span><br><span class="line"></span><br><span class="line"><span class="keyword">for</span> i <span class="keyword">in</span> <span class="built_in">range</span>(<span class="number">0</span>,<span class="built_in">len</span>(c)):</span><br><span class="line"></span><br><span class="line">  n=i%<span class="number">4</span></span><br><span class="line"></span><br><span class="line">  <span class="keyword">if</span>(c[i]<span class="keyword">in</span> up):</span><br><span class="line"></span><br><span class="line">​    <span class="keyword">if</span>(n==<span class="number">0</span>):</span><br><span class="line"></span><br><span class="line">​      j+=<span class="built_in">chr</span>(<span class="number">65</span>+up.find(c[i]))</span><br><span class="line"></span><br><span class="line">​    <span class="keyword">elif</span>(n==<span class="number">1</span>):</span><br><span class="line"></span><br><span class="line">​      j+=<span class="built_in">chr</span>((up.find(c[i])-n)+<span class="number">65</span>)</span><br><span class="line"></span><br><span class="line">​    <span class="keyword">elif</span>(n==<span class="number">2</span>):</span><br><span class="line"></span><br><span class="line">​      j+=<span class="built_in">chr</span>((up.find(c[i]) *//<span class="number">2</span>)+<span class="number">65</span>)<span class="comment">#123*</span></span><br><span class="line"></span><br><span class="line">​    <span class="keyword">else</span>:</span><br><span class="line"></span><br><span class="line">​      j+=<span class="built_in">chr</span>((up.find(c[i])^n) +<span class="number">65</span>)</span><br><span class="line"></span><br><span class="line">  <span class="keyword">elif</span>(c[i]<span class="keyword">in</span> l):</span><br><span class="line"></span><br><span class="line">​    <span class="keyword">if</span>(n==<span class="number">0</span>):</span><br><span class="line"></span><br><span class="line">​      j+=<span class="built_in">chr</span>(l.find(c[i])+<span class="number">97</span>)</span><br><span class="line"></span><br><span class="line">​    <span class="keyword">elif</span>(n==<span class="number">1</span>):</span><br><span class="line"></span><br><span class="line">​      j+=<span class="built_in">chr</span>((l.find(c[i]) *//n) +<span class="number">97</span>)*</span><br><span class="line"></span><br><span class="line">​    <span class="keyword">elif</span>(n==<span class="number">2</span>):</span><br><span class="line"></span><br><span class="line">​      j+=<span class="built_in">chr</span>((l.find(c[i])^n) +<span class="number">97</span>)</span><br><span class="line"></span><br><span class="line">​    <span class="keyword">else</span>:</span><br><span class="line"></span><br><span class="line">​      j+=<span class="built_in">chr</span>((l.find(c[i])-n)+<span class="number">97</span>)</span><br><span class="line"></span><br><span class="line">  <span class="keyword">else</span>:</span><br><span class="line"></span><br><span class="line">​    j+=c[i]</span><br><span class="line"></span><br><span class="line"><span class="built_in">print</span>(j)</span><br></pre></td></tr></table></figure>
-<p>运行结果如下：</p>
-<p><img src="/upload/img/clip_image098.jpg" alt="img"></p>
-<p>很明显flag{w6Lc9mE#t9+6NcrYPti9N:}就是我们想要的，</p>
-<p>将+#转化为_ ，:不转化，那么flag如下</p>
-<p>flag{w3Lc0mE_t0_3NcrYPti0N:}</p>
-
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
-      
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="https://wp.zgroot.cn/2022/04/26/zhanduiqi/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/image.png">
-      <meta itemprop="name" content="楼上请让路*">
-      <meta itemprop="description" content="楼上请让路*的博客">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="楼上请让路*">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/2022/04/26/zhanduiqi/" class="post-title-link" itemprop="url">关于ubuntu18版本以上调用64位程序中的system函数的栈对齐问题</a>
-        </h2>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-calendar"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-
-              <time title="创建时间：2022-04-26 09:30:22" itemprop="dateCreated datePublished" datetime="2022-04-26T09:30:22+00:00">2022-04-26</time>
-            </span>
-
-          
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <p>有时候在做64位题目的时候会exp完全没问题，但就是获取不了shell。然后通过gdb调试发现是在最后的system函数执行的时候卡住了，然后就满脸疑惑，这也能卡？？？</p>
-          <!--noindex-->
-            <div class="post-button">
-              <a class="btn" href="/2022/04/26/zhanduiqi/#more" rel="contents">
-                阅读全文 &raquo;
-              </a>
-            </div>
-          <!--/noindex-->
-        
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
-      
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="https://wp.zgroot.cn/2022/04/26/zhanqianyi/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/image.png">
-      <meta itemprop="name" content="楼上请让路*">
-      <meta itemprop="description" content="楼上请让路*的博客">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="楼上请让路*">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/2022/04/26/zhanqianyi/" class="post-title-link" itemprop="url">栈迁移的原理&&实战运用</a>
-        </h2>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-calendar"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-
-              <time title="创建时间：2022-04-26 09:30:22" itemprop="dateCreated datePublished" datetime="2022-04-26T09:30:22+00:00">2022-04-26</time>
-            </span>
-
-          
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <h1 id="1、什么是栈迁移"><a href="#1、什么是栈迁移" class="headerlink" title="1、什么是栈迁移"></a>1、什么是栈迁移</h1><p>  这里我谈谈自己的理解，简单一句话：<strong>栈迁移就是换一个地方去GetShell</strong>（这个换的地方既可以是bss段也可以是栈里面），此时新的问题随之产生，为什么要换个地方GetShell，这就是下一段要说的为什么要使用栈迁移。<br>
-          <!--noindex-->
-            <div class="post-button">
-              <a class="btn" href="/2022/04/26/zhanqianyi/#more" rel="contents">
+              <a class="btn" href="/2022/04/26/%5BGKCTF%202021%5Dcheckin/#more" rel="contents">
                 阅读全文 &raquo;
               </a>
             </div>
@@ -926,14 +500,14 @@
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">19</span>
+          <span class="site-state-item-count">14</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
       <div class="site-state-item site-state-tags">
             <a href="/tags/">
           
-        <span class="site-state-item-count">29</span>
+        <span class="site-state-item-count">24</span>
         <span class="site-state-item-name">标签</span></a>
       </div>
   </nav>
