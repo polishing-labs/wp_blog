@@ -1,11 +1,11 @@
 ---
 title: 友情链接
-type: "Links"
+type: "links"
 ---
 
 
-## dalao
+## 撰稿者
 
- - [Zikh26](https://zikh26.github.io)
+ - [Zikh26](https://www.cnblogs.com/ZIKH26)
  - [Timochan](https://www.timochan.cn)
  - [Joker](https://www.cnblogs.com/LQ-Joker/)
