@@ -6,4 +6,6 @@ type: "Links"
 
 ## dalao
 
- - [PWN狗](https://zikh26.github.io)
+ - [Zikh26](https://zikh26.github.io)
+ - [Timochan](https://www.timochan.cn)
+ - [Joker](https://www.cnblogs.com/LQ-Joker/)
