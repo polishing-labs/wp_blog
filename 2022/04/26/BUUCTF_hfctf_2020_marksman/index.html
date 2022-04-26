@@ -17,49 +17,49 @@
 
 <script id="hexo-configurations">
     var NexT = window.NexT || {};
-    var CONFIG = {"hostname":"zikh26.github.io","root":"/","scheme":"Muse","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}}};
+    var CONFIG = {"hostname":"wp.zgroot.cn","root":"/","scheme":"Muse","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}}};
   </script>
 
   <meta name="description" content="总结：通过这道题的学习与收获有： 1、atol函数放入的数据应该是打包之前的，而非是打包之后的数据 2、exit函数执行流程，exit函数的调用流程exit函数—&gt;run_exit_handlers函数—&gt;_dl_fini函数—&gt; rtld_lock_unlock_recursive指针 如果我们能够将最后的指针所指向的内容修改为one_gadget，那么即可获取shell。这个">
 <meta property="og:type" content="article">
 <meta property="og:title" content="BUUCTF_hfctf_2020_marksman">
-<meta property="og:url" content="https://zikh26.github.io/2022/04/26/BUUCTF_hfctf_2020_marksman/index.html">
-<meta property="og:site_name" content="ZIKH26">
+<meta property="og:url" content="https://wp.zgroot.cn/2022/04/26/BUUCTF_hfctf_2020_marksman/index.html">
+<meta property="og:site_name" content="楼上请让路*">
 <meta property="og:description" content="总结：通过这道题的学习与收获有： 1、atol函数放入的数据应该是打包之前的，而非是打包之后的数据 2、exit函数执行流程，exit函数的调用流程exit函数—&gt;run_exit_handlers函数—&gt;_dl_fini函数—&gt; rtld_lock_unlock_recursive指针 如果我们能够将最后的指针所指向的内容修改为one_gadget，那么即可获取shell。这个">
 <meta property="og:locale" content="zh_CN">
-<meta property="og:image" content="https://zikh26.github.io/upload/img/image-20220411120946223.png">
-<meta property="og:image" content="https://zikh26.github.io/upload/img/image-20220411120950796.png">
-<meta property="og:image" content="https://zikh26.github.io/upload/img/image-20220411120958456.png">
-<meta property="og:image" content="https://zikh26.github.io/upload/img/image-20220411121014384.png">
-<meta property="og:image" content="https://zikh26.github.io/upload/img/image-20220411121024407.png">
-<meta property="og:image" content="https://zikh26.github.io/upload/img/image-20220411121037158.png">
-<meta property="og:image" content="https://zikh26.github.io/upload/img/image-20220411121041168.png">
-<meta property="og:image" content="https://zikh26.github.io/upload/img/image-20220411121048430.png">
-<meta property="og:image" content="https://zikh26.github.io/upload/img/image-20220411121056518.png">
-<meta property="og:image" content="https://zikh26.github.io/upload/img/image-20220411121101010.png">
-<meta property="og:image" content="https://zikh26.github.io/upload/img/image-20220411121113453.png">
-<meta property="og:image" content="https://zikh26.github.io/upload/img/image-20220411121117131.png">
-<meta property="og:image" content="https://zikh26.github.io/upload/img/image-20220411121123210.png">
-<meta property="og:image" content="https://zikh26.github.io/upload/img/image-20220411121129439.png">
-<meta property="og:image" content="https://zikh26.github.io/upload/img/image-20220411121133711.png">
+<meta property="og:image" content="https://wp.zgroot.cn/upload/img/image-20220411120946223.png">
+<meta property="og:image" content="https://wp.zgroot.cn/upload/img/image-20220411120950796.png">
+<meta property="og:image" content="https://wp.zgroot.cn/upload/img/image-20220411120958456.png">
+<meta property="og:image" content="https://wp.zgroot.cn/upload/img/image-20220411121014384.png">
+<meta property="og:image" content="https://wp.zgroot.cn/upload/img/image-20220411121024407.png">
+<meta property="og:image" content="https://wp.zgroot.cn/upload/img/image-20220411121037158.png">
+<meta property="og:image" content="https://wp.zgroot.cn/upload/img/image-20220411121041168.png">
+<meta property="og:image" content="https://wp.zgroot.cn/upload/img/image-20220411121048430.png">
+<meta property="og:image" content="https://wp.zgroot.cn/upload/img/image-20220411121056518.png">
+<meta property="og:image" content="https://wp.zgroot.cn/upload/img/image-20220411121101010.png">
+<meta property="og:image" content="https://wp.zgroot.cn/upload/img/image-20220411121113453.png">
+<meta property="og:image" content="https://wp.zgroot.cn/upload/img/image-20220411121117131.png">
+<meta property="og:image" content="https://wp.zgroot.cn/upload/img/image-20220411121123210.png">
+<meta property="og:image" content="https://wp.zgroot.cn/upload/img/image-20220411121129439.png">
+<meta property="og:image" content="https://wp.zgroot.cn/upload/img/image-20220411121133711.png">
 <meta property="og:image" content="https://img2022.cnblogs.com/blog/2706180/202203/2706180-20220323150832405-1323272271.png">
-<meta property="og:image" content="https://zikh26.github.io/upload/img/image-20220411121140791.png">
-<meta property="og:image" content="https://zikh26.github.io/upload/img/image-20220411121145701.png">
-<meta property="og:image" content="https://zikh26.github.io/upload/img/image-20220411121152277.png">
-<meta property="og:image" content="https://zikh26.github.io/upload/img/image-20220411121205022.png">
-<meta property="og:image" content="https://zikh26.github.io/upload/img/image-20220411121210062.png">
-<meta property="og:image" content="https://zikh26.github.io/upload/img/image-20220411121215901.png">
-<meta property="article:published_time" content="2022-04-26T02:51:20.943Z">
-<meta property="article:modified_time" content="2022-04-26T02:51:20.943Z">
+<meta property="og:image" content="https://wp.zgroot.cn/upload/img/image-20220411121140791.png">
+<meta property="og:image" content="https://wp.zgroot.cn/upload/img/image-20220411121145701.png">
+<meta property="og:image" content="https://wp.zgroot.cn/upload/img/image-20220411121152277.png">
+<meta property="og:image" content="https://wp.zgroot.cn/upload/img/image-20220411121205022.png">
+<meta property="og:image" content="https://wp.zgroot.cn/upload/img/image-20220411121210062.png">
+<meta property="og:image" content="https://wp.zgroot.cn/upload/img/image-20220411121215901.png">
+<meta property="article:published_time" content="2022-04-26T08:57:04.961Z">
+<meta property="article:modified_time" content="2022-04-26T08:57:04.961Z">
 <meta property="article:author" content="ZIKH26">
 <meta property="article:tag" content="PWN">
 <meta property="article:tag" content="one_gadget">
 <meta property="article:tag" content="劫持exit_hook">
 <meta property="article:tag" content="patch libc和ld">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:image" content="https://zikh26.github.io/upload/img/image-20220411120946223.png">
+<meta name="twitter:image" content="https://wp.zgroot.cn/upload/img/image-20220411120946223.png">
 
-<link rel="canonical" href="https://zikh26.github.io/2022/04/26/BUUCTF_hfctf_2020_marksman/">
+<link rel="canonical" href="https://wp.zgroot.cn/2022/04/26/BUUCTF_hfctf_2020_marksman/">
 
 
 <script id="page-configurations">
@@ -72,7 +72,7 @@
   };
 </script>
 
-  <title>BUUCTF_hfctf_2020_marksman | ZIKH26</title>
+  <title>BUUCTF_hfctf_2020_marksman | 楼上请让路*</title>
   
 
 
@@ -123,10 +123,10 @@
 
     <a href="/" class="brand" rel="start">
       <span class="logo-line-before"><i></i></span>
-      <h1 class="site-title">ZIKH26</h1>
+      <h1 class="site-title">楼上请让路*</h1>
       <span class="logo-line-after"><i></i></span>
     </a>
-      <p class="site-subtitle" itemprop="description">pwn</p>
+      <p class="site-subtitle" itemprop="description">wp发布</p>
   </div>
 
   <div class="site-nav-right">
@@ -188,16 +188,16 @@
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="https://zikh26.github.io/2022/04/26/BUUCTF_hfctf_2020_marksman/">
+    <link itemprop="mainEntityOfPage" href="https://wp.zgroot.cn/2022/04/26/BUUCTF_hfctf_2020_marksman/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/20220411214643.jpg">
+      <meta itemprop="image" content="/images/image.png">
       <meta itemprop="name" content="ZIKH26">
-      <meta itemprop="description" content="未来一位优秀的pwner的博客">
+      <meta itemprop="description" content="楼上请让路*的博客">
     </span>
 
     <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="ZIKH26">
+      <meta itemprop="name" content="楼上请让路*">
     </span>
       <header class="post-header">
         <h1 class="post-title" itemprop="name headline">
@@ -211,7 +211,7 @@
               </span>
               <span class="post-meta-item-text">发表于</span>
 
-              <time title="创建时间：2022-04-26 02:51:20" itemprop="dateCreated datePublished" datetime="2022-04-26T02:51:20+00:00">2022-04-26</time>
+              <time title="创建时间：2022-04-26 08:57:04" itemprop="dateCreated datePublished" datetime="2022-04-26T08:57:04+00:00">2022-04-26</time>
             </span>
 
           
@@ -328,7 +328,7 @@
   </li>
   <li class="post-copyright-link">
     <strong>本文链接：</strong>
-    <a href="https://zikh26.github.io/2022/04/26/BUUCTF_hfctf_2020_marksman/" title="BUUCTF_hfctf_2020_marksman">https://zikh26.github.io/2022/04/26/BUUCTF_hfctf_2020_marksman/</a>
+    <a href="https://wp.zgroot.cn/2022/04/26/BUUCTF_hfctf_2020_marksman/" title="BUUCTF_hfctf_2020_marksman">https://wp.zgroot.cn/2022/04/26/BUUCTF_hfctf_2020_marksman/</a>
   </li>
   <li class="post-copyright-license">
     <strong>版权声明： </strong>本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/zh-CN" rel="noopener" target="_blank"><i class="fab fa-fw fa-creative-commons"></i>BY-NC-SA</a> 许可协议。转载请注明出处！
@@ -423,9 +423,9 @@
       <div class="site-overview-wrap sidebar-panel">
         <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
     <img class="site-author-image" itemprop="image" alt="ZIKH26"
-      src="/images/20220411214643.jpg">
+      src="/images/image.png">
   <p class="site-author-name" itemprop="name">ZIKH26</p>
-  <div class="site-description" itemprop="description">未来一位优秀的pwner的博客</div>
+  <div class="site-description" itemprop="description">楼上请让路*的博客</div>
 </div>
 <div class="site-state-wrap motion-element">
   <nav class="site-state">
@@ -446,7 +446,7 @@
 </div>
   <div class="links-of-author motion-element">
       <span class="links-of-author-item">
-        <a href="https://github.com/ZIKH26" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;ZIKH26" rel="noopener" target="_blank"><i class="fab fa-github fa-fw"></i>GitHub</a>
+        <a href="https://github.com/polishing-labs" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;polishing-labs" rel="noopener" target="_blank"><i class="fab fa-github fa-fw"></i>GitHub</a>
       </span>
   </div>
   <div class="cc-license motion-element" itemprop="license">
