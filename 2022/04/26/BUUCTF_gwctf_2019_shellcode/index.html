@@ -17,7 +17,7 @@
 
 <script id="hexo-configurations">
     var NexT = window.NexT || {};
-    var CONFIG = {"hostname":"wp.zgroot.cn","root":"/","scheme":"Muse","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}}};
+    var CONFIG = {"hostname":"wp.zgroot.cn","root":"/","scheme":"Pisces","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}}};
   </script>
 
   <meta name="description" content="总结：通过这道题的学习与收获有： 1、strlen函数是可以被00给截断的，而shellcode本身执行的时候并不会因为00截断。 2、第一次手写open,read,write函数的汇编 3、push一个字符串的话，比如push 0x67616c66 （这个是flag），不足八字节，push的时候会自动填充00补全八字节，从而占满一个内存单元。">
@@ -37,8 +37,8 @@
 <meta property="og:image" content="https://wp.zgroot.cn/upload/img/image-20220411120920984.png">
 <meta property="og:image" content="https://wp.zgroot.cn/upload/img/image-20220411120927129.png">
 <meta property="og:image" content="https://wp.zgroot.cn/upload/img/image-20220411120933954.png">
-<meta property="article:published_time" content="2022-04-26T08:57:04.961Z">
-<meta property="article:modified_time" content="2022-04-26T08:57:04.961Z">
+<meta property="article:published_time" content="2022-04-26T09:03:12.624Z">
+<meta property="article:modified_time" content="2022-04-26T09:03:12.624Z">
 <meta property="article:author" content="ZIKH26">
 <meta property="article:tag" content="orw">
 <meta property="article:tag" content="PWN">
@@ -199,7 +199,7 @@
               </span>
               <span class="post-meta-item-text">发表于</span>
 
-              <time title="创建时间：2022-04-26 08:57:04" itemprop="dateCreated datePublished" datetime="2022-04-26T08:57:04+00:00">2022-04-26</time>
+              <time title="创建时间：2022-04-26 09:03:12" itemprop="dateCreated datePublished" datetime="2022-04-26T09:03:12+00:00">2022-04-26</time>
             </span>
 
           
@@ -420,7 +420,7 @@
   </span>
   <span class="author" itemprop="copyrightHolder">ZIKH26</span>
 </div>
-  <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://muse.theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Muse</a> 强力驱动
+  <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://pisces.theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Pisces</a> 强力驱动
   </div>
 
         
@@ -446,7 +446,7 @@
 <script src="/js/motion.js"></script>
 
 
-<script src="/js/schemes/muse.js"></script>
+<script src="/js/schemes/pisces.js"></script>
 
 
 <script src="/js/next-boot.js"></script>
