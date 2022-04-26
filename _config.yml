@@ -3,17 +3,17 @@
 ## Source: https://github.com/hexojs/hexo/
 
 # Site
-title: ZIKH26
-subtitle: 'pwn'
-description: '未来一位优秀的pwner的博客'
-keywords: 'pwn,ctf'
+title: 楼上请让路*
+subtitle: 'wp发布'
+description: '楼上请让路*的博客'
+keywords: 'pwn,ctf,web,misc....'
 author: 'ZIKH26'
 language: zh-CN
 timezone: ''
 
 # URL
 ## Set your site url here. For example, if you use GitHub Page, set url as 'https://username.github.io/project'
-url: https://zikh26.github.io
+url: https://wp.zgroot.cn
 permalink: :year/:month/:day/:title/
 permalink_defaults:
 pretty_urls:
