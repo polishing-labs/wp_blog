@@ -23,7 +23,7 @@
   <meta name="description" content="总结：通过这道题的学习与收获有： 1、atol函数放入的数据应该是打包之前的，而非是打包之后的数据 2、exit函数执行流程，exit函数的调用流程exit函数—&gt;run_exit_handlers函数—&gt;_dl_fini函数—&gt; rtld_lock_unlock_recursive指针 如果我们能够将最后的指针所指向的内容修改为one_gadget，那么即可获取shell。这个">
 <meta property="og:type" content="article">
 <meta property="og:title" content="BUUCTF_hfctf_2020_marksman">
-<meta property="og:url" content="https://wp.zgroot.cn/BUU/BUUCTF_hfctf_2020_marksman-7739cc6c38a8/index.html">
+<meta property="og:url" content="https://wp.zgroot.cn/BUU/BUUCTF_hfctf_2020_marksman-b48db8c0869a/index.html">
 <meta property="og:site_name" content="楼上请让路*的WP">
 <meta property="og:description" content="总结：通过这道题的学习与收获有： 1、atol函数放入的数据应该是打包之前的，而非是打包之后的数据 2、exit函数执行流程，exit函数的调用流程exit函数—&gt;run_exit_handlers函数—&gt;_dl_fini函数—&gt; rtld_lock_unlock_recursive指针 如果我们能够将最后的指针所指向的内容修改为one_gadget，那么即可获取shell。这个">
 <meta property="og:locale" content="zh_CN">
@@ -49,8 +49,8 @@
 <meta property="og:image" content="https://wp.zgroot.cn/upload/img/image-20220411121205022.png">
 <meta property="og:image" content="https://wp.zgroot.cn/upload/img/image-20220411121210062.png">
 <meta property="og:image" content="https://wp.zgroot.cn/upload/img/image-20220411121215901.png">
-<meta property="article:published_time" content="2022-04-27T13:42:55.546Z">
-<meta property="article:modified_time" content="2022-04-27T13:42:55.546Z">
+<meta property="article:published_time" content="2022-04-27T13:47:00.351Z">
+<meta property="article:modified_time" content="2022-04-27T13:47:00.351Z">
 <meta property="article:author" content="楼上请让路*">
 <meta property="article:tag" content="PWN">
 <meta property="article:tag" content="one_gadget">
@@ -59,7 +59,7 @@
 <meta name="twitter:card" content="summary">
 <meta name="twitter:image" content="https://wp.zgroot.cn/upload/img/image-20220411120946223.png">
 
-<link rel="canonical" href="https://wp.zgroot.cn/BUU/BUUCTF_hfctf_2020_marksman-7739cc6c38a8/">
+<link rel="canonical" href="https://wp.zgroot.cn/BUU/BUUCTF_hfctf_2020_marksman-b48db8c0869a/">
 
 
 <script id="page-configurations">
@@ -198,7 +198,7 @@
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="https://wp.zgroot.cn/BUU/BUUCTF_hfctf_2020_marksman-7739cc6c38a8/">
+    <link itemprop="mainEntityOfPage" href="https://wp.zgroot.cn/BUU/BUUCTF_hfctf_2020_marksman-b48db8c0869a/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="image" content="/images/image.png">
@@ -221,7 +221,7 @@
               </span>
               <span class="post-meta-item-text">发表于</span>
 
-              <time title="创建时间：2022-04-27 13:42:55 13:42:55" itemprop="dateCreated datePublished" datetime="2022-04-27T13:42:55+00:00">2022-04-27 13:42:55</time>
+              <time title="创建时间：2022-04-27 13:47:00 13:47:00" itemprop="dateCreated datePublished" datetime="2022-04-27T13:47:00+00:00">2022-04-27 13:47:00</time>
             </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -347,7 +347,7 @@
   </li>
   <li class="post-copyright-link">
     <strong>本文链接：</strong>
-    <a href="https://wp.zgroot.cn/BUU/BUUCTF_hfctf_2020_marksman-7739cc6c38a8/" title="BUUCTF_hfctf_2020_marksman">https://wp.zgroot.cn/BUU/BUUCTF_hfctf_2020_marksman-7739cc6c38a8/</a>
+    <a href="https://wp.zgroot.cn/BUU/BUUCTF_hfctf_2020_marksman-b48db8c0869a/" title="BUUCTF_hfctf_2020_marksman">https://wp.zgroot.cn/BUU/BUUCTF_hfctf_2020_marksman-b48db8c0869a/</a>
   </li>
   <li class="post-copyright-license">
     <strong>版权声明： </strong>本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/zh-CN" rel="noopener" target="_blank"><i class="fab fa-fw fa-creative-commons"></i>BY-NC-SA</a> 许可协议。转载请注明出处！
@@ -370,11 +370,11 @@
         
     <div class="post-nav">
       <div class="post-nav-item">
-    <a href="/BUU/BUUCTF_jarvisoj_guess-694de618918a/" rel="prev" title="BUUCTF_jarvisoj_guess">
+    <a href="/BUU/BUUCTF_jarvisoj_guess-9602e1c02889/" rel="prev" title="BUUCTF_jarvisoj_guess">
       <i class="fa fa-chevron-left"></i> BUUCTF_jarvisoj_guess
     </a></div>
       <div class="post-nav-item">
-    <a href="/BUU/BUUCTF_gwctf_2019_shellcode-72e9b2d88ab8/" rel="next" title="BUUCTF_gwctf_2019_shellcode">
+    <a href="/BUU/BUUCTF_gwctf_2019_shellcode-e2ca040c09b0/" rel="next" title="BUUCTF_gwctf_2019_shellcode">
       BUUCTF_gwctf_2019_shellcode <i class="fa fa-chevron-right"></i>
     </a></div>
     </div>
