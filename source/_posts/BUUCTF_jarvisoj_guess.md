@@ -4,6 +4,8 @@ tags:
  - 爆破
  - PWN
  - 数组索引无检查
+categories:
+ - BUU
 ---
 # 总结：
 

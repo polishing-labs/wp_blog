@@ -5,6 +5,8 @@ tags:
  - PWN
  - shellcode
  - 00截断
+categories:
+ - BUU
 ---
 ## 总结：
 

@@ -4,6 +4,8 @@ tags:
  - 栈迁移
  - PWN
  - magic gadget
+categories:
+ - DASCTF
 ---
 ## 总结：
 

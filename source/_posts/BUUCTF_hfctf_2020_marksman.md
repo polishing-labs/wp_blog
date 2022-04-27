@@ -5,6 +5,8 @@ tags:
  - PWN
  - 劫持exit_hook
  - patch libc和ld
+categories:
+ - BUU
 ---
 
 ## 总结：

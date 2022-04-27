@@ -4,6 +4,8 @@ tags:
  - web
  - PWN
  - ctf
+categories:
+ - 网刃杯
 ---
 > 这次网刃杯打的真恶心，虽然自己也很菜
 

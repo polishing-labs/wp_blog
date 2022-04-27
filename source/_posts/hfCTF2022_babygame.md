@@ -4,6 +4,8 @@ tags:
  - 爆破
  - PWN
  - 猜数游戏
+categories:
+ - hufuCTF
 ---
 总结：
 通过这道题的学习与收获有：
