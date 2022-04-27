@@ -96,14 +96,14 @@ POST： properties[template]={TableBody}&properties[data]=1&properties[rowHtmlOp
 
 ## PWN
 ### good_luck
-## 保护策略：
+#### 保护策略：
 
 ![](/upload/img/2706180-20220424083159297-1342905454.png)
 
 
 
 
-## 程序分析：
+#### 程序分析：
 
 ![](/upload/img/2706180-20220424083208729-652924904.png)
 
@@ -127,7 +127,7 @@ POST： properties[template]={TableBody}&properties[data]=1&properties[rowHtmlOp
 
 以printf("%s"，"aaaa")为例 	printf的第二个参数装的并不是aaaa这四个字符，而是aaaa字符串的首地址。可是最后打印出来的并不是aaaa字符串的首地址，而是这个地址所指向的字符串。由此可以推断出，%s有寻址的功能。
 
-## 大致思路：
+#### 大致思路：
 
 思路重新回到泄露栈中的函数真实地址，先说第一种%p进行泄露。
 
@@ -140,7 +140,7 @@ POST： properties[template]={TableBody}&properties[data]=1&properties[rowHtmlOp
 
 这个libc蒙对之后，由于基地址也泄露出来了，剩下的就简单多了，本地怎么打，远程就怎么打(不过讲这个方法感觉没什么意义，毕竟这是靠运气（不过如果远程给了Libc的话这个方法是可以用的）主要我确实是用这个方法打通了，因此记录一下)
 
-## exp1
+#### exp1
 
 ```python
 # coding:utf-8
@@ -191,7 +191,7 @@ pwn()
 
 泄露出了libc基地址，那就随便打了，不过好像没法搜pop_rdi这个指令（不过可以把libc下载下来用Ropgadget来搜，不过有点麻烦），就直接用one_gadget打了(pwncli这个库模式只支持python3)
 
-## exp2
+#### exp2
 
 ```python
 #!/usr/bin/env python3
