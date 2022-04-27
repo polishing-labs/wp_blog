@@ -23,12 +23,12 @@
   "homepage": "https://theme-next.org",
   "devDependencies": {
     "eslint": "8.14.0",
-    "eslint-config-theme-next": "^1.1.4",
-    "gulp": "^4.0.2",
-    "gulp-eslint": "^6.0.0",
-    "gulp-shell": "^0.8.0",
+    "eslint-config-theme-next": "1.2.1",
+    "gulp": "4.0.2",
+    "gulp-eslint": "6.0.0",
+    "gulp-shell": "0.8.0",
     "js-yaml": "4.1.0",
-    "stylint": "^2.0.0"
+    "stylint": "2.0.0"
   },
   "engines": {
     "node": ">=10.9.0"

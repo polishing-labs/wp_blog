@@ -552,7 +552,7 @@ fs.realpath@^1.0.0:
 
 fsevents@~2.3.2:
   version "2.3.2"
-  resolved "https://mirrors.tencent.com/npm/fsevents/-/fsevents-2.3.2.tgz#8a526f78b8fdf4623b709e0b975c52c24c02fd1a"
+  resolved "https://registry.yarnpkg.com/fsevents/-/fsevents-2.3.2.tgz#8a526f78b8fdf4623b709e0b975c52c24c02fd1a"
   integrity sha512-xiqMQR4xAeHTuB9uWm+fFRcIOgKBMiOBP+eXiyT7jsgVCq1bkVygt00oASowB7EdtpOHaaPgKt812P9ab+DDKA==
 
 function-bind@^1.1.1:
@@ -641,31 +641,31 @@ hexo-fs@^3.0.1, hexo-fs@^3.1.0:
     graceful-fs "^4.1.11"
     hexo-util "^2.0.0"
 
-hexo-generator-archive@^1.0.0:
+hexo-generator-archive@1.0.0:
   version "1.0.0"
-  resolved "http://mirrors.cloud.tencent.com/npm/hexo-generator-archive/-/hexo-generator-archive-1.0.0.tgz"
+  resolved "https://registry.npmjs.org/hexo-generator-archive/-/hexo-generator-archive-1.0.0.tgz"
   integrity sha512-24TeanDGpMBUIq37DHpSESQbeN6ssZ06edsGSI76tN4Yit50TgsgzP5g5DSu0yJk0jUtHJntysWE8NYAlFXibA==
   dependencies:
     hexo-pagination "1.0.0"
 
-hexo-generator-category@^1.0.0:
+hexo-generator-category@1.0.0:
   version "1.0.0"
-  resolved "http://mirrors.cloud.tencent.com/npm/hexo-generator-category/-/hexo-generator-category-1.0.0.tgz"
+  resolved "https://registry.npmjs.org/hexo-generator-category/-/hexo-generator-category-1.0.0.tgz"
   integrity sha512-kmtwT1SHYL2ismbGnYQXNtqLFSeTdtHNbJIqno3LKROpCK8ybST5QVXF1bZI9LkFcXV/H8ilt8gfg4/dNNcQQQ==
   dependencies:
     hexo-pagination "1.0.0"
 
-hexo-generator-index@^2.0.0:
+hexo-generator-index@2.0.0:
   version "2.0.0"
-  resolved "http://mirrors.cloud.tencent.com/npm/hexo-generator-index/-/hexo-generator-index-2.0.0.tgz"
+  resolved "https://registry.npmjs.org/hexo-generator-index/-/hexo-generator-index-2.0.0.tgz"
   integrity sha512-q/29Vj9BZs0dwBcF+s9IT8ymS4aYZsDwBEYDnh96C8tsX+KPY5v6TzCdttz58BchifaJpP/l9mi6u9rZuYqA0g==
   dependencies:
     hexo-pagination "1.0.0"
     timsort "^0.3.0"
 
-hexo-generator-tag@^1.0.0:
+hexo-generator-tag@1.0.0:
   version "1.0.0"
-  resolved "http://mirrors.cloud.tencent.com/npm/hexo-generator-tag/-/hexo-generator-tag-1.0.0.tgz"
+  resolved "https://registry.npmjs.org/hexo-generator-tag/-/hexo-generator-tag-1.0.0.tgz"
   integrity sha512-JDoB2T1EncRlyGSjuAhkGxRfKkN8tq0i8tFlk9I4q2L6iYxPaUnFenhji0oxufTADC16/IchuPjmMk//dt8Msg==
   dependencies:
     hexo-pagination "1.0.0"
@@ -696,16 +696,16 @@ hexo-pagination@1.0.0:
   resolved "http://mirrors.cloud.tencent.com/npm/hexo-pagination/-/hexo-pagination-1.0.0.tgz"
   integrity sha512-miEVFgxchPr2qNWxw0JWpJ9R/Yaf7HjHBZVjvCCcqfbsLyYtCvIfJDxcEwz1sDOC/fLzYPqNnhUI73uNxBHRSA==
 
-hexo-renderer-ejs@^2.0.0:
+hexo-renderer-ejs@2.0.0:
   version "2.0.0"
-  resolved "http://mirrors.cloud.tencent.com/npm/hexo-renderer-ejs/-/hexo-renderer-ejs-2.0.0.tgz"
+  resolved "https://registry.npmjs.org/hexo-renderer-ejs/-/hexo-renderer-ejs-2.0.0.tgz"
   integrity sha512-qCjE1IdwgDgv65qyb0KMVCwCdSVAkH0vwAe9XihjvaKWkmb9dtt8DgErOdqCXn0HReSyWiEVP2BrLRj3gyHwOQ==
   dependencies:
     ejs "^3.1.6"
 
-hexo-renderer-marked@^5.0.0:
+hexo-renderer-marked@5.0.0:
   version "5.0.0"
-  resolved "http://mirrors.cloud.tencent.com/npm/hexo-renderer-marked/-/hexo-renderer-marked-5.0.0.tgz"
+  resolved "https://registry.npmjs.org/hexo-renderer-marked/-/hexo-renderer-marked-5.0.0.tgz"
   integrity sha512-lifWMCvefTq3IlH+urQDPFX4gXquFAqDwOQBdqpwcPyhaiVHu0ZweeZ24IeZtCLRYP+zEgsksCPYrGl9hDDJHg==
   dependencies:
     dompurify "^2.3.0"
@@ -713,17 +713,17 @@ hexo-renderer-marked@^5.0.0:
     jsdom "^19.0.0"
     marked "^4.0.1"
 
-hexo-renderer-stylus@^2.0.0:
+hexo-renderer-stylus@2.0.1:
   version "2.0.1"
-  resolved "http://mirrors.cloud.tencent.com/npm/hexo-renderer-stylus/-/hexo-renderer-stylus-2.0.1.tgz"
+  resolved "https://registry.npmjs.org/hexo-renderer-stylus/-/hexo-renderer-stylus-2.0.1.tgz"
   integrity sha512-1S4AG8RtzWqVrqKIYv2AJ4UYms5SHDjkdYS7IiGwgUejL24agbTktpAbnH2cG1JWZ15SRqYN0UGB9aAoSAgvEA==
   dependencies:
     nib "^1.1.2"
     stylus "^0.54.8"
 
-hexo-server@^3.0.0:
+hexo-server@3.0.0:
   version "3.0.0"
-  resolved "http://mirrors.cloud.tencent.com/npm/hexo-server/-/hexo-server-3.0.0.tgz"
+  resolved "https://registry.npmjs.org/hexo-server/-/hexo-server-3.0.0.tgz"
   integrity sha512-u4s0ty9Aew6jV+a9oMrXBwhrRpUQ0U8PWM/88a5aHgDru58VY81mVrxOFxs788NAsWQ8OvsJtF5m7mnXoRnSIA==
   dependencies:
     bluebird "^3.5.5"
@@ -735,14 +735,14 @@ hexo-server@^3.0.0:
     picocolors "^1.0.0"
     serve-static "^1.14.1"
 
-hexo-theme-landscape@^0.0.3:
+hexo-theme-landscape@0.0.3:
   version "0.0.3"
-  resolved "http://mirrors.cloud.tencent.com/npm/hexo-theme-landscape/-/hexo-theme-landscape-0.0.3.tgz"
+  resolved "https://registry.npmjs.org/hexo-theme-landscape/-/hexo-theme-landscape-0.0.3.tgz"
   integrity sha512-b0Di+TUVs4ESrNX4ULEh9uQmADpO6kr10rIJ2OGZM8suNQNFKdxn+vJUjnLfKkCPJAfVmS7/S83KCNYe4tpoNw==
 
-hexo-theme-next@^8.11.0:
+hexo-theme-next@8.11.0:
   version "8.11.0"
-  resolved "http://mirrors.cloud.tencent.com/npm/hexo-theme-next/-/hexo-theme-next-8.11.0.tgz"
+  resolved "https://registry.npmjs.org/hexo-theme-next/-/hexo-theme-next-8.11.0.tgz"
   integrity sha512-gmMu+6Z6PqeKWryfc9XzM4VUKfmLAryI2RL51b0MrP0OLhptIznIWqcZDpZ/CEkgL74jlAJqDqxrUZTsXOgLCg==
 
 hexo-util@^2.0.0, hexo-util@^2.5.0, hexo-util@^2.6.0:
@@ -759,9 +759,9 @@ hexo-util@^2.0.0, hexo-util@^2.5.0, hexo-util@^2.6.0:
     prismjs "^1.17.1"
     strip-indent "^3.0.0"
 
-hexo@^6.0.0:
+hexo@6.1.0:
   version "6.1.0"
-  resolved "http://mirrors.cloud.tencent.com/npm/hexo/-/hexo-6.1.0.tgz"
+  resolved "https://registry.npmjs.org/hexo/-/hexo-6.1.0.tgz"
   integrity sha512-TeV2cN61CD2C1GKczJRR3tdZhR3JUQi8wtS4eIgkDOeDYWTmovPoSCcc8jvh42D3fehOPp6E81fTeyjh39QWtA==
   dependencies:
     abbrev "^1.1.1"
