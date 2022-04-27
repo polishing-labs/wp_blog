@@ -4,7 +4,7 @@ tags:
  - PWN
  - ctf
 categories:
- - hufuCTF
+ - PWNCTF
 ---
 ## 前言
 
