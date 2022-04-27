@@ -122,8 +122,9 @@ menu:
   categories: /categories/ || fa fa-th
   archives: /archives/ || fa fa-archive
   #schedule: /schedule/ || fa fa-calendar
+  links: /links/ || far fa-link
   #sitemap: /sitemap.xml || fa fa-sitemap
-  commonweal: /links/ || fa fa-heartbeat
+  #commonweal: /links/ || fa fa-heartbeat
 
 # Enable / Disable menu icons / item badges.
 menu_settings:
