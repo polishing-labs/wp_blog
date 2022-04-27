@@ -507,7 +507,7 @@ payload+=p64(bss_addr)#执行rep指令，至此拷贝开始
 
 
 
-## 完整exp：
+## 完整exp
 
 ```python
 #coding:utf-8
@@ -669,7 +669,7 @@ p.interactive()
 ![](/upload/img/2706180-20220426103751910-1556922758.png)
 
 
-## 补充：
+## 补充
 
 ### 关于socket和connect的参数
 
