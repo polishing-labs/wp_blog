@@ -23,7 +23,7 @@
   <meta name="description" content="总结：通过这道题的学习和收获有： 1、栈迁移，何为栈？本来栈的定义就是rsp指针与rbp指针之间的就是栈。rsp在哪栈就在哪，因此两次leave，栈就变了两次，而真正跳到变化的栈那步是在最后的ret执行的。也算是对栈迁移又有了一点新的理解。 2、利用magic gadget修改got表 3、这道题的核心考察的就是栈迁移以及payload布局。 4、取magic gadget中的ebx时，如果ebx">
 <meta property="og:type" content="article">
 <meta property="og:title" content="DASCTF2022_checkin">
-<meta property="og:url" content="https://wp.zgroot.cn/DASCTF/DASCTF2022_checkin-e77e968afa5a/index.html">
+<meta property="og:url" content="https://wp.zgroot.cn/DASCTF/DASCTF2022_checkin-1b6dfcf7b946/index.html">
 <meta property="og:site_name" content="楼上请让路*">
 <meta property="og:description" content="总结：通过这道题的学习和收获有： 1、栈迁移，何为栈？本来栈的定义就是rsp指针与rbp指针之间的就是栈。rsp在哪栈就在哪，因此两次leave，栈就变了两次，而真正跳到变化的栈那步是在最后的ret执行的。也算是对栈迁移又有了一点新的理解。 2、利用magic gadget修改got表 3、这道题的核心考察的就是栈迁移以及payload布局。 4、取magic gadget中的ebx时，如果ebx">
 <meta property="og:locale" content="zh_CN">
@@ -34,8 +34,8 @@
 <meta property="og:image" content="https://wp.zgroot.cn/upload/img/image-20220411121517837.png">
 <meta property="og:image" content="https://wp.zgroot.cn/upload/img/image-20220411121521819.png">
 <meta property="og:image" content="https://wp.zgroot.cn/upload/img/image-20220411121525688.png">
-<meta property="article:published_time" content="2022-04-27T11:44:29.625Z">
-<meta property="article:modified_time" content="2022-04-27T11:44:29.625Z">
+<meta property="article:published_time" content="2022-04-27T11:47:26.954Z">
+<meta property="article:modified_time" content="2022-04-27T11:47:26.954Z">
 <meta property="article:author" content="楼上请让路*">
 <meta property="article:tag" content="PWN">
 <meta property="article:tag" content="栈迁移">
@@ -43,7 +43,7 @@
 <meta name="twitter:card" content="summary">
 <meta name="twitter:image" content="https://wp.zgroot.cn/upload/img/image-20220411121501353.png">
 
-<link rel="canonical" href="https://wp.zgroot.cn/DASCTF/DASCTF2022_checkin-e77e968afa5a/">
+<link rel="canonical" href="https://wp.zgroot.cn/DASCTF/DASCTF2022_checkin-1b6dfcf7b946/">
 
 
 <script id="page-configurations">
@@ -172,7 +172,7 @@
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="https://wp.zgroot.cn/DASCTF/DASCTF2022_checkin-e77e968afa5a/">
+    <link itemprop="mainEntityOfPage" href="https://wp.zgroot.cn/DASCTF/DASCTF2022_checkin-1b6dfcf7b946/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="image" content="/images/image.png">
@@ -195,7 +195,7 @@
               </span>
               <span class="post-meta-item-text">发表于</span>
 
-              <time title="创建时间：2022-04-27 11:44:29" itemprop="dateCreated datePublished" datetime="2022-04-27T11:44:29+00:00">2022-04-27</time>
+              <time title="创建时间：2022-04-27 11:47:26" itemprop="dateCreated datePublished" datetime="2022-04-27T11:47:26+00:00">2022-04-27</time>
             </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -275,7 +275,7 @@
   </li>
   <li class="post-copyright-link">
     <strong>本文链接：</strong>
-    <a href="https://wp.zgroot.cn/DASCTF/DASCTF2022_checkin-e77e968afa5a/" title="DASCTF2022_checkin">https://wp.zgroot.cn/DASCTF/DASCTF2022_checkin-e77e968afa5a/</a>
+    <a href="https://wp.zgroot.cn/DASCTF/DASCTF2022_checkin-1b6dfcf7b946/" title="DASCTF2022_checkin">https://wp.zgroot.cn/DASCTF/DASCTF2022_checkin-1b6dfcf7b946/</a>
   </li>
   <li class="post-copyright-license">
     <strong>版权声明： </strong>本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/zh-CN" rel="noopener" target="_blank"><i class="fab fa-fw fa-creative-commons"></i>BY-NC-SA</a> 许可协议。转载请注明出处！
@@ -297,11 +297,11 @@
         
     <div class="post-nav">
       <div class="post-nav-item">
-    <a href="/GKCTF/%5BGKCTF%202021%5Dcheckin-eb4eba7c87b1/" rel="prev" title="GKCTF 2021_checkin">
+    <a href="/GKCTF/%5BGKCTF%202021%5Dcheckin-87838c0cc67d/" rel="prev" title="GKCTF 2021_checkin">
       <i class="fa fa-chevron-left"></i> GKCTF 2021_checkin
     </a></div>
       <div class="post-nav-item">
-    <a href="/BUU/BUUCTF_jarvisoj_guess-d03d6515f1b9/" rel="next" title="BUUCTF_jarvisoj_guess">
+    <a href="/BUU/BUUCTF_jarvisoj_guess-8a3223c7f3a0/" rel="next" title="BUUCTF_jarvisoj_guess">
       BUUCTF_jarvisoj_guess <i class="fa fa-chevron-right"></i>
     </a></div>
     </div>
