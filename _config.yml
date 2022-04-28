@@ -9,7 +9,7 @@ description: '楼上请让路*的WP'
 keywords: 'pwn,ctf,web,misc....'
 author: '楼上请让路*'
 language: zh-CN
-timezone: ''
+timezone: 'Asia/Shanghai'
 
 # URL
 ## Set your site url here. For example, if you use GitHub Page, set url as 'https://username.github.io/project'
