@@ -6,7 +6,7 @@ tags:
  - PWN
  - web
 categories:
- - DSACTF
+ - DASCTF
 ---
 
 > 这次 PWN 手真的哭了，远程太恶心了
