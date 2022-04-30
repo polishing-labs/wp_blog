@@ -25,15 +25,15 @@ categories:
 <!--more-->
 ## 保护策略：
 
-<img src="/upload/img/image-20220428205917903.png" alt="image-20220428205917903" style="width:50%;" />
+<img src="/upload/img/image-20220428205917903.png" alt="image-20220428205917903" style="width:100%;" />
 
-<img src="/upload/img/image-20220428210310835.png" alt="image-20220428210310835" style="width: 33%;" />
+<img src="/upload/img/image-20220428210310835.png" alt="image-20220428210310835" style="width: 100%;" />
 
 ## 程序分析：
 
-<img src="/upload/img/image-20220428210118223.png" alt="image-20220428210118223" style="width:33%;" />
+<img src="/upload/img/image-20220428210118223.png" alt="image-20220428210118223" style="width:100%;" />
 
-<img src="/upload/img/image-20220428210156841.png" alt="image-20220428210156841" style="width: 50%;" />
+<img src="/upload/img/image-20220428210156841.png" alt="image-20220428210156841" style="width: 100%;" />
 
 程序分析起来完全没压力，就是开了个沙箱，然后关闭了标准输出，然后循环100次格式化字符串漏洞（如果输入d^3CTF则会直接退出程序），数据是输入到了bss段。另外就是保护开了PIE
 
@@ -67,7 +67,7 @@ PS:**程序如果setvbuf，stdout会出现在bss段，反之则会在libc库中*
 
 ### 布置栈链
 
-<img src="/upload/img/image-20220429120513056.png" alt="image-20220429120513056" style="width: 50%;" />
+<img src="/upload/img/image-20220429120513056.png" alt="image-20220429120513056" style="width: 100%;" />
 
 首先发现栈中存在bss段上buf的地址<font color=red>（**请注意区分buf的地址，和指向buf的地址）**</font>，因此我们要把0x7fffffffdf58布置到栈里面，通过0x7fffffffdf58来改写0x555555756060,将其改写为stdout的地址，然后通过stdout的地址来修改libc中IO_2_1_stdout。
 
