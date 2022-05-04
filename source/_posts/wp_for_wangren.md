@@ -67,7 +67,7 @@ categories:
 
 ![img](/upload/img/clip_image022.gif)
 
-尝试利用fopher写payload
+尝试利用gopher写payload
 
 ![img](/upload/img/clip_image024.gif)
 
