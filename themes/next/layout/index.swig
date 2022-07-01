@@ -14,7 +14,7 @@
   {% include '_partials/pagination.swig' %}
 
 {% endblock %}
-<script async defer data-website-id="9aab3793-bf4f-4055-8c11-e23ab244a0d0" src="https://analyze.timochan.cn/umami.js"></script>
+
 {% block sidebar %}
   {{ sidebar_template.render(false) }}
 {% endblock %}
