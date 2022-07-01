@@ -59,4 +59,3 @@
 {%- endif %}
 
 {{- next_inject('footer') }}
-博客全站共{{ totalcount(site) }}字
