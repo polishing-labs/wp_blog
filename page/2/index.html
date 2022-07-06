@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
 <meta name="theme-color" content="#222">
 <meta name="generator" content="Hexo 6.2.0">
-<script async defer data-website-id="9aab3793-bf4f-4055-8c11-e23ab244a0d0" src="https://analyze.timochan.cn/umami.js"></script>
+<script async defer data-website-id="9aab3793-bf4f-4055-8c11-e23ab244a0d0" src="https://analyze.timochan.cn/rebuild.js"></script>
   <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
   <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
   <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
@@ -170,6 +170,90 @@
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://wp.zgroot.cn/PWNHUB/pwnhub_2022_spring_ctf/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/image.png">
+      <meta itemprop="name" content="楼上请让路*">
+      <meta itemprop="description" content="楼上请让路*的WP">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="楼上请让路*的WP">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/PWNHUB/pwnhub_2022_spring_ctf/" class="post-title-link" itemprop="url">PWNHUB春季挑战赛</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2022-04-25 20:46:25 20:46:25" itemprop="dateCreated datePublished" datetime="2022-04-25T20:46:25+08:00">2022-04-25 20:46:25</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2022-07-06 11:20:23 11:20:23" itemprop="dateModified" datetime="2022-07-06T11:20:23+08:00">2022-07-06 11:20:23</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/PWNHUB/" itemprop="url" rel="index"><span itemprop="name">PWNHUB</span></a>
+                </span>
+            </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <h2 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h2><p>1、rep指令是进行循环，movs qword ptr [rdi],qword ptr[rsi]则可以拷贝，二者结合就是可以大规模拷贝数据到另一个内存空间。而想实现它，仅仅只需要控制rdi和rsi以及rcx寄存器即可。</p>
+<p>2、我们往可读可写可执行的内存中写入的任何机器码都是可以被当做指令来执行的，而想执行这些指令，仅仅用ret或者call跳转到这些指令所在地址即可<strong>（ret和call要的是指令所在地址，并非指令）</strong></p>
+<p>3、关闭标准输出，没有回显时，可以利用magic_gadget来去获取一些我们需要的函数。</p>
+<p>4、开启沙箱并且三个文件描述符全关时（意味着orw读取的flag也无法看见），可以用socket+connect将flag发送到这个新开的文件上（毕竟close关闭的仅仅是当前终端的0,1,2)</p>
+          <!--noindex-->
+            <div class="post-button">
+              <a class="btn" href="/PWNHUB/pwnhub_2022_spring_ctf/#more" rel="contents">
+                阅读全文 &raquo;
+              </a>
+            </div>
+          <!--/noindex-->
+        
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
     <link itemprop="mainEntityOfPage" href="https://wp.zgroot.cn/PWNHUB/pwnhub_vheap/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -201,7 +285,7 @@
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2022-07-05 14:15:40 14:15:40" itemprop="dateModified" datetime="2022-07-05T14:15:40+08:00">2022-07-05 14:15:40</time>
+                <time title="修改时间：2022-07-06 11:20:23 11:20:23" itemprop="dateModified" datetime="2022-07-06T11:20:23+08:00">2022-07-06 11:20:23</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -286,7 +370,7 @@
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2022-07-05 14:15:40 14:15:40" itemprop="dateModified" datetime="2022-07-05T14:15:40+08:00">2022-07-05 14:15:40</time>
+                <time title="修改时间：2022-07-06 11:20:23 11:20:23" itemprop="dateModified" datetime="2022-07-06T11:20:23+08:00">2022-07-06 11:20:23</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -369,7 +453,7 @@
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2022-07-05 14:15:40 14:15:40" itemprop="dateModified" datetime="2022-07-05T14:15:40+08:00">2022-07-05 14:15:40</time>
+                <time title="修改时间：2022-07-06 11:20:23 11:20:23" itemprop="dateModified" datetime="2022-07-06T11:20:23+08:00">2022-07-06 11:20:23</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -488,7 +572,7 @@
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">13</span>
+          <span class="site-state-item-count">14</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
