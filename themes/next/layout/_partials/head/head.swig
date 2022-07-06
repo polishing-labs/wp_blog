@@ -2,7 +2,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
 <meta name="theme-color" content="{{ theme.android_chrome_color }}">
 <meta name="generator" content="Hexo {{ hexo_version }}">
-<script async defer data-website-id="9aab3793-bf4f-4055-8c11-e23ab244a0d0" src="https://analyze.timochan.cn/umami.js"></script>
+<script async defer data-website-id="9aab3793-bf4f-4055-8c11-e23ab244a0d0" src="https://analyze.timochan.cn/rebuild.js"></script>
 {%- if theme.favicon.apple_touch_icon %}
   <link rel="apple-touch-icon" sizes="180x180" href="{{ url_for(theme.favicon.apple_touch_icon) }}">
 {%- endif %}
