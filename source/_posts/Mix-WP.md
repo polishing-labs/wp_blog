@@ -195,7 +195,6 @@ base64加密
 
 ### FLAG
 
-![42011487927629132](C:\Users\DELL\Desktop\42011487927629132.png)
 
 图片用stegsolve打开后，发现是LSB隐写
 
